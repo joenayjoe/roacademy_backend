@@ -30,7 +30,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public Optional<Grade> findById(Long gradeId) {
+    public Optional<Grade> findGradeById(Long gradeId) {
         return gradeRepository.findById(gradeId);
     }
 
@@ -38,4 +38,11 @@ public class GradeServiceImpl implements GradeService {
     public boolean isGradeExist(Long gradeId) {
         return gradeRepository.existsById(gradeId);
     }
+
+    @Override
+    public void deleteGradeById(Long gradeId) {
+        gradeRepository.deleteById(gradeId);
+    }
+
+
 }

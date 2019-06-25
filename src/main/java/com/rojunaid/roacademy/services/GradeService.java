@@ -12,7 +12,9 @@ public interface GradeService {
 
     Grade updateGrade(Grade grade);
 
-    Optional<Grade> findById(Long gradeId);
+    Optional<Grade> findGradeById(Long gradeId);
 
     boolean isGradeExist(Long gradeId);
+
+    void deleteGradeById(Long gradeId);
 }

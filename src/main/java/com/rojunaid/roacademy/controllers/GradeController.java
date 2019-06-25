@@ -52,7 +52,19 @@ public class GradeController {
   @GetMapping("/{gradeId}")
   public ResponseEntity<Grade> getGradeById(@PathVariable Long gradeId) {
     Grade grade =
-        gradeService.findById(gradeId).orElseThrow(() -> new ResourceNotFoundException("Grade with id "+gradeId+" not found"));
+        gradeService.findGradeById(gradeId).orElseThrow(() -> new ResourceNotFoundException("Grade with id "+gradeId+" not found"));
     return new ResponseEntity<>(grade, HttpStatus.OK);
+  }
+
+  // DELETE /api/grades/:gradeId
+  // Delete a Grade by ID
+  @DeleteMapping("/{gradeId}")
+  public ResponseEntity<HttpStatus> deleteGradeById(@PathVariable Long gradeId) {
+    if(gradeService.isGradeExist(gradeId)) {
+      gradeService.deleteGradeById(gradeId);
+      return new ResponseEntity<>(HttpStatus.OK);
+    } else {
+      throw new ResourceNotFoundException("Grade with id "+gradeId+" not found");
+    }
   }
 }
