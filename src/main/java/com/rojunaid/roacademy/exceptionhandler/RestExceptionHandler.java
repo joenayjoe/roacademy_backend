@@ -5,6 +5,7 @@ import com.rojunaid.roacademy.dto.error.ValidationError;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -54,6 +55,19 @@ public class RestExceptionHandler {
 
             validationErrorList.add(validationError);
         }
+
+        return new ResponseEntity<>(errorDetail, null, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleMessageNotReadableException(HttpMessageNotReadableException mnre, HttpServletRequest request) {
+
+        ErrorDetail errorDetail = new ErrorDetail();
+        errorDetail.setTitle("Bad Request");
+        errorDetail.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorDetail.setOccurredAt(LocalDateTime.now());
+        errorDetail.setDetail(mnre.getLocalizedMessage());
+        errorDetail.setDeveloperMessage(mnre.getClass().getName());
 
         return new ResponseEntity<>(errorDetail, null, HttpStatus.BAD_REQUEST);
     }
