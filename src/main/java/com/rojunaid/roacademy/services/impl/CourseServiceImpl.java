@@ -46,7 +46,7 @@ public class CourseServiceImpl implements CourseService {
       course.setGrade(this.getGrade(courseDTO.getGradeId()));
       return courseRepository.save(course);
     }
-    throw new ResourceNotFoundException("Course with id " + courseId + " does not exist");
+    throw this.courseNotFoundException(courseId);
   }
 
   @Override
@@ -54,7 +54,7 @@ public class CourseServiceImpl implements CourseService {
     return courseRepository
         .findById(courseId)
         .orElseThrow(
-            () -> new ResourceNotFoundException("Course with id " + courseId + " does not exist"));
+            () -> this.courseNotFoundException(courseId));
   }
 
   @Override
@@ -63,7 +63,7 @@ public class CourseServiceImpl implements CourseService {
     if (courseRepository.existsById(courseId)) {
       courseRepository.deleteById(courseId);
     } else {
-      throw new ResourceNotFoundException("Course with id " + courseId + " does not exist");
+      throw this.courseNotFoundException(courseId);
     }
   }
 
@@ -81,9 +81,15 @@ public class CourseServiceImpl implements CourseService {
           courseRepository
               .findById(id)
               .orElseThrow(
-                  () -> new ResourceNotFoundException("Course with ID " + id + " not found"));
+                  () -> this.courseNotFoundException(id));
       preReqCourses.add(course1);
     }
     return preReqCourses;
+  }
+
+  // private methods
+
+  private ResourceNotFoundException courseNotFoundException(Long courseId) {
+    return new ResourceNotFoundException("Course with id " + courseId + " not found");
   }
 }

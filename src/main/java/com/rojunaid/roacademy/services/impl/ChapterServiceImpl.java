@@ -38,7 +38,7 @@ public class ChapterServiceImpl implements ChapterService {
     return chapterRepository
         .getChapterByIdAndCourse(chapterId, courseId)
         .orElseThrow(
-            () -> new ResourceNotFoundException("Chapter with ID " + chapterId + " not found"));
+            () -> this.chapterNotFoundException(chapterId));
   }
 
   @Override
@@ -67,7 +67,7 @@ public class ChapterServiceImpl implements ChapterService {
     if (chapterRepository.existsById(chapterId)) {
       chapterRepository.deleteById(chapterId);
     }
-    throw new ResourceNotFoundException("Chapter with ID " + chapterId + " not found");
+    throw this.chapterNotFoundException(chapterId);
   }
 
   // private methods
@@ -82,5 +82,11 @@ public class ChapterServiceImpl implements ChapterService {
       tags.add(tagService.findOrCreateByName(name.trim()));
     }
     return tags;
+  }
+
+  // private methods
+
+  private ResourceNotFoundException chapterNotFoundException(Long chapterId) {
+    return new ResourceNotFoundException("Chapter with id " + chapterId + " not found");
   }
 }
