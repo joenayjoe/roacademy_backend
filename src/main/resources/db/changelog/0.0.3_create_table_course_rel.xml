@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="3" author="junaid">
+        <createTable tableName="course_rel">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"></constraints>
+            </column>
+            <column name="course_id" type="BIGINT">
+                <constraints foreignKeyName="fk_course_course" references="course(id)"></constraints>
+            </column>
+            <column name="parent_id" type="BIGINT">
+                <constraints foreignKeyName="fk_course_course_parent" references="course(id)"></constraints>
+            </column>
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

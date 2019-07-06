@@ -1,5 +1,7 @@
 package com.rojunaid.roacademy.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -10,31 +12,27 @@ import java.util.Set;
 @Entity
 public class Course extends Auditable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-
     @NotEmpty
     @NotBlank
     @Size(min = 3, max = 100)
+    @Column(unique = true)
     private String name;
-
-    @ManyToOne
-    private Course parentCourse;
-
-    @OneToMany(mappedBy = "parentCourse")
-    private Set<Course> preRequisiteCourses = new HashSet<>();
 
     @ManyToOne
     private Grade grade;
 
-    public Long getId() {
-        return Id;
-    }
+    @ManyToMany(mappedBy = "preRequisiteCourses")
+    @JsonBackReference
+    private Set<Course> parentCourses = new HashSet<>();
 
-    public void setId(Long id) {
-        Id = id;
-    }
+    @ManyToMany
+    @JoinTable(name="CourseRel",
+            joinColumns={@JoinColumn(name="CourseId")},
+            inverseJoinColumns={@JoinColumn(name="ParentId")})
+    private Set<Course> preRequisiteCourses = new HashSet<>();
+
+    @OneToMany(mappedBy = "course")
+    private Set<Chapter> chapters = new HashSet<>();
 
     public String getName() {
         return name;
@@ -42,14 +40,6 @@ public class Course extends Auditable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Set<Course> getPreRequisiteCourses() {
-        return preRequisiteCourses;
-    }
-
-    public void setPreRequisiteCourses(Set<Course> preRequisiteCourses) {
-        this.preRequisiteCourses = preRequisiteCourses;
     }
 
     public Grade getGrade() {
@@ -60,11 +50,27 @@ public class Course extends Auditable {
         this.grade = grade;
     }
 
-    public Course getParentCourse() {
-        return parentCourse;
+    public Set<Course> getParentCourses() {
+        return parentCourses;
     }
 
-    public void setParentCourse(Course parentCourse) {
-        this.parentCourse = parentCourse;
+    public void setParentCourses(Set<Course> parentCourses) {
+        this.parentCourses = parentCourses;
+    }
+
+    public Set<Course> getPreRequisiteCourses() {
+        return preRequisiteCourses;
+    }
+
+    public void setPreRequisiteCourses(Set<Course> preRequisiteCourses) {
+        this.preRequisiteCourses = preRequisiteCourses;
+    }
+
+    public Set<Chapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(Set<Chapter> chapters) {
+        this.chapters = chapters;
     }
 }

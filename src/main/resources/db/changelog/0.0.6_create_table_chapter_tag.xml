@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="6" author="junaid">
+        <createTable tableName="chapter_tag">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"></constraints>
+            </column>
+            <column name="chapter_id" type="BIGINT">
+                <constraints foreignKeyName="fk_chapter_tag_chapter_id" references="chapter(id)"></constraints>
+            </column>
+            <column name="tag_id" type="BIGINT">
+                <constraints foreignKeyName="fk_chapter_tag_tag_id" references="tag(id)"></constraints>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

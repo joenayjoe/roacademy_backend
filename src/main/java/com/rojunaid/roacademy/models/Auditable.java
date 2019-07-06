@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,7 +13,7 @@ public class Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -25,11 +24,11 @@ public class Auditable {
     private Date updatedAt;
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public Date getCreatedAt() {

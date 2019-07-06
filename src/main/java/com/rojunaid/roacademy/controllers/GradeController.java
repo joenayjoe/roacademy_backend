@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +28,16 @@ public class GradeController {
   // Create a grade
   @PostMapping("")
   public ResponseEntity<Grade> createGrade(@Valid @RequestBody Grade grade) {
-    Grade grade1 = gradeService.createGrade(grade);
-    return new ResponseEntity<>(grade1, HttpStatus.CREATED);
+    Grade persistentGrade = gradeService.createGrade(grade);
+    return new ResponseEntity<>(persistentGrade, HttpStatus.CREATED);
   }
 
   // PUT /api/grades/:gradeId
   // Update a grade
   @PutMapping("/{gradeId}")
-  public ResponseEntity<Grade> updateGrade(@PathVariable Long gradeId, @RequestBody Grade grade) {
-    if (gradeService.isGradeExist(gradeId)) {
-      Grade updatedGrade = gradeService.updateGrade(grade);
-
-      return new ResponseEntity<>(updatedGrade, HttpStatus.OK);
-    } else {
-      throw new ResourceNotFoundException("Grade with id "+gradeId+" not found");
-    }
+  public ResponseEntity<Grade> updateGrade(@PathVariable Long gradeId, @Valid @RequestBody Grade grade) {
+    Grade updatedGrade = gradeService.updateGrade(gradeId, grade);
+    return new ResponseEntity<>(updatedGrade, HttpStatus.OK);
   }
 
   // GET /api/grades/:gradeId
@@ -51,8 +45,7 @@ public class GradeController {
 
   @GetMapping("/{gradeId}")
   public ResponseEntity<Grade> getGradeById(@PathVariable Long gradeId) {
-    Grade grade =
-        gradeService.findGradeById(gradeId).orElseThrow(() -> new ResourceNotFoundException("Grade with id "+gradeId+" not found"));
+    Grade grade = gradeService.findGradeById(gradeId);
     return new ResponseEntity<>(grade, HttpStatus.OK);
   }
 
@@ -60,11 +53,7 @@ public class GradeController {
   // Delete a Grade by ID
   @DeleteMapping("/{gradeId}")
   public ResponseEntity<HttpStatus> deleteGradeById(@PathVariable Long gradeId) {
-    if(gradeService.isGradeExist(gradeId)) {
-      gradeService.deleteGradeById(gradeId);
-      return new ResponseEntity<>(HttpStatus.OK);
-    } else {
-      throw new ResourceNotFoundException("Grade with id "+gradeId+" not found");
-    }
+    gradeService.deleteGradeById(gradeId);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }

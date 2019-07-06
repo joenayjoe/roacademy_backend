@@ -1,6 +1,7 @@
 package com.rojunaid.roacademy.dto.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class ErrorDetail {
     private LocalDateTime occurredAt;
 
     private String developerMessage;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, List<ValidationError>> errors = new HashMap<>();
 
     public String getTitle() {
