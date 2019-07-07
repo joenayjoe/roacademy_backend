@@ -44,7 +44,7 @@ public class CourseController {
   // GET /api/courses/:courseId
   // Get a course by ID
   @GetMapping("/{courseId}")
-  public ResponseEntity<Course> findCourseById(@PathVariable Long courseId) {
+  public ResponseEntity<Course> getCourseById(@PathVariable Long courseId) {
     Course course = courseService.findCourseById(courseId);
     return new ResponseEntity<>(course, HttpStatus.OK);
   }

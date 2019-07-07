@@ -5,24 +5,20 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-    <changeSet id="2" author="junaid">
-        <createTable tableName="course">
+    <changeSet id="7" author="junaid">
+        <createTable tableName="category">
             <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" nullable="false"></constraints>
             </column>
             <column name="name" type="varchar(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="grade_id" type="BIGINT">
-                <constraints foreignKeyName="fk_grade_course" references="grade(id)"/>
+                <constraints unique="true" uniqueConstraintName="category_name_uk"></constraints>
             </column>
             <column name="created_at" type="DATETIME">
-                <constraints nullable="false"/>
+                <constraints nullable="false"></constraints>
             </column>
             <column name="updated_at" type="DATETIME">
-                <constraints nullable="false"/>
+                <constraints nullable="false"></constraints>
             </column>
         </createTable>
-        <addUniqueConstraint columnNames="name, grade_id" constraintName="uk_course_name" tableName="course"/>
     </changeSet>
 </databaseChangeLog>

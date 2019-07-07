@@ -1,11 +1,9 @@
 package com.rojunaid.roacademy.dto;
 
-
 import javax.persistence.Column;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ChapterDTO {
 
@@ -13,10 +11,9 @@ public class ChapterDTO {
   @Column(unique = true)
   private String name;
 
-  @NotNull
-  private Long courseId;
+  @NotNull private Long courseId;
 
-  private List<String> tags = new ArrayList<>();
+  private Set<String> tagNames = new HashSet<>();
 
   public String getName() {
     return name;
@@ -34,11 +31,11 @@ public class ChapterDTO {
     this.courseId = courseId;
   }
 
-  public List<String> getTags() {
-    return tags;
+  public Set<String> getTagNames() {
+    return tagNames;
   }
 
-  public void setTags(List<String> tags) {
-    this.tags = tags;
+  public void setTagNames(Set<String> tagNames) {
+    this.tagNames = tagNames;
   }
 }

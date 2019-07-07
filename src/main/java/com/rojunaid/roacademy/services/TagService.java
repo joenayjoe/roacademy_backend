@@ -4,5 +4,5 @@ import com.rojunaid.roacademy.models.Tag;
 
 public interface TagService {
 
-   Tag findOrCreateByName(String name);
+  Tag findOrCreateByName(String name);
 }

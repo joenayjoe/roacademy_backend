@@ -11,11 +11,10 @@ import java.util.Set;
 @Entity
 public class Tag extends Auditable {
 
-  @NotNull private String name;
-
   @ManyToMany(mappedBy = "tags")
   @JsonBackReference
   Set<Chapter> chapters = new HashSet<>();
+  @NotNull private String name;
 
   public String getName() {
     return name;

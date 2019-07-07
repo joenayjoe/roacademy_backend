@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -24,8 +23,7 @@ public class ChapterServiceImpl implements ChapterService {
 
   @Autowired CourseService courseService;
 
-  @Autowired
-  TagService tagService;
+  @Autowired TagService tagService;
 
   @Override
   public Iterable<Chapter> getAllChapterForCourse(Long courseId) {
@@ -37,15 +35,14 @@ public class ChapterServiceImpl implements ChapterService {
   public Chapter getChapterById(Long courseId, Long chapterId) {
     return chapterRepository
         .getChapterByIdAndCourse(chapterId, courseId)
-        .orElseThrow(
-            () -> this.chapterNotFoundException(chapterId));
+        .orElseThrow(() -> this.chapterNotFoundException(chapterId));
   }
 
   @Override
   public Chapter createChapter(ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
     Chapter chapter = ChapterMapper.INSTANCE.chapterDTOToChapter(chapterDTO);
-    Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTags());
+    Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTagNames());
     chapter.setTags(tags);
     chapter.setCourse(course);
     return chapterRepository.save(chapter);
@@ -55,7 +52,7 @@ public class ChapterServiceImpl implements ChapterService {
   public Chapter updateChapter(Long chapterId, ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
     Chapter chapter = ChapterMapper.INSTANCE.chapterDTOToChapter(chapterDTO);
-    Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTags());
+    Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTagNames());
     chapter.setTags(tags);
     chapter.setCourse(course);
     chapter.setId(chapterId);
@@ -76,9 +73,9 @@ public class ChapterServiceImpl implements ChapterService {
     return courseService.findCourseById(courseId);
   }
 
-  private Set<Tag> getOrCreateTags(List<String> tag_names) {
+  private Set<Tag> getOrCreateTags(Set<String> tag_names) {
     Set<Tag> tags = new HashSet<>();
-    for(String name: tag_names) {
+    for (String name : tag_names) {
       tags.add(tagService.findOrCreateByName(name.trim()));
     }
     return tags;

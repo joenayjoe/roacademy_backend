@@ -10,62 +10,63 @@ import java.util.Map;
 
 public class ErrorDetail {
 
-    private String title;
-    private int status;
-    private String detail;
+  private String title;
+  private int status;
+  private String detail;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime occurredAt;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime occurredAt;
 
-    private String developerMessage;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, List<ValidationError>> errors = new HashMap<>();
+  private String developerMessage;
 
-    public String getTitle() {
-        return title;
-    }
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
+  private Map<String, List<ValidationError>> errors = new HashMap<>();
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public int getStatus() {
-        return status;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
+  public int getStatus() {
+    return status;
+  }
 
-    public String getDetail() {
-        return detail;
-    }
+  public void setStatus(int status) {
+    this.status = status;
+  }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
+  public String getDetail() {
+    return detail;
+  }
 
-    public LocalDateTime getOccurredAt() {
-        return occurredAt;
-    }
+  public void setDetail(String detail) {
+    this.detail = detail;
+  }
 
-    public void setOccurredAt(LocalDateTime occurredAt) {
-        this.occurredAt = occurredAt;
-    }
+  public LocalDateTime getOccurredAt() {
+    return occurredAt;
+  }
 
-    public String getDeveloperMessage() {
-        return developerMessage;
-    }
+  public void setOccurredAt(LocalDateTime occurredAt) {
+    this.occurredAt = occurredAt;
+  }
 
-    public void setDeveloperMessage(String developerMessage) {
-        this.developerMessage = developerMessage;
-    }
+  public String getDeveloperMessage() {
+    return developerMessage;
+  }
 
-    public Map<String, List<ValidationError>> getErrors() {
-        return errors;
-    }
+  public void setDeveloperMessage(String developerMessage) {
+    this.developerMessage = developerMessage;
+  }
 
-    public void setErrors(Map<String, List<ValidationError>> errors) {
-        this.errors = errors;
-    }
+  public Map<String, List<ValidationError>> getErrors() {
+    return errors;
+  }
+
+  public void setErrors(Map<String, List<ValidationError>> errors) {
+    this.errors = errors;
+  }
 }

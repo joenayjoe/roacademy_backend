@@ -11,5 +11,6 @@ public interface ChapterMapper {
   ChapterMapper INSTANCE = Mappers.getMapper(ChapterMapper.class);
 
   Chapter chapterDTOToChapter(ChapterDTO chapterDTO);
+
   ChapterDTO chapterToChapterDTO(Chapter chapter);
 }

@@ -10,19 +10,14 @@ import java.util.Set;
 @Entity
 public class Chapter extends Auditable {
 
-  @NotEmpty
-  private String name;
-
-  @ManyToOne
-  @JsonBackReference
-  private Course course;
-
   @ManyToMany
   @JoinTable(
-          name = "chapter_tag",
-          joinColumns = @JoinColumn(name = "chapter_id"),
-          inverseJoinColumns = @JoinColumn(name = "tag_id"))
+      name = "chapter_tag",
+      joinColumns = @JoinColumn(name = "chapter_id"),
+      inverseJoinColumns = @JoinColumn(name = "tag_id"))
   Set<Tag> tags = new HashSet<>();
+  @NotEmpty private String name;
+  @ManyToOne @JsonBackReference private Course course;
 
   public String getName() {
     return name;

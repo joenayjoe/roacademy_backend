@@ -53,8 +53,7 @@ public class CourseServiceImpl implements CourseService {
   public Course findCourseById(Long courseId) {
     return courseRepository
         .findById(courseId)
-        .orElseThrow(
-            () -> this.courseNotFoundException(courseId));
+        .orElseThrow(() -> this.courseNotFoundException(courseId));
   }
 
   @Override
@@ -71,17 +70,13 @@ public class CourseServiceImpl implements CourseService {
 
   private Grade getGrade(Long gradeId) {
     return gradeService.findGradeById(gradeId);
-
   }
 
   private Set<Course> getPreRequisiteCourses(List<Long> preReqCourseIds) {
     Set<Course> preReqCourses = new HashSet<>();
     for (Long id : preReqCourseIds) {
       Course course1 =
-          courseRepository
-              .findById(id)
-              .orElseThrow(
-                  () -> this.courseNotFoundException(id));
+          courseRepository.findById(id).orElseThrow(() -> this.courseNotFoundException(id));
       preReqCourses.add(course1);
     }
     return preReqCourses;

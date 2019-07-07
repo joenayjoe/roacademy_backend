@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface ChapterRepository extends CrudRepository<Chapter, Long> {
 
-   Optional<Chapter> getChapterByIdAndCourse(Long chapterId, Long courseId);
+  Optional<Chapter> getChapterByIdAndCourse(Long chapterId, Long courseId);
 }

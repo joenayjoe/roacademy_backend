@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TagServiceImpl implements TagService {
 
-  @Autowired
-  TagRepository tagRepository;
+  @Autowired TagRepository tagRepository;
 
   @Override
   public Tag findOrCreateByName(String name) {
@@ -18,7 +17,7 @@ public class TagServiceImpl implements TagService {
     tag.setName(name);
 
     Tag existingTag = tagRepository.findByName(name).orElse(null);
-    if(existingTag == null) {
+    if (existingTag == null) {
       existingTag = tagRepository.save(tag);
     }
     return existingTag;

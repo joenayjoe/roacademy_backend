@@ -1,8 +1,12 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.dto.GradeDTO;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
+import com.rojunaid.roacademy.mapper.GradeMapper;
+import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.GradeRepository;
+import com.rojunaid.roacademy.services.CategoryService;
 import com.rojunaid.roacademy.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class GradeServiceImpl implements GradeService {
 
   @Autowired GradeRepository gradeRepository;
+  @Autowired CategoryService categoryService;
 
   @Override
   public Iterable<Grade> getAllGrade() {
@@ -18,14 +23,20 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
-  public Grade createGrade(Grade grade) {
+  public Grade createGrade(Long categoryId, GradeDTO gradeDTO) {
+    Category category = categoryService.findCategoryById(categoryId);
+    Grade grade = GradeMapper.INSTANCE.gradeDTOToGrade(gradeDTO);
+    grade.setCategory(category);
     return gradeRepository.save(grade);
   }
 
   @Override
-  public Grade updateGrade(Long gradeId, Grade grade) {
-
+  public Grade updateGrade(Long categoryId, Long gradeId, GradeDTO gradeDTO) {
+    Category category = categoryService.findCategoryById(categoryId);
     if (gradeRepository.existsById(gradeId)) {
+      Grade grade = GradeMapper.INSTANCE.gradeDTOToGrade(gradeDTO);
+      grade.setCategory(category);
+      grade.setId(gradeId);
       return gradeRepository.save(grade);
     }
     throw this.gradeNotFoundException(gradeId);
@@ -36,6 +47,11 @@ public class GradeServiceImpl implements GradeService {
     return gradeRepository
         .findById(gradeId)
         .orElseThrow(() -> this.gradeNotFoundException(gradeId));
+  }
+
+  @Override
+  public Iterable<Grade> findGradesByCategoryId(Long categoryId) {
+    return gradeRepository.findAllByCategoryId(categoryId);
   }
 
   @Override
@@ -52,5 +68,4 @@ public class GradeServiceImpl implements GradeService {
   private ResourceNotFoundException gradeNotFoundException(Long gradeId) {
     return new ResourceNotFoundException("Grade with id " + gradeId + " not found");
   }
-
 }

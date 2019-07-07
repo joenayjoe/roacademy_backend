@@ -12,65 +12,65 @@ import java.util.Set;
 @Entity
 public class Course extends Auditable {
 
-    @NotEmpty
-    @NotBlank
-    @Size(min = 3, max = 100)
-    @Column(unique = true)
-    private String name;
+  @NotEmpty
+  @NotBlank
+  @Size(min = 3, max = 100)
+  @Column(unique = true)
+  private String name;
 
-    @ManyToOne
-    private Grade grade;
+  @ManyToOne private Grade grade;
 
-    @ManyToMany(mappedBy = "preRequisiteCourses")
-    @JsonBackReference
-    private Set<Course> parentCourses = new HashSet<>();
+  @ManyToMany(mappedBy = "preRequisiteCourses")
+  @JsonBackReference
+  private Set<Course> parentCourses = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(name="CourseRel",
-            joinColumns={@JoinColumn(name="CourseId")},
-            inverseJoinColumns={@JoinColumn(name="ParentId")})
-    private Set<Course> preRequisiteCourses = new HashSet<>();
+  @ManyToMany
+  @JoinTable(
+      name = "CourseRel",
+      joinColumns = {@JoinColumn(name = "CourseId")},
+      inverseJoinColumns = {@JoinColumn(name = "ParentId")})
+  private Set<Course> preRequisiteCourses = new HashSet<>();
 
-    @OneToMany(mappedBy = "course")
-    private Set<Chapter> chapters = new HashSet<>();
+  @OneToMany(mappedBy = "course")
+  private Set<Chapter> chapters = new HashSet<>();
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public Grade getGrade() {
-        return grade;
-    }
+  public Grade getGrade() {
+    return grade;
+  }
 
-    public void setGrade(Grade grade) {
-        this.grade = grade;
-    }
+  public void setGrade(Grade grade) {
+    this.grade = grade;
+  }
 
-    public Set<Course> getParentCourses() {
-        return parentCourses;
-    }
+  public Set<Course> getParentCourses() {
+    return parentCourses;
+  }
 
-    public void setParentCourses(Set<Course> parentCourses) {
-        this.parentCourses = parentCourses;
-    }
+  public void setParentCourses(Set<Course> parentCourses) {
+    this.parentCourses = parentCourses;
+  }
 
-    public Set<Course> getPreRequisiteCourses() {
-        return preRequisiteCourses;
-    }
+  public Set<Course> getPreRequisiteCourses() {
+    return preRequisiteCourses;
+  }
 
-    public void setPreRequisiteCourses(Set<Course> preRequisiteCourses) {
-        this.preRequisiteCourses = preRequisiteCourses;
-    }
+  public void setPreRequisiteCourses(Set<Course> preRequisiteCourses) {
+    this.preRequisiteCourses = preRequisiteCourses;
+  }
 
-    public Set<Chapter> getChapters() {
-        return chapters;
-    }
+  public Set<Chapter> getChapters() {
+    return chapters;
+  }
 
-    public void setChapters(Set<Chapter> chapters) {
-        this.chapters = chapters;
-    }
+  public void setChapters(Set<Chapter> chapters) {
+    this.chapters = chapters;
+  }
 }

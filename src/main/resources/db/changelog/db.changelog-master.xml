@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
@@ -12,5 +12,6 @@
     <include file="db/changelog/0.0.4_create_table_chapter.xml"/>
     <include file="db/changelog/0.0.5_create_table_tag.xml"/>
     <include file="db/changelog/0.0.6_create_table_chapter_tag.xml"/>
+    <include file="db/changelog/0.0.7_create_table_category.xml"/>
 
 </databaseChangeLog>

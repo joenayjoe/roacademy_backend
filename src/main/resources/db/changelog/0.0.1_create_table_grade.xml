@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog
-xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
     <changeSet id="1" author="junaid">
         <createTable tableName="grade">
@@ -11,8 +11,9 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                 <constraints primaryKey="true" nullable="false"></constraints>
             </column>
             <column name="name" type="varchar(100)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="grade_name_uk"/>
+                <constraints nullable="false"/>
             </column>
+            <column name="category_id" type="BIGINT"></column>
             <column name="created_at" type="DATETIME">
                 <constraints nullable="false"></constraints>
             </column>
@@ -20,5 +21,6 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                 <constraints nullable="false"></constraints>
             </column>
         </createTable>
+        <addUniqueConstraint tableName="grade" columnNames="name, category_id" constraintName="uk_grade_name"/>
     </changeSet>
 </databaseChangeLog>
