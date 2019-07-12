@@ -19,20 +19,22 @@ public class SwaggerConfig {
   @Bean
   public Docket api() {
     return new Docket(DocumentationType.SWAGGER_2)
-            .select()
-            .apis(RequestHandlerSelectors.basePackage("com.rojunaid.roacademy.controllers"))
-            .paths(PathSelectors.any())
-            .build()
-            .apiInfo(apiInfo());
+        .select()
+        .apis(RequestHandlerSelectors.basePackage("com.rojunaid.roacademy.controllers"))
+        .paths(PathSelectors.any())
+        .build()
+        .apiInfo(apiInfo());
   }
 
   private ApiInfo apiInfo() {
     return new ApiInfo(
-            "Rohingya Academy API",
-            "API for Rohingya Academy.",
-            "v1",
-            "Terms of service",
-            new Contact("Junaid Alam", "www.rojunaid.com", "joenayjoe@gmail.com"),
-            "License of API", "API license URL", Collections.emptyList());
+        "Rohingya Academy API",
+        "API for Rohingya Academy.",
+        "v1",
+        "Terms of service",
+        new Contact("Junaid Alam", "www.rojunaid.com", "joenayjoe@gmail.com"),
+        "License of API",
+        "API license URL",
+        Collections.emptyList());
   }
 }

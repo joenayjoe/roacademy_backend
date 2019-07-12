@@ -16,8 +16,8 @@ public class GradeController {
 
   @Autowired private GradeService gradeService;
 
-  // GET /api/categories/:categoryId/grades
-  // Get all grade
+  // GET /api/categories/:categoryId/sections
+  // Get all section
   @GetMapping("")
   public ResponseEntity<Iterable<Grade>> getAllGrade(@PathVariable Long categoryId) {
     Iterable<Grade> grades = gradeService.findGradesByCategoryId(categoryId);
@@ -25,34 +25,36 @@ public class GradeController {
     return new ResponseEntity<>(grades, HttpStatus.OK);
   }
 
-  // POST /api/categories/:categoryId/grades
-  // Create a grade
+  // POST /api/categories/:categoryId/sections
+  // Create a section
   @PostMapping("")
   public ResponseEntity<Grade> createGrade(
       @PathVariable Long categoryId, @Valid @RequestBody GradeDTO gradeDTO) {
-    Grade persistentGrade = gradeService.createGrade(categoryId, gradeDTO);
-    return new ResponseEntity<>(persistentGrade, HttpStatus.CREATED);
+    Grade persistentSection = gradeService.createGrade(categoryId, gradeDTO);
+    return new ResponseEntity<>(persistentSection, HttpStatus.CREATED);
   }
 
-  // PUT /api/grades/:gradeId
-  // Update a grade
+  // PUT /api/sections/:gradeId
+  // Update a section
   @PutMapping("/{gradeId}")
   public ResponseEntity<Grade> updateGrade(
-      @PathVariable Long categoryId, @PathVariable Long gradeId, @Valid @RequestBody GradeDTO gradeDTO) {
-    Grade updatedGrade = gradeService.updateGrade(categoryId, gradeId, gradeDTO);
-    return new ResponseEntity<>(updatedGrade, HttpStatus.OK);
+      @PathVariable Long categoryId,
+      @PathVariable Long gradeId,
+      @Valid @RequestBody GradeDTO gradeDTO) {
+    Grade updatedSection = gradeService.updateGrade(categoryId, gradeId, gradeDTO);
+    return new ResponseEntity<>(updatedSection, HttpStatus.OK);
   }
 
-  // GET /api/grades/:gradeId
-  // Get a grade by :gradeId
+  // GET /api/sections/:gradeId
+  // Get a section by :gradeId
 
   @GetMapping("/{gradeId}")
   public ResponseEntity<Grade> getGradeById(@PathVariable Long gradeId) {
-    Grade grade = gradeService.findGradeById(gradeId);
-    return new ResponseEntity<>(grade, HttpStatus.OK);
+    Grade section = gradeService.findGradeById(gradeId);
+    return new ResponseEntity<>(section, HttpStatus.OK);
   }
 
-  // DELETE /api/grades/:gradeId
+  // DELETE /api/sections/:gradeId
   // Delete a Grade by ID
   @DeleteMapping("/{gradeId}")
   public ResponseEntity<HttpStatus> deleteGradeById(@PathVariable Long gradeId) {

@@ -1,8 +1,8 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.ChapterDTO;
+import com.rojunaid.roacademy.dto.mapper.ChapterMapper;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
-import com.rojunaid.roacademy.mapper.ChapterMapper;
 import com.rojunaid.roacademy.models.Chapter;
 import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.Tag;
@@ -41,7 +41,7 @@ public class ChapterServiceImpl implements ChapterService {
   @Override
   public Chapter createChapter(ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
-    Chapter chapter = ChapterMapper.INSTANCE.chapterDTOToChapter(chapterDTO);
+    Chapter chapter = ChapterMapper.chapterDTOToChapter(chapterDTO);
     Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTagNames());
     chapter.setTags(tags);
     chapter.setCourse(course);
@@ -51,7 +51,7 @@ public class ChapterServiceImpl implements ChapterService {
   @Override
   public Chapter updateChapter(Long chapterId, ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
-    Chapter chapter = ChapterMapper.INSTANCE.chapterDTOToChapter(chapterDTO);
+    Chapter chapter = ChapterMapper.chapterDTOToChapter(chapterDTO);
     Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTagNames());
     chapter.setTags(tags);
     chapter.setCourse(course);
@@ -63,8 +63,9 @@ public class ChapterServiceImpl implements ChapterService {
   public void deleteChapter(Long chapterId) {
     if (chapterRepository.existsById(chapterId)) {
       chapterRepository.deleteById(chapterId);
+    } else {
+      throw this.chapterNotFoundException(chapterId);
     }
-    throw this.chapterNotFoundException(chapterId);
   }
 
   // private methods

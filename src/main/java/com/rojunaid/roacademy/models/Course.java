@@ -1,6 +1,8 @@
 package com.rojunaid.roacademy.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
 public class Course extends Auditable {
 
   @NotEmpty
@@ -18,59 +22,20 @@ public class Course extends Auditable {
   @Column(unique = true)
   private String name;
 
-  @ManyToOne private Grade grade;
+  @JsonIgnore @ManyToOne private Grade grade;
 
-  @ManyToMany(mappedBy = "preRequisiteCourses")
-  @JsonBackReference
+  @ManyToMany(mappedBy = "preRequisiteCourses", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JsonIgnore
   private Set<Course> parentCourses = new HashSet<>();
 
-  @ManyToMany
+  @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinTable(
       name = "CourseRel",
-      joinColumns = {@JoinColumn(name = "CourseId")},
-      inverseJoinColumns = {@JoinColumn(name = "ParentId")})
+      joinColumns = {@JoinColumn(name = "ChildCourseId")},
+      inverseJoinColumns = {@JoinColumn(name = "ParentCourseId")})
   private Set<Course> preRequisiteCourses = new HashSet<>();
 
   @OneToMany(mappedBy = "course")
+  @JsonIgnore
   private Set<Chapter> chapters = new HashSet<>();
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Grade getGrade() {
-    return grade;
-  }
-
-  public void setGrade(Grade grade) {
-    this.grade = grade;
-  }
-
-  public Set<Course> getParentCourses() {
-    return parentCourses;
-  }
-
-  public void setParentCourses(Set<Course> parentCourses) {
-    this.parentCourses = parentCourses;
-  }
-
-  public Set<Course> getPreRequisiteCourses() {
-    return preRequisiteCourses;
-  }
-
-  public void setPreRequisiteCourses(Set<Course> preRequisiteCourses) {
-    this.preRequisiteCourses = preRequisiteCourses;
-  }
-
-  public Set<Chapter> getChapters() {
-    return chapters;
-  }
-
-  public void setChapters(Set<Chapter> chapters) {
-    this.chapters = chapters;
-  }
 }

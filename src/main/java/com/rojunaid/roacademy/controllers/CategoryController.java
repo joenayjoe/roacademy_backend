@@ -17,8 +17,8 @@ public class CategoryController {
 
   @GetMapping("")
   public ResponseEntity<Iterable<Category>> getAllCategory() {
-    Iterable<Category> caregories = categoryService.getAllCategory();
-    return new ResponseEntity<>(caregories, HttpStatus.OK);
+    Iterable<Category> categories = categoryService.getAllCategory();
+    return new ResponseEntity<>(categories, HttpStatus.OK);
   }
 
   @PostMapping("")
@@ -40,11 +40,11 @@ public class CategoryController {
     return new ResponseEntity<>(category, HttpStatus.OK);
   }
 
-  // this method is implemented in grade controller
-  //  @GetMapping("/{category_id}/grades")
+  // this method is implemented in section controller
+  //  @GetMapping("/{category_id}/sections")
   //  public ResponseEntity<Iterable<Grade>> getGradesByCategory(@PathVariable Long category_id) {
-  //    Iterable<Grade> grades = categoryService.finGradesByCategoryId(category_id);
-  //    return new ResponseEntity<>(grades, HttpStatus.OK);
+  //    Iterable<Grade> sections = categoryService.finGradesByCategoryId(category_id);
+  //    return new ResponseEntity<>(sections, HttpStatus.OK);
   //  }
 
   @DeleteMapping("/{category_id}")

@@ -1,6 +1,8 @@
 package com.rojunaid.roacademy.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -9,26 +11,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
 public class Tag extends Auditable {
 
   @ManyToMany(mappedBy = "tags")
-  @JsonBackReference
+  @JsonIgnore
   Set<Chapter> chapters = new HashSet<>();
+
   @NotNull private String name;
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Set<Chapter> getChapters() {
-    return chapters;
-  }
-
-  public void setChapters(Set<Chapter> chapters) {
-    this.chapters = chapters;
-  }
 }

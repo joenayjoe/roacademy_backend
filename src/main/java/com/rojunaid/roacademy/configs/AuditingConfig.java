@@ -11,12 +11,12 @@ import java.util.Optional;
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 public class AuditingConfig {
 
-    @Bean
-    public AuditorAware<String> auditorProvider() {
+  @Bean
+  public AuditorAware<String> auditorProvider() {
 
-        // TODO: return logged in user from Spring Security
+    // TODO: return logged in user from Spring Security
 
-        // SecurityContextHolder.getContext().getAuthentication().getName()
-        return () -> Optional.ofNullable("Junaid");
-    }
+    // SecurityContextHolder.getContext().getAuthentication().getName()
+    return () -> Optional.ofNullable("Junaid");
+  }
 }

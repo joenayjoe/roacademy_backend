@@ -10,11 +10,11 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"></constraints>
             </column>
-            <column name="course_id" type="BIGINT">
-                <constraints foreignKeyName="fk_course_course" references="course(id)"></constraints>
+            <column name="child_course_id" type="BIGINT">
+                <constraints foreignKeyName="fk__child_course" references="course(id)"></constraints>
             </column>
-            <column name="parent_id" type="BIGINT">
-                <constraints foreignKeyName="fk_course_course_parent" references="course(id)"></constraints>
+            <column name="parent_course_id" type="BIGINT">
+                <constraints foreignKeyName="fk_parent_course" references="course(id)"></constraints>
             </column>
 
         </createTable>

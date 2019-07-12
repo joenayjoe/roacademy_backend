@@ -1,8 +1,8 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.CourseDTO;
+import com.rojunaid.roacademy.dto.mapper.CourseMapper;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
-import com.rojunaid.roacademy.mapper.CourseMapper;
 import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CourseRepository;
@@ -29,7 +29,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public Course createCourse(CourseDTO courseDTO) {
-    Course course = CourseMapper.INSTANCE.courseDTOToCourse(courseDTO);
+    Course course = CourseMapper.courseDTOToCourse(courseDTO);
     course.setGrade(this.getGrade(courseDTO.getGradeId()));
     course.setPreRequisiteCourses(
         this.getPreRequisiteCourses(courseDTO.getPreRequisiteCourseIds()));
@@ -38,11 +38,11 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public Course updateCourse(Long courseId, CourseDTO courseDTO) {
-    if (courseRepository.existsById(courseId)) {
-      Course course = CourseMapper.INSTANCE.courseDTOToCourse(courseDTO);
+    Course course = courseRepository.findById(courseId).orElse(null);
+    if (course != null) {
       course.setPreRequisiteCourses(
           this.getPreRequisiteCourses(courseDTO.getPreRequisiteCourseIds()));
-      course.setId(courseId);
+
       course.setGrade(this.getGrade(courseDTO.getGradeId()));
       return courseRepository.save(course);
     }

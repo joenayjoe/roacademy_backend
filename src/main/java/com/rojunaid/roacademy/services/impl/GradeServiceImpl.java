@@ -1,8 +1,8 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.GradeDTO;
+import com.rojunaid.roacademy.dto.mapper.GradeMapper;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
-import com.rojunaid.roacademy.mapper.GradeMapper;
 import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.GradeRepository;
@@ -25,7 +25,7 @@ public class GradeServiceImpl implements GradeService {
   @Override
   public Grade createGrade(Long categoryId, GradeDTO gradeDTO) {
     Category category = categoryService.findCategoryById(categoryId);
-    Grade grade = GradeMapper.INSTANCE.gradeDTOToGrade(gradeDTO);
+    Grade grade = GradeMapper.gradeDTOToGrade(gradeDTO);
     grade.setCategory(category);
     return gradeRepository.save(grade);
   }
@@ -34,7 +34,7 @@ public class GradeServiceImpl implements GradeService {
   public Grade updateGrade(Long categoryId, Long gradeId, GradeDTO gradeDTO) {
     Category category = categoryService.findCategoryById(categoryId);
     if (gradeRepository.existsById(gradeId)) {
-      Grade grade = GradeMapper.INSTANCE.gradeDTOToGrade(gradeDTO);
+      Grade grade = GradeMapper.gradeDTOToGrade(gradeDTO);
       grade.setCategory(category);
       grade.setId(gradeId);
       return gradeRepository.save(grade);
