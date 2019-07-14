@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.exceptionhandler;
 
 import com.rojunaid.roacademy.dto.error.ErrorDetail;
 import com.rojunaid.roacademy.dto.error.ValidationError;
+import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,5 +74,19 @@ public class RestExceptionHandler {
     errorDetail.setDeveloperMessage(mnre.getClass().getName());
 
     return new ResponseEntity<>(errorDetail, null, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(ResourceAlreadyExistException.class)
+  public ResponseEntity<?> handleResourceAlreadyExistException(
+      ResourceAlreadyExistException raee, HttpServletRequest request) {
+
+    ErrorDetail errorDetail = new ErrorDetail();
+    errorDetail.setTitle("Request Conflict");
+    errorDetail.setStatus(HttpStatus.CONFLICT.value());
+    errorDetail.setOccurredAt(LocalDateTime.now());
+    errorDetail.setDetail(raee.getMessage());
+    errorDetail.setDeveloperMessage(raee.getClass().getName());
+
+    return new ResponseEntity<>(errorDetail, null, HttpStatus.CONFLICT);
   }
 }

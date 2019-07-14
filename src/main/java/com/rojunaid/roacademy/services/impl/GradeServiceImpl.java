@@ -1,7 +1,6 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.GradeDTO;
-import com.rojunaid.roacademy.dto.mapper.GradeMapper;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.models.Grade;
@@ -25,7 +24,7 @@ public class GradeServiceImpl implements GradeService {
   @Override
   public Grade createGrade(Long categoryId, GradeDTO gradeDTO) {
     Category category = categoryService.findCategoryById(categoryId);
-    Grade grade = GradeMapper.gradeDTOToGrade(gradeDTO);
+    Grade grade = this.gradeDTOToGrade(gradeDTO);
     grade.setCategory(category);
     return gradeRepository.save(grade);
   }
@@ -34,7 +33,7 @@ public class GradeServiceImpl implements GradeService {
   public Grade updateGrade(Long categoryId, Long gradeId, GradeDTO gradeDTO) {
     Category category = categoryService.findCategoryById(categoryId);
     if (gradeRepository.existsById(gradeId)) {
-      Grade grade = GradeMapper.gradeDTOToGrade(gradeDTO);
+      Grade grade = this.gradeDTOToGrade(gradeDTO);
       grade.setCategory(category);
       grade.setId(gradeId);
       return gradeRepository.save(grade);
@@ -67,5 +66,11 @@ public class GradeServiceImpl implements GradeService {
 
   private ResourceNotFoundException gradeNotFoundException(Long gradeId) {
     return new ResourceNotFoundException("Grade with id " + gradeId + " not found");
+  }
+
+  private Grade gradeDTOToGrade(GradeDTO gradeDTO) {
+    Grade grade = new Grade();
+    grade.setName(gradeDTO.getName());
+    return grade;
   }
 }

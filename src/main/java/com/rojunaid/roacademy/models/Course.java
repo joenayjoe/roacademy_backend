@@ -24,7 +24,9 @@ public class Course extends Auditable {
 
   @JsonIgnore @ManyToOne private Grade grade;
 
-  @ManyToMany(mappedBy = "preRequisiteCourses", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @ManyToMany(
+      mappedBy = "preRequisiteCourses",
+      cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JsonIgnore
   private Set<Course> parentCourses = new HashSet<>();
 

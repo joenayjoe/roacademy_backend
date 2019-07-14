@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Column;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class CourseDTO {
 
-  @NotEmpty
+  @NotBlank
   @Column(unique = true)
   private String name;
 

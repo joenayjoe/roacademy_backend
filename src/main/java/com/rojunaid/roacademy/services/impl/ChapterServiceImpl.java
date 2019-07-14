@@ -1,7 +1,6 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.ChapterDTO;
-import com.rojunaid.roacademy.dto.mapper.ChapterMapper;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Chapter;
 import com.rojunaid.roacademy.models.Course;
@@ -41,9 +40,7 @@ public class ChapterServiceImpl implements ChapterService {
   @Override
   public Chapter createChapter(ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
-    Chapter chapter = ChapterMapper.chapterDTOToChapter(chapterDTO);
-    Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTagNames());
-    chapter.setTags(tags);
+    Chapter chapter = this.chapterDTOToChapter(chapterDTO);
     chapter.setCourse(course);
     return chapterRepository.save(chapter);
   }
@@ -51,9 +48,7 @@ public class ChapterServiceImpl implements ChapterService {
   @Override
   public Chapter updateChapter(Long chapterId, ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
-    Chapter chapter = ChapterMapper.chapterDTOToChapter(chapterDTO);
-    Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTagNames());
-    chapter.setTags(tags);
+    Chapter chapter = this.chapterDTOToChapter(chapterDTO);
     chapter.setCourse(course);
     chapter.setId(chapterId);
     return chapterRepository.save(chapter);
@@ -86,5 +81,13 @@ public class ChapterServiceImpl implements ChapterService {
 
   private ResourceNotFoundException chapterNotFoundException(Long chapterId) {
     return new ResourceNotFoundException("Chapter with id " + chapterId + " not found");
+  }
+
+  private Chapter chapterDTOToChapter(ChapterDTO chapterDTO) {
+    Chapter chapter = new Chapter();
+    chapter.setName(chapterDTO.getName());
+    Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTagNames());
+    chapter.setTags(tags);
+    return chapter;
   }
 }

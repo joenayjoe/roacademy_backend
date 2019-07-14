@@ -13,5 +13,6 @@
     <include file="db/changelog/0.0.5_create_table_tag.xml"/>
     <include file="db/changelog/0.0.6_create_table_chapter_tag.xml"/>
     <include file="db/changelog/0.0.7_create_table_category.xml"/>
+    <include file="db/changelog/0.0.8_create_table_user.xml"/>
 
 </databaseChangeLog>
