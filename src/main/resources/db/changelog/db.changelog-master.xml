@@ -14,5 +14,7 @@
     <include file="db/changelog/0.0.6_create_table_chapter_tag.xml"/>
     <include file="db/changelog/0.0.7_create_table_category.xml"/>
     <include file="db/changelog/0.0.8_create_table_user.xml"/>
+    <include file="db/changelog/0.0.9_create_table_role.xml"/>
+    <include file="db/changelog/0.1.0_create_table_user_role.xml"/>
 
 </databaseChangeLog>

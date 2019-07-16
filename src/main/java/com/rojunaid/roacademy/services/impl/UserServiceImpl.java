@@ -4,18 +4,26 @@ import com.rojunaid.roacademy.dto.ResetPasswordDTO;
 import com.rojunaid.roacademy.dto.UserDTO;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
+import com.rojunaid.roacademy.models.Role;
 import com.rojunaid.roacademy.models.User;
+import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import com.rojunaid.roacademy.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class UserServiceImpl implements UserService {
 
   @Autowired UserRepository userRepository;
   @Autowired PasswordEncoder passwordEncoder;
+  @Autowired RoleRepository roleRepository;
 
   @Override
   public User findByEmail(String email) {
@@ -41,6 +49,7 @@ public class UserServiceImpl implements UserService {
     User persitedUser = this.findUserById(userId);
     persitedUser.setFirstName(userDTO.getFirstName());
     persitedUser.setLastName(userDTO.getLastName());
+    persitedUser.setRoles(this.getRoles(userDTO.getRoleIds()));
     return userRepository.save(persitedUser);
   }
 
@@ -83,6 +92,24 @@ public class UserServiceImpl implements UserService {
     user.setLastName(userDTO.getLastName());
     user.setEmail(userDTO.getEmail());
     user.setHashPassword(passwordEncoder.encode(userDTO.getPassword()));
+    user.setRoles(this.getRoles(userDTO.getRoleIds()));
     return user;
+  }
+
+  private Set<Role> getRoles(List<Long> roleIds) {
+    Set<Role> roles = new HashSet<>();
+    List<Long> notFoundIds = new ArrayList<>();
+    for (Long roleId : roleIds) {
+      Role role = roleRepository.findById(roleId).orElse(null);
+      if (role == null) {
+        notFoundIds.add(roleId);
+      } else {
+        roles.add(role);
+      }
+    }
+    if (notFoundIds.size() > 0) {
+      throw new ResourceNotFoundException("Roles with IDs " + notFoundIds + " do not exist");
+    }
+    return roles;
   }
 }
