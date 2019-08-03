@@ -16,7 +16,6 @@ public class TagServiceImpl implements TagService {
   @Autowired TagRepository tagRepository;
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Tag findOrCreateByName(String name) {
     Tag tag = new Tag();
     tag.setName(name);
@@ -29,7 +28,6 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Set<Tag> findOrCreateByName(Set<String> tag_names) {
     Set<Tag> tags = new HashSet<>();
     for (String name : tag_names) {

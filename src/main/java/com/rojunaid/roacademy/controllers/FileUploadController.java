@@ -24,7 +24,6 @@ public class FileUploadController {
   @PostMapping(
       value = "/uploadFile",
       consumes = {"multipart/form-data"})
-  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<TeachingResource> uploadFile(
       @Valid @RequestPart(value = "fileInfo") TeachingResourceDTO teachingResourceDTO,
       @NotNull @NotBlank @RequestPart MultipartFile file) {

@@ -32,7 +32,6 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Grade updateGrade(Long categoryId, Long gradeId, GradeDTO gradeDTO) {
     Category category = categoryService.findCategoryById(categoryId);
     if (gradeRepository.existsById(gradeId)) {
@@ -52,13 +51,11 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Iterable<Grade> findGradesByCategoryId(Long categoryId) {
     return gradeRepository.findAllByCategoryId(categoryId);
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public void deleteGradeById(Long gradeId) {
     if (gradeRepository.existsById(gradeId)) {
       gradeRepository.deleteById(gradeId);

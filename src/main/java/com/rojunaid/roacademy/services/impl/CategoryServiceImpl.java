@@ -23,13 +23,11 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Category createCategory(Category category) {
     return categoryRepository.save(category);
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Category updateCategory(Long categoryId, Category updatedCategory) {
     Category category = categoryRepository.findById(categoryId).orElse(null);
     if (category != null) {
@@ -52,7 +50,6 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public void deleteCategoryById(Long categoryId) {
     if (categoryRepository.existsById(categoryId)) {
       categoryRepository.deleteById(categoryId);

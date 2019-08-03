@@ -37,7 +37,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public User createUser(UserDTO userDTO) {
     User existedUser = userRepository.findByEmail(userDTO.getEmail()).orElse(null);
     if (existedUser != null) {
@@ -73,7 +72,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @PreAuthorize("#email == authentication.principal.email or hasRole('ROLE_ADMIN')")
   public User updateUser(Long userId, UserDTO userDTO) {
     User oldUser = this.findUserById(userId);
     oldUser.setFirstName(userDTO.getFirstName());
@@ -88,7 +86,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public void deleteUserById(Long userId) {
     if (userRepository.existsById(userId)) {
       userRepository.deleteById(userId);

@@ -38,7 +38,6 @@ public class ChapterServiceImpl implements ChapterService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Chapter createChapter(ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
     Chapter chapter = this.chapterDTOToChapter(chapterDTO);
@@ -47,7 +46,6 @@ public class ChapterServiceImpl implements ChapterService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Chapter updateChapter(Long chapterId, ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
     Chapter chapter = this.chapterDTOToChapter(chapterDTO);
@@ -57,7 +55,6 @@ public class ChapterServiceImpl implements ChapterService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public void deleteChapter(Long chapterId) {
     if (chapterRepository.existsById(chapterId)) {
       chapterRepository.deleteById(chapterId);

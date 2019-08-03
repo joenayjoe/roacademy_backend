@@ -22,7 +22,6 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN')")
   public Role createRole(Role role) {
 
     try {
@@ -34,7 +33,6 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN')")
   public Role updateRole(Long roleId, Role role) {
     Role existingRole = this.getRoleById(roleId);
     existingRole.setName(role.getName());
@@ -59,7 +57,6 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN')")
   public void deleteRoleById(Long roleId) {
     if (roleRepository.existsById(roleId)) {
       roleRepository.deleteById(roleId);

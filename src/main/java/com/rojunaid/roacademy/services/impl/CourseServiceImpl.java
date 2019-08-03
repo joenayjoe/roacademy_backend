@@ -28,14 +28,12 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Course createCourse(CourseDTO courseDTO) {
     Course course = this.courseDTOToCourse(courseDTO);
     return courseRepository.save(course);
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Course updateCourse(Long courseId, CourseDTO courseDTO) {
     if (courseRepository.existsById(courseId)) {
       Course course = this.courseDTOToCourse(courseDTO);
@@ -53,7 +51,6 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public void deleteCourseById(Long courseId) {
 
     if (courseRepository.existsById(courseId)) {

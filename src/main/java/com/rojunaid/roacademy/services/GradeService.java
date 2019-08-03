@@ -6,16 +6,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface GradeService {
 
-  @PreAuthorize("hasRole('ROLE_TEACHER')")
   Iterable<Grade> getAllGrade();
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   Grade createGrade(Long categoryId, GradeDTO gradeDTO);
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   Grade updateGrade(Long categoryId, Long gradeId, GradeDTO gradeDTO);
 
   Grade findGradeById(Long gradeId);
 
   Iterable<Grade> findGradesByCategoryId(Long categoryId);
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteGradeById(Long gradeId);
 }
