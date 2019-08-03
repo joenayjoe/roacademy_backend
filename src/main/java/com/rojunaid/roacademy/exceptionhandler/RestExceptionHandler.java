@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.exceptionhandler;
 
 import com.rojunaid.roacademy.dto.error.ErrorDetail;
 import com.rojunaid.roacademy.dto.error.ValidationError;
+import com.rojunaid.roacademy.exception.MediaTypeNotSupportedException;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -53,6 +54,7 @@ public class RestExceptionHandler {
     return new ResponseEntity<>(errorDetail, null, HttpStatus.NOT_FOUND);
   }
 
+  // field validation
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<?> handleValidationError(
       MethodArgumentNotValidException manve, HttpServletRequest request) {
@@ -82,6 +84,7 @@ public class RestExceptionHandler {
     return new ResponseEntity<>(errorDetail, null, HttpStatus.BAD_REQUEST);
   }
 
+  // json parsing error
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<?> handleMessageNotReadableException(
       HttpMessageNotReadableException mnre, HttpServletRequest request) {
@@ -110,9 +113,10 @@ public class RestExceptionHandler {
     return new ResponseEntity<>(errorDetail, null, HttpStatus.CONFLICT);
   }
 
-  @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+  // for not supported media type
+  @ExceptionHandler(MediaTypeNotSupportedException.class)
   public ResponseEntity<?> handleMediaTypeNotAcceptableException(
-      HttpMediaTypeNotAcceptableException mtnae, HttpServletRequest request) {
+      MediaTypeNotSupportedException mtnae, HttpServletRequest request) {
     ErrorDetail errorDetail = new ErrorDetail();
     errorDetail.setTitle("Content Type Not Acceptable");
     errorDetail.setStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
@@ -123,6 +127,7 @@ public class RestExceptionHandler {
     return new ResponseEntity<>(errorDetail, null, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
 
+  // database error
   @ResponseStatus(value = HttpStatus.CONFLICT) // 409
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<?> constrainViolation(

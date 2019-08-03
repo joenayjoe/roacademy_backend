@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.services.impl;
 
 import com.google.api.services.youtube.model.Video;
 import com.rojunaid.roacademy.dto.TeachingResourceDTO;
+import com.rojunaid.roacademy.exception.MediaTypeNotSupportedException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Chapter;
 import com.rojunaid.roacademy.models.TeachingResource;
@@ -13,7 +14,6 @@ import com.rojunaid.roacademy.services.TeachingResourceService;
 import com.rojunaid.roacademy.youtube.YoutubeUploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -38,6 +39,9 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   @Value("${file.upload-dir}")
   private String uploadDir;
 
+  private static final List<String> ALLOWED_MEDIA_TYPES =
+      Arrays.asList("image/png", "image/jpeg", "video/", "application/pdf");
+
   @Override
   public TeachingResource getTeachingResourceById(Long id) {
     return teachingResourceRepository.findById(id).orElseThrow(() -> this.notFoundException(id));
@@ -45,7 +49,10 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
 
   @Override
   public TeachingResource getTeachingResourceByName(String name) {
-    return teachingResourceRepository.findByTitle(name).orElse(null);
+    return teachingResourceRepository
+        .findByTitle(name)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Resource with name [" + name + "] not found"));
   }
 
   @Override
@@ -68,6 +75,11 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   @Transactional
   public TeachingResource uploadTeachingResource(
       TeachingResourceDTO teachingResourceDTO, MultipartFile file) {
+
+    if (!isFileValid(file)) {
+      throw new MediaTypeNotSupportedException(
+          "Provided file format is not supported.  Only IMAGE, VIDEO and PDF are supported");
+    }
 
     TeachingResource teachingResource = saveTeachingResource(teachingResourceDTO, file);
 
@@ -163,5 +175,14 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
     teachingResource.setTags(tagService.findOrCreateByName(teachingResourceDTO.getTagNames()));
 
     return teachingResource;
+  }
+
+  private boolean isFileValid(MultipartFile file) {
+    String mediaType = file.getContentType();
+
+    for (String amt : ALLOWED_MEDIA_TYPES) {
+      if (mediaType.startsWith(amt)) return true;
+    }
+    return false;
   }
 }
