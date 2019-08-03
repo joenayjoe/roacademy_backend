@@ -7,6 +7,7 @@ import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.services.CategoryService;
 import com.rojunaid.roacademy.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,11 +23,13 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Category createCategory(Category category) {
     return categoryRepository.save(category);
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Category updateCategory(Long categoryId, Category updatedCategory) {
     Category category = categoryRepository.findById(categoryId).orElse(null);
     if (category != null) {
@@ -49,6 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public void deleteCategoryById(Long categoryId) {
     if (categoryRepository.existsById(categoryId)) {
       categoryRepository.deleteById(categoryId);

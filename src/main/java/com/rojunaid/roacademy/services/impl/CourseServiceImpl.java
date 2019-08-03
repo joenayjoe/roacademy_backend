@@ -8,6 +8,7 @@ import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -27,12 +28,14 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Course createCourse(CourseDTO courseDTO) {
     Course course = this.courseDTOToCourse(courseDTO);
     return courseRepository.save(course);
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Course updateCourse(Long courseId, CourseDTO courseDTO) {
     if (courseRepository.existsById(courseId)) {
       Course course = this.courseDTOToCourse(courseDTO);
@@ -50,6 +53,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public void deleteCourseById(Long courseId) {
 
     if (courseRepository.existsById(courseId)) {
@@ -59,7 +63,7 @@ public class CourseServiceImpl implements CourseService {
     }
   }
 
-  // helper methods
+  // util methods
 
   private Grade getGrade(Long gradeId) {
     return gradeService.findGradeById(gradeId);

@@ -5,15 +5,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-@FieldMatch(first = "newPassword", second = "confirmPassword")
+@FieldMatch(first = "newPassword", second = "confirmPassword", message = "{FieldMatch.password}")
 public class ResetPasswordDTO {
 
-  @NotBlank private String oldPassword;
+  @NotBlank(message = "{NotBlank.field}")
+  private String oldPassword;
 
-  @NotBlank private String newPassword;
+  @NotBlank(message = "{NotBlank.field}")
+  private String newPassword;
 
-  @NotBlank private String confirmPassword;
+  @NotBlank(message = "{NotBlank.field}") private String confirmPassword;
 }

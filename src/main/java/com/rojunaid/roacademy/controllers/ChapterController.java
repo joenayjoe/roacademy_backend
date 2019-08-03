@@ -1,8 +1,11 @@
 package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.ChapterDTO;
+import com.rojunaid.roacademy.dto.TeachingResourceDTO;
 import com.rojunaid.roacademy.models.Chapter;
+import com.rojunaid.roacademy.models.TeachingResource;
 import com.rojunaid.roacademy.services.ChapterService;
+import com.rojunaid.roacademy.services.TeachingResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import javax.validation.Valid;
 public class ChapterController {
 
   @Autowired ChapterService chapterService;
+  @Autowired TeachingResourceService teachingResourceService;
 
   // GET /api/courses/:courseId/chapters
   // Get all chapter for a course
@@ -60,5 +64,13 @@ public class ChapterController {
       @PathVariable Long courseId, @PathVariable Long chapterId) {
     chapterService.deleteChapter(chapterId);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @GetMapping("/{chapterId}/resources")
+  public ResponseEntity<Iterable<TeachingResource>> getTeachingResourcesByChapterId(
+          @PathVariable Long chapterId) {
+    Iterable<TeachingResource> teachingResources =
+            teachingResourceService.getTeachingResourceByChapter(chapterId);
+    return new ResponseEntity<>(teachingResources, HttpStatus.OK);
   }
 }

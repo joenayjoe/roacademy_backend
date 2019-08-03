@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,11 +14,11 @@ import java.util.Set;
 @Setter
 public class ChapterDTO {
 
-  @NotBlank
-  @Column(unique = true)
+  @NotBlank(message = "{NotBlank.field}")
   private String name;
 
-  @NotBlank private Long courseId;
+  @NotNull(message = "{NotNull.field}")
+  private Long courseId;
 
   private Set<String> tagNames = new HashSet<>();
 }

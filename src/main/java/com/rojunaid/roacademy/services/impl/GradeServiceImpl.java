@@ -8,6 +8,7 @@ import com.rojunaid.roacademy.repositories.GradeRepository;
 import com.rojunaid.roacademy.services.CategoryService;
 import com.rojunaid.roacademy.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,7 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Grade createGrade(Long categoryId, GradeDTO gradeDTO) {
     Category category = categoryService.findCategoryById(categoryId);
     Grade grade = this.gradeDTOToGrade(gradeDTO);
@@ -30,6 +32,7 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Grade updateGrade(Long categoryId, Long gradeId, GradeDTO gradeDTO) {
     Category category = categoryService.findCategoryById(categoryId);
     if (gradeRepository.existsById(gradeId)) {
@@ -49,11 +52,13 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Iterable<Grade> findGradesByCategoryId(Long categoryId) {
     return gradeRepository.findAllByCategoryId(categoryId);
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public void deleteGradeById(Long gradeId) {
     if (gradeRepository.existsById(gradeId)) {
       gradeRepository.deleteById(gradeId);

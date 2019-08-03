@@ -3,10 +3,12 @@ package com.rojunaid.roacademy.services.impl;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Role;
+import com.rojunaid.roacademy.models.RoleEnum;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public Role createRole(Role role) {
 
     try {
@@ -31,6 +34,7 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public Role updateRole(Long roleId, Role role) {
     Role existingRole = this.getRoleById(roleId);
     existingRole.setName(role.getName());
@@ -48,6 +52,14 @@ public class RoleServiceImpl implements RoleService {
   }
 
   @Override
+  public Role getRoleByName(RoleEnum name) {
+    return roleRepository
+        .findByName(name)
+        .orElseThrow(() -> new ResourceNotFoundException("Role with name [" + name + "] not found"));
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public void deleteRoleById(Long roleId) {
     if (roleRepository.existsById(roleId)) {
       roleRepository.deleteById(roleId);

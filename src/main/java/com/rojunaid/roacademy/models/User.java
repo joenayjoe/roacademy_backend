@@ -16,25 +16,35 @@ import java.util.Set;
 @Setter
 public class User extends Auditable {
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_role",
       joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   Set<Role> roles = new HashSet<>();
-  @NotBlank
-  @Size(min = 1, max = 100)
+
+  @NotBlank(message = "{NotBlank.field}")
+  @Size(min = 1, max = 100, message = "{Size.field}")
   private String firstName;
-  @NotBlank
-  @Size(min = 1, max = 100)
+
+  @NotBlank(message = "{NotBlank.field}")
+  @Size(min = 1, max = 100, message = "{Size.field}")
   private String lastName;
-  @NotBlank
-  @Size(min = 3, max = 100)
+
+  @NotBlank(message = "{NotBlank.field}")
+  @Size(min = 3, max = 100, message = "{Size.field}")
   @Column(unique = true)
-  @ValidEmail
+  @ValidEmail(message = "{ValidEmail.email}")
   private String email;
-  @NotBlank
-  @Size(min = 8, max = 100)
+
+  @NotBlank(message = "{NotBlank.field}")
+  @Size(min = 8, max = 100, message = "{Size.field}")
   @JsonIgnore
   private String hashPassword;
+
+  private Boolean enable = true;
+
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  Set<TeachingResource> teachingResources = new HashSet<>();
 }

@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,5 +20,10 @@ public class Tag extends Auditable {
   @JsonIgnore
   Set<Chapter> chapters = new HashSet<>();
 
-  @NotNull private String name;
+  @NotBlank(message = "{NotBlank.field}")
+  private String name;
+
+  @ManyToMany(mappedBy = "tags")
+  @JsonIgnore
+  Set<TeachingResource> teachingResources = new HashSet<>();
 }

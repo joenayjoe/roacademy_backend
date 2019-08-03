@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -17,8 +18,8 @@ public class Grade extends Auditable {
 
   @JsonIgnore @ManyToOne Category category;
 
-  @NotNull
-  @Size(min = 3, max = 100, message = "Please give name between 3 to 100 characters.")
+  @NotBlank(message = "{NotBlank.field}")
+  @Size(min = 3, max = 100, message = "{Size.field}")
   @Column(unique = true)
   private String name;
 

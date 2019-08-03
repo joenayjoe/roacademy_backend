@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,5 +20,6 @@ public class Role extends Auditable {
   @JsonIgnore
   Set<User> users = new HashSet<>();
 
-  private String name;
+  @Enumerated(EnumType.STRING)
+  private RoleEnum name;
 }

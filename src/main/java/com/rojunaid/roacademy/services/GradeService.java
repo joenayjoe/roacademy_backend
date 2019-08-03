@@ -2,9 +2,11 @@ package com.rojunaid.roacademy.services;
 
 import com.rojunaid.roacademy.dto.GradeDTO;
 import com.rojunaid.roacademy.models.Grade;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface GradeService {
 
+  @PreAuthorize("hasRole('ROLE_TEACHER')")
   Iterable<Grade> getAllGrade();
 
   Grade createGrade(Long categoryId, GradeDTO gradeDTO);

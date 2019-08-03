@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,9 +20,10 @@ public class Chapter extends Auditable {
       name = "chapter_tag",
       joinColumns = @JoinColumn(name = "chapter_id"),
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  Set<Tag> tags = new HashSet<>();
+  private Set<Tag> tags = new HashSet<>();
 
-  @NotEmpty private String name;
+  @NotBlank(message = "{NotBlank.field}")
+  private String name;
 
   @JsonBackReference @ManyToOne private Course course;
 }

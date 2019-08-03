@@ -10,9 +10,9 @@ import com.rojunaid.roacademy.services.ChapterService;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -38,6 +38,7 @@ public class ChapterServiceImpl implements ChapterService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Chapter createChapter(ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
     Chapter chapter = this.chapterDTOToChapter(chapterDTO);
@@ -46,6 +47,7 @@ public class ChapterServiceImpl implements ChapterService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public Chapter updateChapter(Long chapterId, ChapterDTO chapterDTO) {
     Course course = this.getCourse(chapterDTO.getCourseId());
     Chapter chapter = this.chapterDTOToChapter(chapterDTO);
@@ -55,6 +57,7 @@ public class ChapterServiceImpl implements ChapterService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public void deleteChapter(Long chapterId) {
     if (chapterRepository.existsById(chapterId)) {
       chapterRepository.deleteById(chapterId);
@@ -69,14 +72,6 @@ public class ChapterServiceImpl implements ChapterService {
     return courseService.findCourseById(courseId);
   }
 
-  private Set<Tag> getOrCreateTags(Set<String> tag_names) {
-    Set<Tag> tags = new HashSet<>();
-    for (String name : tag_names) {
-      tags.add(tagService.findOrCreateByName(name.trim()));
-    }
-    return tags;
-  }
-
   // private methods
 
   private ResourceNotFoundException chapterNotFoundException(Long chapterId) {
@@ -86,7 +81,7 @@ public class ChapterServiceImpl implements ChapterService {
   private Chapter chapterDTOToChapter(ChapterDTO chapterDTO) {
     Chapter chapter = new Chapter();
     chapter.setName(chapterDTO.getName());
-    Set<Tag> tags = this.getOrCreateTags(chapterDTO.getTagNames());
+    Set<Tag> tags = tagService.findOrCreateByName(chapterDTO.getTagNames());
     chapter.setTags(tags);
     return chapter;
   }

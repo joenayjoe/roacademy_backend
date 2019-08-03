@@ -16,9 +16,8 @@ import java.util.Set;
 @Setter
 public class Course extends Auditable {
 
-  @NotEmpty
-  @NotBlank
-  @Size(min = 3, max = 100)
+  @NotBlank(message = "{NotBlank.field}")
+  @Size(min = 3, max = 100, message = "{Size.field}")
   @Column(unique = true)
   private String name;
 

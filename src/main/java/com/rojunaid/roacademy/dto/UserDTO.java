@@ -6,26 +6,29 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
 @Setter
-@FieldMatch(first = "password", second = "confirmPassword", message = "password must match")
+@FieldMatch(first = "password", second = "confirmPassword", message = "{FieldMatch.password}")
 public class UserDTO {
 
-  @NotBlank private String firstName;
+  @NotBlank(message = "{NotBlank.field}")
+  private String firstName;
 
-  @NotBlank private String lastName;
+  @NotBlank(message = "{NotBlank.field}")
+  private String lastName;
 
-  @ValidEmail @NotBlank private String email;
+  @ValidEmail(message = "{ValidEmail.email}")
+  @NotBlank(message = "{NotBlank.field}")
+  private String email;
 
-  @NotBlank private String password;
+  @NotBlank(message = "{NotBlank.field}")
+  private String password;
 
-  @NotBlank private String confirmPassword;
+  @NotBlank(message = "{NotBlank.field}")
+  private String confirmPassword;
 
-  @NotEmpty
-  @NotNull
+  @NotBlank(message = "{NotBlank.field}")
   private List<Long> roleIds;
 }

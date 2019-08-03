@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="11" author="junaid">
+        <createTable tableName="teaching_resource">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="varchar(10000)"/>
+
+            <column name="file_name" type="varchar(10000)"/>
+
+            <column name="content_type" type="varchar(50)"/>
+
+            <column name="file_size" type="BIGINT"/>
+
+            <column name="file_url" type="varchar(250)"/>
+
+            <column name="hosting_type" type="varchar(100)"/>
+            <column name="privacy_status" type="varchar(100)" defaultValue="public"/>
+
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_resource_user_id" references="user(id)"/>
+            </column>
+
+            <column name="resource_owner_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resource_owner_type" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint columnNames="title" constraintName="uk_resource_title" tableName="teaching_resource"/>
+    </changeSet>
+</databaseChangeLog>
