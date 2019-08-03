@@ -2,15 +2,16 @@ package com.rojunaid.roacademy.exceptionhandler;
 
 import com.rojunaid.roacademy.dto.error.ErrorDetail;
 import com.rojunaid.roacademy.dto.error.ValidationError;
+import com.rojunaid.roacademy.exception.DirectoryCreationException;
 import com.rojunaid.roacademy.exception.MediaTypeNotSupportedException;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
+import com.rojunaid.roacademy.util.Translator;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,18 +26,19 @@ public class RestExceptionHandler {
 
   private static Map<String, String> constraintCodeMap;
 
+  // a map of unique_key and their corresponding message code for i18n
   static {
     constraintCodeMap =
         new HashMap<String, String>() {
           {
-            put("uk_grade_name", "Grade name already exist");
-            put("uk_course_name", "Course name already exist");
-            put("uk_chapter_name", "Chapter name already exist");
-            put("tag_name_uk", "Tag name already exist");
-            put("category_name_uk", "Category name already exist");
-            put("user_email_uk", "Email id already exist");
-            put("uk_role_name", "Role name already exist");
-            put("uk_resource_title", "Title already exist");
+            put("uk_grade_name", "Name.exist");
+            put("uk_course_name", "Name.exist");
+            put("uk_chapter_name", "Name.exist");
+            put("tag_name_uk", "Name.exist");
+            put("category_name_uk", "Name.exist");
+            put("user_email_uk", "Email.exist");
+            put("uk_role_name", "Name.exist");
+            put("uk_resource_title", "Title.exist");
           }
         };
   }
@@ -144,7 +146,7 @@ public class RestExceptionHandler {
       errorDetail.setTitle("Constrain Violation Error");
       errorDetail.setStatus(HttpStatus.CONFLICT.value());
       errorDetail.setOccurredAt(LocalDateTime.now());
-      errorDetail.setDetail(entry.get().getValue());
+      errorDetail.setDetail(Translator.toLocale(entry.get().getValue()));
       errorDetail.setDeveloperMessage(exp.getClass().getName());
 
       return new ResponseEntity<>(errorDetail, null, HttpStatus.CONFLICT);
@@ -152,6 +154,20 @@ public class RestExceptionHandler {
     } else {
       return globalErrorResponse(exp.getLocalizedMessage(), exp.getClass().getName());
     }
+  }
+
+  @ExceptionHandler(DirectoryCreationException.class)
+  public ResponseEntity<?> handleDirectoryCreationException(
+      DirectoryCreationException dce, HttpServletRequest request) {
+    ErrorDetail errorDetail = new ErrorDetail();
+
+    errorDetail.setTitle("File or Directory Creation failed");
+    errorDetail.setStatus(HttpStatus.CONFLICT.value());
+    errorDetail.setOccurredAt(LocalDateTime.now());
+    errorDetail.setDetail(dce.getMessage());
+    errorDetail.setDeveloperMessage(dce.getClass().getName());
+
+    return new ResponseEntity<>(errorDetail, null, HttpStatus.CONFLICT);
   }
 
   @ExceptionHandler(Exception.class)

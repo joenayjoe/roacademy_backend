@@ -7,6 +7,7 @@ import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.GradeRepository;
 import com.rojunaid.roacademy.services.CategoryService;
 import com.rojunaid.roacademy.services.GradeService;
+import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -67,7 +68,7 @@ public class GradeServiceImpl implements GradeService {
   // private methods
 
   private ResourceNotFoundException gradeNotFoundException(Long gradeId) {
-    return new ResourceNotFoundException("Grade with id " + gradeId + " not found");
+    return new ResourceNotFoundException(Translator.toLocale("Grade.id.notfound", new Object[]{gradeId}));
   }
 
   private Grade gradeDTOToGrade(GradeDTO gradeDTO) {

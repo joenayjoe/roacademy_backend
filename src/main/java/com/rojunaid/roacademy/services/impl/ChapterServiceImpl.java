@@ -9,6 +9,7 @@ import com.rojunaid.roacademy.repositories.ChapterRepository;
 import com.rojunaid.roacademy.services.ChapterService;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.TagService;
+import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -72,7 +73,7 @@ public class ChapterServiceImpl implements ChapterService {
   // private methods
 
   private ResourceNotFoundException chapterNotFoundException(Long chapterId) {
-    return new ResourceNotFoundException("Chapter with id " + chapterId + " not found");
+    return new ResourceNotFoundException(Translator.toLocale("Chapter.id.notfound", new Object[] {chapterId}));
   }
 
   private Chapter chapterDTOToChapter(ChapterDTO chapterDTO) {

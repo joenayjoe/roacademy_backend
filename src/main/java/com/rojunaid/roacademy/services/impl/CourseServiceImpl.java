@@ -7,6 +7,7 @@ import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.GradeService;
+import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -79,7 +80,7 @@ public class CourseServiceImpl implements CourseService {
   // private methods
 
   private ResourceNotFoundException courseNotFoundException(Long courseId) {
-    return new ResourceNotFoundException("Course with id " + courseId + " not found");
+    return new ResourceNotFoundException(Translator.toLocale("Course.id.notfound", new Object[]{courseId}));
   }
 
   private Course courseDTOToCourse(CourseDTO courseDTO) {

@@ -6,6 +6,7 @@ import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.services.CategoryService;
 import com.rojunaid.roacademy.services.GradeService;
+import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,6 @@ public class CategoryServiceImpl implements CategoryService {
   // private methods
 
   private ResourceNotFoundException categoryNotFoundException(Long category_id) {
-    return new ResourceNotFoundException("Category with ID " + category_id + " not found");
+    return new ResourceNotFoundException(Translator.toLocale("Category.id.notfound", new Object[] {category_id}));
   }
 }

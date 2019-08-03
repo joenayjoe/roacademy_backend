@@ -11,8 +11,8 @@ import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import com.rojunaid.roacademy.services.UserService;
+import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +33,9 @@ public class UserServiceImpl implements UserService {
     return userRepository
         .findByEmail(email)
         .orElseThrow(
-            () -> new ResourceNotFoundException("User with email " + email + " does not exist"));
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("User.email.notfound", new Object[] {email})));
   }
 
   @Override
@@ -41,7 +43,7 @@ public class UserServiceImpl implements UserService {
     User existedUser = userRepository.findByEmail(userDTO.getEmail()).orElse(null);
     if (existedUser != null) {
       throw new ResourceAlreadyExistException(
-          "User with email " + userDTO.getEmail() + " already exist");
+          Translator.toLocale("User.email.exist", new Object[] {userDTO.getEmail()}));
     }
     User user = this.userDTOToUser(userDTO);
     return userRepository.save(user);
@@ -53,7 +55,7 @@ public class UserServiceImpl implements UserService {
     User existedUser = userRepository.findByEmail(signUpDTO.getEmail()).orElse(null);
     if (existedUser != null) {
       throw new ResourceAlreadyExistException(
-          "User with email " + signUpDTO.getEmail() + " already exist");
+          Translator.toLocale("User.email.exist", new Object[] {signUpDTO.getEmail()}));
     }
     User user = new User();
     user.setFirstName(signUpDTO.getFirstName());
@@ -109,7 +111,7 @@ public class UserServiceImpl implements UserService {
   // private method
 
   ResourceNotFoundException userNotFoundException(Long userId) {
-    return new ResourceNotFoundException("User with id" + userId + " not found");
+    return new ResourceNotFoundException(Translator.toLocale("User.id.notfound", new Object[]{userId}));
   }
 
   private User userDTOToUser(UserDTO userDTO) {
@@ -134,7 +136,7 @@ public class UserServiceImpl implements UserService {
       }
     }
     if (notFoundIds.size() > 0) {
-      throw new ResourceNotFoundException("Roles with IDs " + notFoundIds + " do not exist");
+      throw new ResourceNotFoundException(Translator.toLocale("Role.id.notfound", notFoundIds.toArray()));
     }
     return roles;
   }

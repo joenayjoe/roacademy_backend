@@ -6,9 +6,9 @@ import com.rojunaid.roacademy.models.Role;
 import com.rojunaid.roacademy.models.RoleEnum;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.services.RoleService;
+import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +28,7 @@ public class RoleServiceImpl implements RoleService {
       return roleRepository.save(role);
     } catch (DataIntegrityViolationException exp) {
       throw new ResourceAlreadyExistException(
-          "Role with name " + role.getName() + " already exist");
+          Translator.toLocale("Role.name.exist", new Object[] {role.getName()}));
     }
   }
 
@@ -40,7 +40,7 @@ public class RoleServiceImpl implements RoleService {
       return roleRepository.save(existingRole);
     } catch (DataIntegrityViolationException exp) {
       throw new ResourceAlreadyExistException(
-          "Role with name " + role.getName() + " already exist");
+          Translator.toLocale("Role.name.exist", new Object[] {role.getName()}));
     }
   }
 
@@ -53,7 +53,10 @@ public class RoleServiceImpl implements RoleService {
   public Role getRoleByName(RoleEnum name) {
     return roleRepository
         .findByName(name)
-        .orElseThrow(() -> new ResourceNotFoundException("Role with name [" + name + "] not found"));
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("Role.name.notfound", new Object[] {name.name()})));
   }
 
   @Override
@@ -68,6 +71,7 @@ public class RoleServiceImpl implements RoleService {
   // private methods
 
   private ResourceNotFoundException notFoundException(Long roleId) {
-    return new ResourceNotFoundException("Role with ID " + roleId + " not found");
+    return new ResourceNotFoundException(
+        Translator.toLocale("Role.id.notfound", new Object[] {roleId}));
   }
 }
