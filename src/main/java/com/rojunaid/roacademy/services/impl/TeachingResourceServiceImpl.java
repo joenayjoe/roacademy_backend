@@ -1,11 +1,14 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.google.api.services.youtube.model.Video;
+import com.rojunaid.roacademy.dto.TagResponse;
 import com.rojunaid.roacademy.dto.TeachingResourceDTO;
+import com.rojunaid.roacademy.dto.TeachingResourceResponse;
 import com.rojunaid.roacademy.exception.DirectoryCreationException;
 import com.rojunaid.roacademy.exception.MediaTypeNotSupportedException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Chapter;
+import com.rojunaid.roacademy.models.Tag;
 import com.rojunaid.roacademy.models.TeachingResource;
 import com.rojunaid.roacademy.repositories.TeachingResourceRepository;
 import com.rojunaid.roacademy.security.AuthenticationFacade;
@@ -24,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,37 +49,20 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
       Arrays.asList("image/png", "image/jpeg", "video/", "application/pdf");
 
   @Override
-  public TeachingResource getTeachingResourceById(Long id) {
-    return teachingResourceRepository.findById(id).orElseThrow(() -> this.notFoundException(id));
-  }
-
-  @Override
-  public TeachingResource getTeachingResourceByName(String name) {
-    return teachingResourceRepository
-        .findByTitle(name)
-        .orElseThrow(
-            () -> new ResourceNotFoundException("Resource with name [" + name + "] not found"));
-  }
-
-  @Override
-  public Iterable<TeachingResource> getTeachingResourceByTag(String tag) {
-    return null;
-  }
-
-  @Override
-  public Iterable<TeachingResource> getTeachingResourceByTags(List<String> tags) {
-    return null;
-  }
-
-  @Override
-  public Iterable<TeachingResource> getTeachingResourceByChapter(Long chapterId) {
-    return teachingResourceRepository.findByResourceIdAndType(
+  public Iterable<TeachingResourceResponse> getTeachingResourceByChapter(Long chapterId) {
+    Iterable<TeachingResource> teachingResources = teachingResourceRepository.findByResourceIdAndType(
         chapterId, Chapter.class.getSimpleName());
+
+    List<TeachingResourceResponse> teachingResourceResponses = new ArrayList<>();
+    for(TeachingResource resource: teachingResources) {
+      teachingResourceResponses.add(this.teachingResourceToTeachingResourceResponse(resource));
+    }
+    return teachingResourceResponses;
   }
 
   @Override
   @Transactional
-  public TeachingResource uploadTeachingResource(
+  public TeachingResourceResponse uploadTeachingResource(
       TeachingResourceDTO teachingResourceDTO, MultipartFile file) {
 
     if (!isFileValid(file)) {
@@ -89,7 +76,9 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
 
     teachingResource.setFileUrl(fileUrl);
 
-    return teachingResourceRepository.save(teachingResource);
+    teachingResource = teachingResourceRepository.save(teachingResource);
+
+    return this.teachingResourceToTeachingResourceResponse(teachingResource);
   }
 
   // private method
@@ -174,7 +163,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
         (CustomUserPrincipal) authenticationFacade.getAuthentication().getPrincipal();
     teachingResource.setUser(principal.getUser());
 
-    teachingResource.setTags(tagService.findOrCreateByName(teachingResourceDTO.getTagNames()));
+    teachingResource.setTags(tagService.findOrCreateByNames(teachingResourceDTO.getTagNames()));
 
     return teachingResource;
   }
@@ -186,5 +175,29 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
       if (mediaType.startsWith(amt)) return true;
     }
     return false;
+  }
+
+  private TeachingResourceResponse teachingResourceToTeachingResourceResponse(TeachingResource teachingResource) {
+    TeachingResourceResponse response = new TeachingResourceResponse();
+    response.setId(teachingResource.getId());
+    response.setTitle(teachingResource.getTitle());
+    response.setDescription(teachingResource.getDescription());
+    response.setFileName(teachingResource.getFileName());
+    response.setContentType(teachingResource.getContentType());
+    response.setHostingType(teachingResource.getHostingType());
+    response.setPrivacyStatus(teachingResource.getPrivacyStatus());
+    response.setResourceOwnerId(teachingResource.getResourceOwnerId());
+    response.setResourceOwnerType(teachingResource.getResourceOwnerType());
+    response.setFileSize(teachingResource.getFileSize());
+    response.setUploaderId(teachingResource.getUser().getId());
+
+    List<TagResponse> tagResponses = new ArrayList<>();
+    for(Tag tag: teachingResource.getTags()) {
+      tagResponses.add(tagService.tagToTagResponse(tag));
+    }
+
+    response.setTags(tagResponses);
+    return response;
+
   }
 }

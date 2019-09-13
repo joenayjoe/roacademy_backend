@@ -1,8 +1,10 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.controllers.UserController;
 import com.rojunaid.roacademy.dto.ResetPasswordDTO;
 import com.rojunaid.roacademy.dto.SignUpDTO;
 import com.rojunaid.roacademy.dto.UserDTO;
+import com.rojunaid.roacademy.dto.UserResponse;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Role;
@@ -11,6 +13,7 @@ import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import com.rojunaid.roacademy.services.UserService;
+import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,19 +42,20 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User createUser(UserDTO userDTO) {
+  public UserResponse createUser(UserDTO userDTO) {
     User existedUser = userRepository.findByEmail(userDTO.getEmail()).orElse(null);
     if (existedUser != null) {
       throw new ResourceAlreadyExistException(
           Translator.toLocale("User.email.exist", new Object[] {userDTO.getEmail()}));
     }
     User user = this.userDTOToUser(userDTO);
-    return userRepository.save(user);
+    user = userRepository.save(user);
+    return this.userToUserResponse(user);
   }
 
   // does not need to pre authorize
   @Override
-  public User registerNewUser(SignUpDTO signUpDTO) {
+  public UserResponse registerNewUser(SignUpDTO signUpDTO) {
     User existedUser = userRepository.findByEmail(signUpDTO.getEmail()).orElse(null);
     if (existedUser != null) {
       throw new ResourceAlreadyExistException(
@@ -70,21 +74,28 @@ public class UserServiceImpl implements UserService {
     if (role.getName() == RoleEnum.ROLE_TEACHER || role.getName() == RoleEnum.ROLE_ADMIN) {
       user.setEnable(false);
     }
-    return userRepository.save(user);
+    user = userRepository.save(user);
+    return this.userToUserResponse(user);
   }
 
   @Override
-  public User updateUser(Long userId, UserDTO userDTO) {
-    User oldUser = this.findUserById(userId);
+  public UserResponse updateUser(Long userId, UserDTO userDTO) {
+    User oldUser = userRepository.findById(userId).orElse(null);
+    if(oldUser == null) {
+      throw this.userNotFoundException(userId);
+    }
+
     oldUser.setFirstName(userDTO.getFirstName());
     oldUser.setLastName(userDTO.getLastName());
     oldUser.setRoles(this.getRoles(userDTO.getRoleIds()));
-    return userRepository.save(oldUser);
+    oldUser = userRepository.save(oldUser);
+    return this.userToUserResponse(oldUser);
   }
 
   @Override
-  public User findUserById(Long userId) {
-    return userRepository.findById(userId).orElseThrow(() -> this.userNotFoundException(userId));
+  public UserResponse findUserById(Long userId) {
+    User user =  userRepository.findById(userId).orElseThrow(() -> this.userNotFoundException(userId));
+    return this.userToUserResponse(user);
   }
 
   @Override
@@ -97,21 +108,44 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Iterable<User> findAll() {
-    return userRepository.findAll();
+  public Iterable<UserResponse> findAll() {
+    Iterable<User> users = userRepository.findAll();
+    List<UserResponse> userResponses = new ArrayList<>();
+    for (User user : users) {
+      userResponses.add(this.userToUserResponse(user));
+    }
+    return userResponses;
   }
 
   @Override
-  public User resetUserPassword(Long userId, ResetPasswordDTO resetPasswordDTO) {
-    User user = this.findUserById(userId);
+  public UserResponse resetUserPassword(Long userId, ResetPasswordDTO resetPasswordDTO) {
+    User user = userRepository.findById(userId).orElse(null);
+    if(user == null) {
+      throw this.userNotFoundException(userId);
+    }
     user.setHashPassword(passwordEncoder.encode(resetPasswordDTO.getNewPassword()));
-    return userRepository.save(user);
+    user = userRepository.save(user);
+    return this.userToUserResponse(user);
+  }
+
+  @Override
+  public UserResponse userToUserResponse(User user) {
+    UserResponse userResponse = new UserResponse();
+    userResponse.setId(user.getId());
+    userResponse.setFirstName(user.getFirstName());
+    userResponse.setLastName(user.getLastName());
+    userResponse.setEmail(user.getEmail());
+
+    String url = Helper.buildURL(UserController.class, "getUserById", user.getId());
+    userResponse.setUrl(url);
+    return userResponse;
   }
 
   // private method
 
   ResourceNotFoundException userNotFoundException(Long userId) {
-    return new ResourceNotFoundException(Translator.toLocale("User.id.notfound", new Object[]{userId}));
+    return new ResourceNotFoundException(
+        Translator.toLocale("User.id.notfound", new Object[] {userId}));
   }
 
   private User userDTOToUser(UserDTO userDTO) {
@@ -136,7 +170,8 @@ public class UserServiceImpl implements UserService {
       }
     }
     if (notFoundIds.size() > 0) {
-      throw new ResourceNotFoundException(Translator.toLocale("Role.id.notfound", notFoundIds.toArray()));
+      throw new ResourceNotFoundException(
+          Translator.toLocale("Role.id.notfound", notFoundIds.toArray()));
     }
     return roles;
   }

@@ -1,6 +1,7 @@
 package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.CourseDTO;
+import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,34 +20,34 @@ public class CourseController {
   // GET /api/courses
   // Get all courses
   @GetMapping("")
-  public ResponseEntity<Iterable<Course>> getAllCourse() {
-    Iterable<Course> courses = courseService.getAllCourse();
-    return new ResponseEntity<>(courses, HttpStatus.OK);
+  public ResponseEntity<Iterable<CourseResponse>> getAllCourse() {
+    Iterable<CourseResponse> courseResponses = courseService.getAllCourse();
+    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 
   // POST /api/courses
   // Create a course
   @PostMapping("")
-  public ResponseEntity<Course> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
-    Course course = courseService.createCourse(courseDTO);
-    return new ResponseEntity<>(course, HttpStatus.CREATED);
+  public ResponseEntity<CourseResponse> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
+    CourseResponse courseResponse = courseService.createCourse(courseDTO);
+    return new ResponseEntity<>(courseResponse, HttpStatus.CREATED);
   }
 
   // PUT /api/courses/:courseId
   // Update a course
   @PutMapping("/{courseId}")
-  public ResponseEntity<Course> updateCourse(
+  public ResponseEntity<CourseResponse> updateCourse(
       @PathVariable Long courseId, @Valid @RequestBody CourseDTO courseDTO) {
-    Course course = courseService.updateCourse(courseId, courseDTO);
-    return new ResponseEntity<>(course, HttpStatus.OK);
+    CourseResponse courseResponse = courseService.updateCourse(courseId, courseDTO);
+    return new ResponseEntity<>(courseResponse, HttpStatus.OK);
   }
 
   // GET /api/courses/:courseId
   // Get a course by ID
   @GetMapping("/{courseId}")
-  public ResponseEntity<Course> getCourseById(@PathVariable Long courseId) {
-    Course course = courseService.findCourseById(courseId);
-    return new ResponseEntity<>(course, HttpStatus.OK);
+  public ResponseEntity<CourseResponse> getCourseById(@PathVariable Long courseId) {
+    CourseResponse courseResponse = courseService.findCourseById(courseId);
+    return new ResponseEntity<>(courseResponse, HttpStatus.OK);
   }
 
   // DELETE /api/courses/:courseId

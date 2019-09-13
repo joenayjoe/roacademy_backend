@@ -1,6 +1,8 @@
 package com.rojunaid.roacademy.controllers;
 
+import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.dto.GradeDTO;
+import com.rojunaid.roacademy.dto.GradeResponse;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,42 +18,42 @@ public class GradeController {
 
   @Autowired private GradeService gradeService;
 
-  // GET /api/categories/:categoryId/sections
-  // Get all section
+  // GET /api/categories/:categoryId/grades
+  // Get all grades
   @GetMapping("")
-  public ResponseEntity<Iterable<Grade>> getAllGrade(@PathVariable Long categoryId) {
-    Iterable<Grade> grades = gradeService.findGradesByCategoryId(categoryId);
+  public ResponseEntity<Iterable<GradeResponse>> getAllGrade(@PathVariable Long categoryId) {
+    Iterable<GradeResponse> gradeResponses = gradeService.findGradesByCategoryId(categoryId);
 
-    return new ResponseEntity<>(grades, HttpStatus.OK);
+    return new ResponseEntity<>(gradeResponses, HttpStatus.OK);
   }
 
-  // POST /api/categories/:categoryId/sections
-  // Create a section
+  // POST /api/categories/:categoryId/grades
+  // Create a grade
   @PostMapping("")
-  public ResponseEntity<Grade> createGrade(
+  public ResponseEntity<GradeResponse> createGrade(
       @PathVariable Long categoryId, @Valid @RequestBody GradeDTO gradeDTO) {
-    Grade persistentSection = gradeService.createGrade(categoryId, gradeDTO);
-    return new ResponseEntity<>(persistentSection, HttpStatus.CREATED);
+    GradeResponse gradeResponse = gradeService.createGrade(categoryId, gradeDTO);
+    return new ResponseEntity<>(gradeResponse, HttpStatus.CREATED);
   }
 
   // PUT /api/sections/:gradeId
   // Update a section
   @PutMapping("/{gradeId}")
-  public ResponseEntity<Grade> updateGrade(
+  public ResponseEntity<GradeResponse> updateGrade(
       @PathVariable Long categoryId,
       @PathVariable Long gradeId,
       @Valid @RequestBody GradeDTO gradeDTO) {
-    Grade updatedSection = gradeService.updateGrade(categoryId, gradeId, gradeDTO);
-    return new ResponseEntity<>(updatedSection, HttpStatus.OK);
+    GradeResponse gradeResponse = gradeService.updateGrade(categoryId, gradeId, gradeDTO);
+    return new ResponseEntity<>(gradeResponse, HttpStatus.OK);
   }
 
   // GET /api/sections/:gradeId
   // Get a section by :gradeId
 
   @GetMapping("/{gradeId}")
-  public ResponseEntity<Grade> getGradeById(@PathVariable Long gradeId) {
-    Grade section = gradeService.findGradeById(gradeId);
-    return new ResponseEntity<>(section, HttpStatus.OK);
+  public ResponseEntity<GradeResponse> getGradeById(@PathVariable Long gradeId) {
+    GradeResponse gradeResponse = gradeService.findGradeById(gradeId);
+    return new ResponseEntity<>(gradeResponse, HttpStatus.OK);
   }
 
   // DELETE /api/sections/:gradeId
@@ -60,5 +62,12 @@ public class GradeController {
   public ResponseEntity<HttpStatus> deleteGradeById(@PathVariable Long gradeId) {
     gradeService.deleteGradeById(gradeId);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @GetMapping("/{gradeId}/courses")
+  public ResponseEntity<Iterable<CourseResponse>> getCoursesByGradeId(@PathVariable Long gradeId) {
+
+    Iterable<CourseResponse> courseResponses = gradeService.findCoursesByGradeId(gradeId);
+    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 }

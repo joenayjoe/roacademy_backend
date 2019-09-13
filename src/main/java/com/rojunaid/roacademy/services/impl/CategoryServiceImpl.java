@@ -1,15 +1,21 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.controllers.CategoryController;
+import com.rojunaid.roacademy.dto.CategoryResponse;
+import com.rojunaid.roacademy.dto.GradeResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.services.CategoryService;
 import com.rojunaid.roacademy.services.GradeService;
+import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -19,34 +25,43 @@ public class CategoryServiceImpl implements CategoryService {
   @Autowired private GradeService gradeService;
 
   @Override
-  public Iterable<Category> getAllCategory() {
-    return categoryRepository.findAll();
+  public Iterable<CategoryResponse> getAllCategory() {
+    Iterable<Category> categories = categoryRepository.findAll();
+    List<CategoryResponse> categoryResponses = new ArrayList<>();
+    for (Category category : categories) {
+      categoryResponses.add(this.categoryToCategoryResponse(category));
+    }
+    return categoryResponses;
   }
 
   @Override
-  public Category createCategory(Category category) {
-    return categoryRepository.save(category);
+  public CategoryResponse createCategory(Category category) {
+    Category category1 = categoryRepository.save(category);
+    return this.categoryToCategoryResponse(category1);
   }
 
   @Override
-  public Category updateCategory(Long categoryId, Category updatedCategory) {
+  public CategoryResponse updateCategory(Long categoryId, Category updatedCategory) {
     Category category = categoryRepository.findById(categoryId).orElse(null);
     if (category != null) {
       category.setName(updatedCategory.getName());
-      return categoryRepository.save(category);
+      category = categoryRepository.save(category);
+      return this.categoryToCategoryResponse(category);
     }
     throw this.categoryNotFoundException(categoryId);
   }
 
   @Override
-  public Category findCategoryById(Long categoryId) {
-    return categoryRepository
-        .findById(categoryId)
-        .orElseThrow(() -> this.categoryNotFoundException(categoryId));
+  public CategoryResponse findCategoryById(Long categoryId) {
+    Category category =
+        categoryRepository
+            .findById(categoryId)
+            .orElseThrow(() -> this.categoryNotFoundException(categoryId));
+    return this.categoryToCategoryResponse(category);
   }
 
   @Override
-  public Iterable<Grade> finGradesByCategoryId(Long category_id) {
+  public Iterable<GradeResponse> finGradesByCategoryId(Long category_id) {
     return gradeService.findGradesByCategoryId(category_id);
   }
 
@@ -62,6 +77,24 @@ public class CategoryServiceImpl implements CategoryService {
   // private methods
 
   private ResourceNotFoundException categoryNotFoundException(Long category_id) {
-    return new ResourceNotFoundException(Translator.toLocale("Category.id.notfound", new Object[] {category_id}));
+    return new ResourceNotFoundException(
+        Translator.toLocale("Category.id.notfound", new Object[] {category_id}));
+  }
+
+  private CategoryResponse categoryToCategoryResponse(Category category) {
+    CategoryResponse categoryResponse = new CategoryResponse();
+    categoryResponse.setId(category.getId());
+    categoryResponse.setName(category.getName());
+
+    List<GradeResponse> gradeResponses = new ArrayList<>();
+    for (Grade grade : category.getGrades()) {
+      gradeResponses.add(this.gradeService.gradeToGradeResponse(grade));
+    }
+    categoryResponse.setGrades(gradeResponses);
+
+    String url = Helper.buildURL(CategoryController.class, "getCategoryById", category.getId());
+    categoryResponse.setUrl(url);
+
+    return categoryResponse;
   }
 }

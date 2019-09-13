@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
+import com.rojunaid.roacademy.dto.RoleResponse;
 import com.rojunaid.roacademy.models.Role;
 import com.rojunaid.roacademy.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,27 +17,27 @@ public class RoleController {
   @Autowired RoleService roleService;
 
   @GetMapping("")
-  public ResponseEntity<Iterable<Role>> getAllRoles() {
-    Iterable<Role> roles = roleService.getAllRole();
-    return new ResponseEntity<>(roles, HttpStatus.OK);
+  public ResponseEntity<Iterable<RoleResponse>> getAllRoles() {
+    Iterable<RoleResponse> roleResponses = roleService.getAllRole();
+    return new ResponseEntity<>(roleResponses, HttpStatus.OK);
   }
 
   @PostMapping("")
-  public ResponseEntity<Role> createRole(@Valid @RequestBody Role role) {
-    Role persistentRole = roleService.createRole(role);
-    return new ResponseEntity<>(persistentRole, HttpStatus.CREATED);
+  public ResponseEntity<RoleResponse> createRole(@Valid @RequestBody Role role) {
+    RoleResponse roleResponse = roleService.createRole(role);
+    return new ResponseEntity<>(roleResponse, HttpStatus.CREATED);
   }
 
   @PutMapping("/{roleId}")
-  public ResponseEntity<Role> updateRole(@PathVariable Long roleId, @Valid @RequestBody Role role) {
-    Role updatedRole = roleService.updateRole(roleId, role);
-    return new ResponseEntity<>(updatedRole, HttpStatus.OK);
+  public ResponseEntity<RoleResponse> updateRole(@PathVariable Long roleId, @Valid @RequestBody Role role) {
+    RoleResponse roleResponse = roleService.updateRole(roleId, role);
+    return new ResponseEntity<>(roleResponse, HttpStatus.OK);
   }
 
   @GetMapping("/{roleId}")
-  public ResponseEntity<Role> getRoleById(@PathVariable Long roleId) {
-    Role role = roleService.getRoleById(roleId);
-    return new ResponseEntity<>(role, HttpStatus.OK);
+  public ResponseEntity<RoleResponse> getRoleById(@PathVariable Long roleId) {
+    RoleResponse roleResponse = roleService.getRoleById(roleId);
+    return new ResponseEntity<>(roleResponse, HttpStatus.OK);
   }
 
   @DeleteMapping("/roleId")

@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
+import com.rojunaid.roacademy.dto.CategoryResponse;
 import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,36 +17,30 @@ public class CategoryController {
   @Autowired private CategoryService categoryService;
 
   @GetMapping("")
-  public ResponseEntity<Iterable<Category>> getAllCategory() {
-    Iterable<Category> categories = categoryService.getAllCategory();
-    return new ResponseEntity<>(categories, HttpStatus.OK);
+  public ResponseEntity<Iterable<CategoryResponse>> getAllCategory() {
+    Iterable<CategoryResponse> categoryResponses = categoryService.getAllCategory();
+    return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
   }
 
   @PostMapping("")
-  public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
-    Category category1 = categoryService.createCategory(category);
-    return new ResponseEntity<>(category1, HttpStatus.CREATED);
+  public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody Category category) {
+    CategoryResponse categoryResponse = categoryService.createCategory(category);
+    return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
   }
 
   @PutMapping("/{category_id}")
-  public ResponseEntity<Category> updateCategory(
+  public ResponseEntity<CategoryResponse> updateCategory(
       @Valid @RequestBody Category category, @PathVariable Long category_id) {
-    Category category1 = categoryService.updateCategory(category_id, category);
-    return new ResponseEntity<>(category1, HttpStatus.OK);
+    CategoryResponse categoryResponse = categoryService.updateCategory(category_id, category);
+    return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
   }
 
   @GetMapping("/{category_id}")
-  public ResponseEntity<Category> getCategoryById(@PathVariable Long category_id) {
-    Category category = categoryService.findCategoryById(category_id);
-    return new ResponseEntity<>(category, HttpStatus.OK);
+  public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long category_id) {
+    CategoryResponse categoryResponse = categoryService.findCategoryById(category_id);
+    return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
   }
 
-  // this method is implemented in section controller
-  //  @GetMapping("/{category_id}/sections")
-  //  public ResponseEntity<Iterable<Grade>> getGradesByCategory(@PathVariable Long category_id) {
-  //    Iterable<Grade> sections = categoryService.finGradesByCategoryId(category_id);
-  //    return new ResponseEntity<>(sections, HttpStatus.OK);
-  //  }
 
   @DeleteMapping("/{category_id}")
   public ResponseEntity<HttpStatus> deleteCategory(@PathVariable Long category_id) {

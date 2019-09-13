@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.dto.TagResponse;
 import com.rojunaid.roacademy.models.Tag;
 import com.rojunaid.roacademy.repositories.TagRepository;
 import com.rojunaid.roacademy.services.TagService;
@@ -28,11 +29,19 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public Set<Tag> findOrCreateByName(Set<String> tag_names) {
+  public Set<Tag> findOrCreateByNames(Set<String> tag_names) {
     Set<Tag> tags = new HashSet<>();
     for (String name : tag_names) {
       tags.add(this.findOrCreateByName(name.trim()));
     }
     return tags;
+  }
+
+  @Override
+  public TagResponse tagToTagResponse(Tag tag) {
+    TagResponse tagResponse = new TagResponse();
+    tagResponse.setId(tag.getId());
+    tagResponse.setName(tag.getName());
+    return tagResponse;
   }
 }

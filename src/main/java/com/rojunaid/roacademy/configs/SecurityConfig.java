@@ -6,10 +6,10 @@ import com.rojunaid.roacademy.security.RestAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -74,8 +74,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers("/api/auth/**")
         .permitAll()
+        .antMatchers(HttpMethod.GET, "/api/categories")
+        .permitAll()
+        .antMatchers(HttpMethod.GET, "/api/categories/{\\d+}/grades")
+        .permitAll()
+        .antMatchers(HttpMethod.GET, "/api/categories/{\\d+}/grades/{\\d+}/courses")
+        .permitAll()
+        .antMatchers(HttpMethod.GET, "/api/courses")
+        .permitAll()
         .anyRequest()
         .authenticated();
-    httpSecurity.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    httpSecurity.addFilterBefore(
+        jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 }

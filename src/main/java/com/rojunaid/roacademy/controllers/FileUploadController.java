@@ -1,6 +1,7 @@
 package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.TeachingResourceDTO;
+import com.rojunaid.roacademy.dto.TeachingResourceResponse;
 import com.rojunaid.roacademy.models.TeachingResource;
 import com.rojunaid.roacademy.services.TeachingResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,10 @@ public class FileUploadController {
   @PostMapping(
       value = "/uploadFile",
       consumes = {"multipart/form-data"})
-  public ResponseEntity<TeachingResource> uploadFile(
+  public ResponseEntity<TeachingResourceResponse> uploadFile(
       @Valid @RequestPart(value = "fileInfo") TeachingResourceDTO teachingResourceDTO,
       @NotNull @NotBlank @RequestPart MultipartFile file) {
-    TeachingResource teachingResource = teachingResourceService.uploadTeachingResource(teachingResourceDTO, file);
-    return new ResponseEntity<>(teachingResource, HttpStatus.CREATED);
+    TeachingResourceResponse teachingResourceResponse = teachingResourceService.uploadTeachingResource(teachingResourceDTO, file);
+    return new ResponseEntity<>(teachingResourceResponse, HttpStatus.CREATED);
   }
 }

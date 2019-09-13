@@ -3,12 +3,8 @@ package com.rojunaid.roacademy.models;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +15,7 @@ import java.util.Set;
 public class Category extends Auditable {
 
   @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+  @OrderBy("name asc")
   Set<Grade> grades = new HashSet<>();
 
   @NotBlank(message = "{NotBlank.field}")

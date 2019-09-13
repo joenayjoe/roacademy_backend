@@ -1,17 +1,20 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.controllers.CourseController;
 import com.rojunaid.roacademy.dto.CourseDTO;
+import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CourseRepository;
+import com.rojunaid.roacademy.repositories.GradeRepository;
 import com.rojunaid.roacademy.services.CourseService;
-import com.rojunaid.roacademy.services.GradeService;
+import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,34 +24,43 @@ public class CourseServiceImpl implements CourseService {
 
   @Autowired private CourseRepository courseRepository;
 
-  @Autowired private GradeService gradeService;
+  @Autowired private GradeRepository gradeRepository;
 
   @Override
-  public Iterable<Course> getAllCourse() {
-    return courseRepository.findAll();
+  public Iterable<CourseResponse> getAllCourse() {
+    Iterable<Course> courses = courseRepository.findAll();
+    List<CourseResponse> courseResponses = new ArrayList<>();
+    for(Course course: courses) {
+      courseResponses.add(this.courseToCourseResponse(course));
+    }
+    return courseResponses;
   }
 
   @Override
-  public Course createCourse(CourseDTO courseDTO) {
+  public CourseResponse createCourse(CourseDTO courseDTO) {
     Course course = this.courseDTOToCourse(courseDTO);
-    return courseRepository.save(course);
+    course = courseRepository.save(course);
+    return this.courseToCourseResponse(course);
   }
 
   @Override
-  public Course updateCourse(Long courseId, CourseDTO courseDTO) {
+  public CourseResponse updateCourse(Long courseId, CourseDTO courseDTO) {
     if (courseRepository.existsById(courseId)) {
       Course course = this.courseDTOToCourse(courseDTO);
       course.setId(courseId);
-      return courseRepository.save(course);
+      course = courseRepository.save(course);
+      return this.courseToCourseResponse(course);
     }
     throw this.courseNotFoundException(courseId);
   }
 
   @Override
-  public Course findCourseById(Long courseId) {
-    return courseRepository
+  public CourseResponse findCourseById(Long courseId) {
+    Course course = courseRepository
         .findById(courseId)
         .orElseThrow(() -> this.courseNotFoundException(courseId));
+
+    return this.courseToCourseResponse(course);
   }
 
   @Override
@@ -61,10 +73,28 @@ public class CourseServiceImpl implements CourseService {
     }
   }
 
+  @Override
+  public CourseResponse courseToCourseResponse(Course course) {
+    CourseResponse courseResponse = new CourseResponse();
+    courseResponse.setId(course.getId());
+    courseResponse.setName(course.getName());
+    courseResponse.setGradeId(course.getGrade().getId());
+
+    String url = Helper.buildURL(CourseController.class, "getCourseById", course.getId());
+
+    courseResponse.setUrl(url);
+    return  courseResponse;
+  }
+
   // util methods
 
   private Grade getGrade(Long gradeId) {
-    return gradeService.findGradeById(gradeId);
+    return gradeRepository
+        .findById(gradeId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("Grade.id.notfound", new Object[] {gradeId})));
   }
 
   private Set<Course> getPreRequisiteCourses(List<Long> preReqCourseIds) {
@@ -80,7 +110,8 @@ public class CourseServiceImpl implements CourseService {
   // private methods
 
   private ResourceNotFoundException courseNotFoundException(Long courseId) {
-    return new ResourceNotFoundException(Translator.toLocale("Course.id.notfound", new Object[]{courseId}));
+    return new ResourceNotFoundException(
+        Translator.toLocale("Course.id.notfound", new Object[] {courseId}));
   }
 
   private Course courseDTOToCourse(CourseDTO courseDTO) {
@@ -91,4 +122,5 @@ public class CourseServiceImpl implements CourseService {
         this.getPreRequisiteCourses(courseDTO.getPreRequisiteCourseIds()));
     return course;
   }
+
 }
