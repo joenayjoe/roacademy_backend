@@ -70,10 +70,10 @@ public class Helper {
   }
 
   public static String buildURL(
-          Class klass, String methodName, Long methodParam1, Long methodParam2, Long pathVariable) {
+      Class klass, String methodName, Long methodParam1, Long methodParam2, Long pathVariable) {
     UriComponents uriComponents =
-            MvcUriComponentsBuilder.fromMethodName(klass, methodName, methodParam1, methodParam2)
-                    .buildAndExpand(pathVariable);
+        MvcUriComponentsBuilder.fromMethodName(klass, methodName, methodParam1, methodParam2)
+            .buildAndExpand(pathVariable);
     return uriComponents.encode().toUriString();
   }
 }

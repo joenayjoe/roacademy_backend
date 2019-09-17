@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse updateUser(Long userId, UserDTO userDTO) {
     User oldUser = userRepository.findById(userId).orElse(null);
-    if(oldUser == null) {
+    if (oldUser == null) {
       throw this.userNotFoundException(userId);
     }
 
@@ -94,7 +94,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponse findUserById(Long userId) {
-    User user =  userRepository.findById(userId).orElseThrow(() -> this.userNotFoundException(userId));
+    User user =
+        userRepository.findById(userId).orElseThrow(() -> this.userNotFoundException(userId));
     return this.userToUserResponse(user);
   }
 
@@ -120,7 +121,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse resetUserPassword(Long userId, ResetPasswordDTO resetPasswordDTO) {
     User user = userRepository.findById(userId).orElse(null);
-    if(user == null) {
+    if (user == null) {
       throw this.userNotFoundException(userId);
     }
     user.setHashPassword(passwordEncoder.encode(resetPasswordDTO.getNewPassword()));

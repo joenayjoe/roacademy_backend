@@ -29,7 +29,8 @@ public class RoleController {
   }
 
   @PutMapping("/{roleId}")
-  public ResponseEntity<RoleResponse> updateRole(@PathVariable Long roleId, @Valid @RequestBody Role role) {
+  public ResponseEntity<RoleResponse> updateRole(
+      @PathVariable Long roleId, @Valid @RequestBody Role role) {
     RoleResponse roleResponse = roleService.updateRole(roleId, role);
     return new ResponseEntity<>(roleResponse, HttpStatus.OK);
   }

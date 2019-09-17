@@ -10,10 +10,10 @@ import java.util.List;
 @Getter
 @Setter
 public class ChapterResponse {
+  List<TagResponse> tags = new ArrayList<>();
+  List<TeachingResource> teachingResources = new ArrayList<>();
   private Long id;
   private String name;
   private Long courseId;
   private String url;
-  List<TagResponse> tags = new ArrayList<>();
-  List<TeachingResource> teachingResources = new ArrayList<>();
 }

@@ -26,26 +26,23 @@ public class JwtTokenProvider {
     Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
     return Jwts.builder()
-            .setSubject(Long.toString(userPrincipal.getUser().getId()))
-            .setIssuedAt(new Date())
-            .setExpiration(expiryDate)
-            .signWith(SignatureAlgorithm.HS512, jwtSecret)
-            .compact();
+        .setSubject(Long.toString(userPrincipal.getUser().getId()))
+        .setIssuedAt(new Date())
+        .setExpiration(expiryDate)
+        .signWith(SignatureAlgorithm.HS512, jwtSecret)
+        .compact();
   }
 
   public Long getUserIdFromJwt(String token) {
-    Claims claims = Jwts.parser()
-            .setSigningKey(jwtSecret)
-            .parseClaimsJws(token)
-            .getBody();
+    Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     return Long.parseLong(claims.getSubject());
   }
 
   public boolean validateToken(String token) {
-    try{
+    try {
       Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
       return true;
-    }catch (SignatureException ex) {
+    } catch (SignatureException ex) {
       logger.error("Invalid JWT signature");
     } catch (MalformedJwtException ex) {
       logger.error("Invalid JWT token");

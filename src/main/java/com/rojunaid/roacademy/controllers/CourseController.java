@@ -2,7 +2,6 @@ package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.CourseDTO;
 import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

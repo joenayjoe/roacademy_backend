@@ -9,8 +9,7 @@ public class TokenResponse {
   @Key("access_token")
   private String accessToken;
 
-  @Key
-  private String scope;
+  @Key private String scope;
 
   @Key("token_type")
   private String tokenType;

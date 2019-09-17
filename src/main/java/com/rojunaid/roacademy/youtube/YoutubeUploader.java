@@ -23,11 +23,9 @@ import java.util.stream.Collectors;
 @Component
 public class YoutubeUploader {
 
-  @Autowired private Auth authProvider;
-
-  private static YouTube youtube;
-
   private static final String VIDEO_FILE_FORMAT = "video/*";
+  private static YouTube youtube;
+  @Autowired private Auth authProvider;
 
   public Video upload(MultipartFile file, TeachingResource teachingResource) {
 
@@ -67,9 +65,9 @@ public class YoutubeUploader {
           teachingResource.getTags().stream().map(Tag::getName).collect(Collectors.toList());
       snippet.setTags(tags);
 
-      String hashTags = tags.stream().map(tag->"#"+tag).collect(Collectors.joining(" "));
+      String hashTags = tags.stream().map(tag -> "#" + tag).collect(Collectors.joining(" "));
 
-      snippet.setDescription(teachingResource.getDescription()+"\n\n"+hashTags);
+      snippet.setDescription(teachingResource.getDescription() + "\n\n" + hashTags);
 
       // Add the completed snippet object to the video resource.
       videoObjectDefiningMetadata.setSnippet(snippet);

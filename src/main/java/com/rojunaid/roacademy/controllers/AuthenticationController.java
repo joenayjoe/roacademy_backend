@@ -4,7 +4,6 @@ import com.rojunaid.roacademy.dto.JwtAuthenticationResponseDTO;
 import com.rojunaid.roacademy.dto.LoginDTO;
 import com.rojunaid.roacademy.dto.SignUpDTO;
 import com.rojunaid.roacademy.dto.UserResponse;
-import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.security.JwtTokenProvider;
 import com.rojunaid.roacademy.services.RoleService;
 import com.rojunaid.roacademy.services.UserService;

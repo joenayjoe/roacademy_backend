@@ -34,27 +34,23 @@ import java.util.List;
 @Service
 public class TeachingResourceServiceImpl implements TeachingResourceService {
 
+  private static final List<String> ALLOWED_MEDIA_TYPES =
+      Arrays.asList("image/png", "image/jpeg", "video/", "application/pdf");
   @Autowired private TeachingResourceRepository teachingResourceRepository;
-
   @Autowired private TagService tagService;
-
   @Autowired private AuthenticationFacade authenticationFacade;
-
   @Autowired private YoutubeUploader youtubeUploader;
-
   @Value("${file.upload-dir}")
   private String uploadDir;
 
-  private static final List<String> ALLOWED_MEDIA_TYPES =
-      Arrays.asList("image/png", "image/jpeg", "video/", "application/pdf");
-
   @Override
   public Iterable<TeachingResourceResponse> getTeachingResourceByChapter(Long chapterId) {
-    Iterable<TeachingResource> teachingResources = teachingResourceRepository.findByResourceIdAndType(
-        chapterId, Chapter.class.getSimpleName());
+    Iterable<TeachingResource> teachingResources =
+        teachingResourceRepository.findByResourceIdAndType(
+            chapterId, Chapter.class.getSimpleName());
 
     List<TeachingResourceResponse> teachingResourceResponses = new ArrayList<>();
-    for(TeachingResource resource: teachingResources) {
+    for (TeachingResource resource : teachingResources) {
       teachingResourceResponses.add(this.teachingResourceToTeachingResourceResponse(resource));
     }
     return teachingResourceResponses;
@@ -66,8 +62,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
       TeachingResourceDTO teachingResourceDTO, MultipartFile file) {
 
     if (!isFileValid(file)) {
-      throw new MediaTypeNotSupportedException(
-              Translator.toLocale("MediaType.notsupported"));
+      throw new MediaTypeNotSupportedException(Translator.toLocale("MediaType.notsupported"));
     }
 
     TeachingResource teachingResource = saveTeachingResource(teachingResourceDTO, file);
@@ -121,8 +116,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
     try {
       Files.createDirectories(resourceTypePath);
     } catch (Exception exp) {
-      throw new DirectoryCreationException(
-          Translator.toLocale("Directory.notcreated"));
+      throw new DirectoryCreationException(Translator.toLocale("Directory.notcreated"));
     }
 
     // create a directory with database id of teaching resource
@@ -130,8 +124,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
     try {
       Files.createDirectories(resourceIdPath);
     } catch (Exception exp) {
-      throw new DirectoryCreationException(
-          Translator.toLocale("Directory.notcreated"));
+      throw new DirectoryCreationException(Translator.toLocale("Directory.notcreated"));
     }
 
     // copy file to target location
@@ -177,7 +170,8 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
     return false;
   }
 
-  private TeachingResourceResponse teachingResourceToTeachingResourceResponse(TeachingResource teachingResource) {
+  private TeachingResourceResponse teachingResourceToTeachingResourceResponse(
+      TeachingResource teachingResource) {
     TeachingResourceResponse response = new TeachingResourceResponse();
     response.setId(teachingResource.getId());
     response.setTitle(teachingResource.getTitle());
@@ -192,12 +186,11 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
     response.setUploaderId(teachingResource.getUser().getId());
 
     List<TagResponse> tagResponses = new ArrayList<>();
-    for(Tag tag: teachingResource.getTags()) {
+    for (Tag tag : teachingResource.getTags()) {
       tagResponses.add(tagService.tagToTagResponse(tag));
     }
 
     response.setTags(tagResponses);
     return response;
-
   }
 }

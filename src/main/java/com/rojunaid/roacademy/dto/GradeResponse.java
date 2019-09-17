@@ -15,5 +15,4 @@ public class GradeResponse {
   private Long categoryId;
   private String url;
   private List<CourseResponse> courses = new ArrayList<>();
-
 }

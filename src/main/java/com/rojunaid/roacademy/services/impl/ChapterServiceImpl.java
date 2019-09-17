@@ -44,9 +44,10 @@ public class ChapterServiceImpl implements ChapterService {
 
   @Override
   public ChapterResponse getChapterById(Long courseId, Long chapterId) {
-    Chapter chapter = chapterRepository
-        .getChapterByIdAndCourse(chapterId, courseId)
-        .orElseThrow(() -> this.chapterNotFoundException(chapterId));
+    Chapter chapter =
+        chapterRepository
+            .getChapterByIdAndCourse(chapterId, courseId)
+            .orElseThrow(() -> this.chapterNotFoundException(chapterId));
     return this.chapterToChapterResponse(chapter);
   }
 
@@ -65,7 +66,7 @@ public class ChapterServiceImpl implements ChapterService {
     Chapter chapter = this.chapterDTOToChapter(chapterDTO);
     chapter.setCourse(course);
     chapter.setId(chapterId);
-    chapter =  chapterRepository.save(chapter);
+    chapter = chapterRepository.save(chapter);
     return this.chapterToChapterResponse(chapter);
   }
 
@@ -90,18 +91,13 @@ public class ChapterServiceImpl implements ChapterService {
     chapterResponse.setCourseId(courseId);
 
     List<TagResponse> tagResponses = new ArrayList<>();
-    for(Tag tag: chapter.getTags()) {
+    for (Tag tag : chapter.getTags()) {
       tagResponses.add(tagService.tagToTagResponse(tag));
     }
     chapterResponse.setTags(tagResponses);
 
     String url =
-        Helper.buildURL(
-            ChapterController.class,
-            "getChapterById",
-            courseId,
-            chapterId,
-            courseId);
+        Helper.buildURL(ChapterController.class, "getChapterById", courseId, chapterId, courseId);
 
     chapterResponse.setUrl(url);
     return chapterResponse;

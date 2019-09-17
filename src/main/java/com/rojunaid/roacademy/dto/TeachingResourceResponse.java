@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 public class TeachingResourceResponse {
 
+  List<TagResponse> tags = new ArrayList<>();
   private Long id;
   private String title;
   private String description;
@@ -21,5 +22,4 @@ public class TeachingResourceResponse {
   private Long resourceOwnerId;
   private String resourceOwnerType;
   private Long uploaderId;
-  List<TagResponse> tags = new ArrayList<>();
 }

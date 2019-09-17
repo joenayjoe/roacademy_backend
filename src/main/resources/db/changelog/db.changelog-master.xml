@@ -20,5 +20,6 @@
     <include file="db/changelog/0.1.2_create_table_teaching_resource_tag.xml"/>
     <include file="db/changelog/0.1.3_create_table_oauth2_credential.xml"/>
     <include file="db/changelog/0.1.4_add_column_enable_to_user.xml"/>
+    <include file="db/changelog/0.1.5_add_column_description_to_course.xml"/>
 
 </databaseChangeLog>

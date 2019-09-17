@@ -3,7 +3,6 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.ChapterDTO;
 import com.rojunaid.roacademy.dto.ChapterResponse;
 import com.rojunaid.roacademy.dto.TeachingResourceResponse;
-import com.rojunaid.roacademy.models.TeachingResource;
 import com.rojunaid.roacademy.services.ChapterService;
 import com.rojunaid.roacademy.services.TeachingResourceService;
 import org.springframework.beans.factory.annotation.Autowired;

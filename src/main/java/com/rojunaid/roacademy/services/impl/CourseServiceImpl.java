@@ -30,7 +30,7 @@ public class CourseServiceImpl implements CourseService {
   public Iterable<CourseResponse> getAllCourse() {
     Iterable<Course> courses = courseRepository.findAll();
     List<CourseResponse> courseResponses = new ArrayList<>();
-    for(Course course: courses) {
+    for (Course course : courses) {
       courseResponses.add(this.courseToCourseResponse(course));
     }
     return courseResponses;
@@ -56,9 +56,10 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public CourseResponse findCourseById(Long courseId) {
-    Course course = courseRepository
-        .findById(courseId)
-        .orElseThrow(() -> this.courseNotFoundException(courseId));
+    Course course =
+        courseRepository
+            .findById(courseId)
+            .orElseThrow(() -> this.courseNotFoundException(courseId));
 
     return this.courseToCourseResponse(course);
   }
@@ -83,7 +84,7 @@ public class CourseServiceImpl implements CourseService {
     String url = Helper.buildURL(CourseController.class, "getCourseById", course.getId());
 
     courseResponse.setUrl(url);
-    return  courseResponse;
+    return courseResponse;
   }
 
   // util methods
@@ -122,5 +123,4 @@ public class CourseServiceImpl implements CourseService {
         this.getPreRequisiteCourses(courseDTO.getPreRequisiteCourseIds()));
     return course;
   }
-
 }

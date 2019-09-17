@@ -3,7 +3,6 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.dto.GradeDTO;
 import com.rojunaid.roacademy.dto.GradeResponse;
-import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

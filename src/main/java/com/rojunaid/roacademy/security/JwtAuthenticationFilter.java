@@ -18,24 +18,24 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  @Autowired
-  private JwtTokenProvider tokenProvider;
-
-  @Autowired
-  private CustomUserDetailService customUserDetailService;
-
   private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+  @Autowired private JwtTokenProvider tokenProvider;
+  @Autowired private CustomUserDetailService customUserDetailService;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
 
-    try{
+    try {
       String jwt = getJwtFromRequest(request);
-      if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+      if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
         Long userId = tokenProvider.getUserIdFromJwt(jwt);
 
         UserDetails userDetails = customUserDetailService.loadUserById(userId);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private String getJwtFromRequest(HttpServletRequest request) {
     String bearerToken = request.getHeader("Authorization");
-    if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
       return bearerToken.substring(7);
     }
     return null;

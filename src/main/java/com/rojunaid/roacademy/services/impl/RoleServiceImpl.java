@@ -4,7 +4,6 @@ import com.rojunaid.roacademy.dto.RoleResponse;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Role;
-import com.rojunaid.roacademy.models.RoleEnum;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.services.RoleService;
 import com.rojunaid.roacademy.util.Translator;
@@ -24,7 +23,7 @@ public class RoleServiceImpl implements RoleService {
   public Iterable<RoleResponse> getAllRole() {
     Iterable<Role> roles = roleRepository.findAll();
     List<RoleResponse> roleResponses = new ArrayList<>();
-    for(Role role: roles) {
+    for (Role role : roles) {
       roleResponses.add(this.roleToRoleResponse(role));
     }
     return roleResponses;
@@ -44,7 +43,8 @@ public class RoleServiceImpl implements RoleService {
 
   @Override
   public RoleResponse updateRole(Long roleId, Role role) {
-    Role existingRole = roleRepository.findById(roleId).orElseThrow(() -> this.notFoundException(roleId));
+    Role existingRole =
+        roleRepository.findById(roleId).orElseThrow(() -> this.notFoundException(roleId));
     existingRole.setName(role.getName());
     try {
       role = roleRepository.save(existingRole);

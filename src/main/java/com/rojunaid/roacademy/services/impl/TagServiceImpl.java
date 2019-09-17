@@ -5,7 +5,6 @@ import com.rojunaid.roacademy.models.Tag;
 import com.rojunaid.roacademy.repositories.TagRepository;
 import com.rojunaid.roacademy.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;

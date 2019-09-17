@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -19,5 +17,6 @@ public class ResetPasswordDTO {
   @NotBlank(message = "{NotBlank.field}")
   private String newPassword;
 
-  @NotBlank(message = "{NotBlank.field}") private String confirmPassword;
+  @NotBlank(message = "{NotBlank.field}")
+  private String confirmPassword;
 }

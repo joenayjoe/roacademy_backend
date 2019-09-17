@@ -3,7 +3,6 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.ResetPasswordDTO;
 import com.rojunaid.roacademy.dto.UserDTO;
 import com.rojunaid.roacademy.dto.UserResponse;
-import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
