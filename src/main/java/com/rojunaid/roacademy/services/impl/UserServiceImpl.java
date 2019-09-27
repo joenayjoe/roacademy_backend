@@ -1,10 +1,7 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.controllers.UserController;
-import com.rojunaid.roacademy.dto.ResetPasswordDTO;
-import com.rojunaid.roacademy.dto.SignUpDTO;
-import com.rojunaid.roacademy.dto.UserDTO;
-import com.rojunaid.roacademy.dto.UserResponse;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Role;
@@ -12,6 +9,9 @@ import com.rojunaid.roacademy.models.RoleEnum;
 import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
+import com.rojunaid.roacademy.security.AuthenticationFacade;
+import com.rojunaid.roacademy.security.CustomUserPrincipal;
+import com.rojunaid.roacademy.services.RoleService;
 import com.rojunaid.roacademy.services.UserService;
 import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,6 +31,8 @@ public class UserServiceImpl implements UserService {
   @Autowired UserRepository userRepository;
   @Autowired PasswordEncoder passwordEncoder;
   @Autowired RoleRepository roleRepository;
+  @Autowired RoleService roleService;
+  @Autowired AuthenticationFacade authenticationFacade;
 
   @Override
   public User findByEmail(String email) {
@@ -79,23 +82,43 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponse updateUser(Long userId, UserDTO userDTO) {
+  public UserResponse updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
     User oldUser = userRepository.findById(userId).orElse(null);
     if (oldUser == null) {
       throw this.userNotFoundException(userId);
     }
 
-    oldUser.setFirstName(userDTO.getFirstName());
-    oldUser.setLastName(userDTO.getLastName());
-    oldUser.setRoles(this.getRoles(userDTO.getRoleIds()));
+    oldUser.setFirstName(userUpdateDTO.getFirstName());
+    oldUser.setLastName(userUpdateDTO.getLastName());
+    oldUser.setEmail(userUpdateDTO.getEmail());
     oldUser = userRepository.save(oldUser);
     return this.userToUserResponse(oldUser);
+  }
+
+  @Override
+  public UserResponse updateUserRole(Long userId, UserRoleUpdateDTO userRoleUpdateDTO) {
+    User user = userRepository.findById(userRoleUpdateDTO.getUserId()).orElse(null);
+    if (user == null) {
+      throw this.userNotFoundException(userId);
+    }
+    List<Role> roles = roleRepository.findAllById(userRoleUpdateDTO.getRoleIds());
+    Set<Role> roleSet = roles.stream().collect(Collectors.toSet());
+    user.setRoles(roleSet);
+    return this.userToUserResponse(user);
   }
 
   @Override
   public UserResponse findUserById(Long userId) {
     User user =
         userRepository.findById(userId).orElseThrow(() -> this.userNotFoundException(userId));
+    return this.userToUserResponse(user);
+  }
+
+  @Override
+  public UserResponse getCurrentUser() {
+    CustomUserPrincipal principal =
+        (CustomUserPrincipal) authenticationFacade.getAuthentication().getPrincipal();
+    User user = principal.getUser();
     return this.userToUserResponse(user);
   }
 
@@ -137,6 +160,13 @@ public class UserServiceImpl implements UserService {
     userResponse.setLastName(user.getLastName());
     userResponse.setEmail(user.getEmail());
 
+    Set<Role> roles = user.getRoles();
+    List<RoleResponse> roleResponses = new ArrayList<>();
+    for (Role role : roles) {
+      roleResponses.add(roleService.roleToRoleResponse(role));
+    }
+
+    userResponse.setRoles(roleResponses);
     String url = Helper.buildURL(UserController.class, "getUserById", user.getId());
     userResponse.setUrl(url);
     return userResponse;

@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.dto;
 
-import com.rojunaid.roacademy.models.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +14,6 @@ public class UserResponse {
   private String firstName;
   private String lastName;
   private String email;
-  private List<Role> roles = new ArrayList<>();
+  private List<RoleResponse> roles = new ArrayList<>();
   private String url;
 }

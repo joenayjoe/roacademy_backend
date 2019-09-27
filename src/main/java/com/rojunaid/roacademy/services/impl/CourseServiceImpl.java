@@ -75,6 +75,16 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  public Iterable<CourseResponse> search(String query) {
+    Iterable<Course> courses= courseRepository.search(query);
+    List<CourseResponse> courseResponses = new ArrayList<>();
+    for (Course course : courses) {
+      courseResponses.add(this.courseToCourseResponse(course));
+    }
+    return courseResponses;
+  }
+
+  @Override
   public CourseResponse courseToCourseResponse(Course course) {
     CourseResponse courseResponse = new CourseResponse();
     courseResponse.setId(course.getId());

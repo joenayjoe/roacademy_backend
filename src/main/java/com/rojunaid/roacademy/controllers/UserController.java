@@ -1,8 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.ResetPasswordDTO;
-import com.rojunaid.roacademy.dto.UserDTO;
-import com.rojunaid.roacademy.dto.UserResponse;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,8 +29,15 @@ public class UserController {
 
   @PutMapping("/{userId}")
   public ResponseEntity<UserResponse> updateUser(
-      @PathVariable Long userId, @Valid @RequestBody UserDTO userDTO) {
-    UserResponse userResponse = userService.updateUser(userId, userDTO);
+      @PathVariable Long userId, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+    UserResponse userResponse = userService.updateUser(userId, userUpdateDTO);
+    return new ResponseEntity<>(userResponse, HttpStatus.OK);
+  }
+
+  @PostMapping("/{userId}/update_roles")
+  public ResponseEntity<UserResponse> updateUserRoles(
+      @PathVariable Long userId, @Valid UserRoleUpdateDTO userRoleUpdateDTO) {
+    UserResponse userResponse = userService.updateUserRole(userId, userRoleUpdateDTO);
     return new ResponseEntity<>(userResponse, HttpStatus.OK);
   }
 
@@ -46,6 +51,12 @@ public class UserController {
   @GetMapping("/{userId}")
   public ResponseEntity<UserResponse> getUserById(@PathVariable Long userId) {
     UserResponse userResponse = userService.findUserById(userId);
+    return new ResponseEntity<>(userResponse, HttpStatus.OK);
+  }
+
+  @GetMapping("/currentUser")
+  public ResponseEntity<UserResponse> getCurrentUser() {
+    UserResponse userResponse = userService.getCurrentUser();
     return new ResponseEntity<>(userResponse, HttpStatus.OK);
   }
 

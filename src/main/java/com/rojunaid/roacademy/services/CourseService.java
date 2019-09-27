@@ -20,5 +20,9 @@ public interface CourseService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteCourseById(Long courseId);
 
+
+  Iterable<CourseResponse> search(String query);
+
+  // DTO Mapper
   CourseResponse courseToCourseResponse(Course course);
 }

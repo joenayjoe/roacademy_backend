@@ -20,6 +20,9 @@ public class Course extends Auditable {
   @Column(unique = true)
   private String name;
 
+  @NotBlank(message = "{NotBlank.field}")
+  private String description;
+
   @JsonIgnore @ManyToOne private Grade grade;
 
   @ManyToMany(
