@@ -86,11 +86,11 @@ public class CategoryServiceImpl implements CategoryService {
     categoryResponse.setId(category.getId());
     categoryResponse.setName(category.getName());
 
-    List<GradeResponse> gradeResponses = new ArrayList<>();
-    for (Grade grade : category.getGrades()) {
-      gradeResponses.add(this.gradeService.gradeToGradeResponse(grade));
-    }
-    categoryResponse.setGrades(gradeResponses);
+//    List<GradeResponse> gradeResponses = new ArrayList<>();
+//    for (Grade grade : category.getGrades()) {
+//      gradeResponses.add(this.gradeService.gradeToGradeResponse(grade));
+//    }
+//    categoryResponse.setGrades(gradeResponses);
 
     String url = Helper.buildURL(CategoryController.class, "getCategoryById", category.getId());
     categoryResponse.setUrl(url);

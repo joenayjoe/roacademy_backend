@@ -3,7 +3,6 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.JwtAuthenticationResponseDTO;
 import com.rojunaid.roacademy.dto.LoginDTO;
 import com.rojunaid.roacademy.dto.SignUpDTO;
-import com.rojunaid.roacademy.dto.UserResponse;
 import com.rojunaid.roacademy.security.JwtTokenProvider;
 import com.rojunaid.roacademy.services.RoleService;
 import com.rojunaid.roacademy.services.UserService;
@@ -52,8 +51,8 @@ public class AuthenticationController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<UserResponse> registerUer(@Valid @RequestBody SignUpDTO signUpDTO) {
-    UserResponse userResponse = userService.registerNewUser(signUpDTO);
-    return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
+  public ResponseEntity<HttpStatus> registerUer(@Valid @RequestBody SignUpDTO signUpDTO) {
+    userService.registerNewUser(signUpDTO);
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 }

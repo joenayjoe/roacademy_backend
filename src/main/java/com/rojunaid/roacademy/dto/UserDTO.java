@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Getter
 @Setter
@@ -28,7 +27,4 @@ public class UserDTO {
 
   @NotBlank(message = "{NotBlank.field}")
   private String confirmPassword;
-
-  @NotBlank(message = "{NotBlank.field}")
-  private List<Long> roleIds;
 }

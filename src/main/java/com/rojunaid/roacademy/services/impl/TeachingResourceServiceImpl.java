@@ -4,7 +4,6 @@ import com.google.api.services.youtube.model.Video;
 import com.rojunaid.roacademy.dto.TagResponse;
 import com.rojunaid.roacademy.dto.TeachingResourceDTO;
 import com.rojunaid.roacademy.dto.TeachingResourceResponse;
-import com.rojunaid.roacademy.exception.DirectoryCreationException;
 import com.rojunaid.roacademy.exception.MediaTypeNotSupportedException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Chapter;
@@ -13,6 +12,7 @@ import com.rojunaid.roacademy.models.TeachingResource;
 import com.rojunaid.roacademy.repositories.TeachingResourceRepository;
 import com.rojunaid.roacademy.security.AuthenticationFacade;
 import com.rojunaid.roacademy.security.CustomUserPrincipal;
+import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.TagService;
 import com.rojunaid.roacademy.services.TeachingResourceService;
 import com.rojunaid.roacademy.util.Translator;
@@ -23,10 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +36,8 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   @Autowired private TagService tagService;
   @Autowired private AuthenticationFacade authenticationFacade;
   @Autowired private YoutubeUploader youtubeUploader;
+  @Autowired private FileUploadService fileUploadService;
+
   @Value("${file.upload-dir}")
   private String uploadDir;
 
@@ -98,43 +96,13 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
       Video returnVideo = uploadToYoutube(teachingResource, file);
       return returnVideo.getId();
     } else {
-      return saveFileToLocalFileSystem(teachingResource, file);
+      String trn = TeachingResource.class.getSimpleName();
+      return fileUploadService.uploadFile(trn, teachingResource.getId(), file);
     }
   }
 
   private Video uploadToYoutube(TeachingResource teachingResource, MultipartFile file) {
     return youtubeUploader.upload(file, teachingResource);
-  }
-
-  private String saveFileToLocalFileSystem(TeachingResource teachingResource, MultipartFile file) {
-
-    String fileName = file.getOriginalFilename();
-
-    // create a directory with resource type, eg: TeachingResource
-    Path resourceTypePath =
-        Paths.get(uploadDir, TeachingResource.class.getSimpleName()).normalize();
-    try {
-      Files.createDirectories(resourceTypePath);
-    } catch (Exception exp) {
-      throw new DirectoryCreationException(Translator.toLocale("Directory.notcreated"));
-    }
-
-    // create a directory with database id of teaching resource
-    Path resourceIdPath = resourceTypePath.resolve(teachingResource.getId().toString());
-    try {
-      Files.createDirectories(resourceIdPath);
-    } catch (Exception exp) {
-      throw new DirectoryCreationException(Translator.toLocale("Directory.notcreated"));
-    }
-
-    // copy file to target location
-    Path targetLocation = resourceIdPath.resolve(fileName).normalize();
-    try {
-      Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-    } catch (Exception exp) {
-      throw new DirectoryCreationException(Translator.toLocale("FileSave.error"));
-    }
-    return targetLocation.toString();
   }
 
   private TeachingResource teachingResourceDTOToTeachingResource(
