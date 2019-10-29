@@ -1,7 +1,7 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.controllers.ChapterController;
-import com.rojunaid.roacademy.dto.ChapterDTO;
+import com.rojunaid.roacademy.dto.ChapterRequest;
 import com.rojunaid.roacademy.dto.ChapterResponse;
 import com.rojunaid.roacademy.dto.TagResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
@@ -52,18 +52,18 @@ public class ChapterServiceImpl implements ChapterService {
   }
 
   @Override
-  public ChapterResponse createChapter(ChapterDTO chapterDTO) {
-    Course course = this.getCourse(chapterDTO.getCourseId());
-    Chapter chapter = this.chapterDTOToChapter(chapterDTO);
+  public ChapterResponse createChapter(ChapterRequest chapterRequest) {
+    Course course = this.getCourse(chapterRequest.getCourseId());
+    Chapter chapter = this.chapterDTOToChapter(chapterRequest);
     chapter.setCourse(course);
     chapter = chapterRepository.save(chapter);
     return this.chapterToChapterResponse(chapter);
   }
 
   @Override
-  public ChapterResponse updateChapter(Long chapterId, ChapterDTO chapterDTO) {
-    Course course = this.getCourse(chapterDTO.getCourseId());
-    Chapter chapter = this.chapterDTOToChapter(chapterDTO);
+  public ChapterResponse updateChapter(Long chapterId, ChapterRequest chapterRequest) {
+    Course course = this.getCourse(chapterRequest.getCourseId());
+    Chapter chapter = this.chapterDTOToChapter(chapterRequest);
     chapter.setCourse(course);
     chapter.setId(chapterId);
     chapter = chapterRepository.save(chapter);
@@ -116,10 +116,10 @@ public class ChapterServiceImpl implements ChapterService {
         Translator.toLocale("Chapter.id.notfound", new Object[] {chapterId}));
   }
 
-  private Chapter chapterDTOToChapter(ChapterDTO chapterDTO) {
+  private Chapter chapterDTOToChapter(ChapterRequest chapterRequest) {
     Chapter chapter = new Chapter();
-    chapter.setName(chapterDTO.getName());
-    Set<Tag> tags = tagService.findOrCreateByNames(chapterDTO.getTagNames());
+    chapter.setName(chapterRequest.getName());
+    Set<Tag> tags = tagService.findOrCreateByNames(chapterRequest.getTagNames());
     chapter.setTags(tags);
     return chapter;
   }

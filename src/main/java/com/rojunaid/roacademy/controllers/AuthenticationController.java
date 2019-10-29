@@ -1,8 +1,8 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.JwtAuthenticationResponseDTO;
-import com.rojunaid.roacademy.dto.LoginDTO;
-import com.rojunaid.roacademy.dto.SignUpDTO;
+import com.rojunaid.roacademy.dto.JwtAuthenticationResponse;
+import com.rojunaid.roacademy.dto.LoginRequest;
+import com.rojunaid.roacademy.dto.SignUpRequest;
 import com.rojunaid.roacademy.security.JwtTokenProvider;
 import com.rojunaid.roacademy.services.RoleService;
 import com.rojunaid.roacademy.services.UserService;
@@ -36,23 +36,23 @@ public class AuthenticationController {
   @Autowired JwtTokenProvider jwtTokenProvider;
 
   @PostMapping("/signin")
-  public ResponseEntity<JwtAuthenticationResponseDTO> authenticateUser(
-      @Valid @RequestBody LoginDTO loginDTO) {
+  public ResponseEntity<JwtAuthenticationResponse> authenticateUser(
+      @Valid @RequestBody LoginRequest loginRequest) {
     Authentication authentication =
         authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
+            new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = jwtTokenProvider.generateToken(authentication);
-    JwtAuthenticationResponseDTO jwtResponse = new JwtAuthenticationResponseDTO();
+    JwtAuthenticationResponse jwtResponse = new JwtAuthenticationResponse();
     jwtResponse.setAccessToken(jwt);
     return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<HttpStatus> registerUer(@Valid @RequestBody SignUpDTO signUpDTO) {
-    userService.registerNewUser(signUpDTO);
+  public ResponseEntity<HttpStatus> registerUer(@Valid @RequestBody SignUpRequest signUpRequest) {
+    userService.registerNewUser(signUpRequest);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 }

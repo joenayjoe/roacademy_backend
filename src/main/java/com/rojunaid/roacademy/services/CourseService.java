@@ -1,6 +1,6 @@
 package com.rojunaid.roacademy.services;
 
-import com.rojunaid.roacademy.dto.CourseDTO;
+import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.models.Course;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,10 +10,10 @@ public interface CourseService {
   Iterable<CourseResponse> getAllCourse();
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  CourseResponse createCourse(CourseDTO courseDTO);
+  CourseResponse createCourse(CourseRequest courseRequest);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  CourseResponse updateCourse(Long courseId, CourseDTO courseDTO);
+  CourseResponse updateCourse(Long courseId, CourseRequest courseRequest);
 
   CourseResponse findCourseById(Long courseId);
 

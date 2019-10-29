@@ -2,7 +2,7 @@ package com.rojunaid.roacademy.services.impl;
 
 import com.google.api.services.youtube.model.Video;
 import com.rojunaid.roacademy.dto.TagResponse;
-import com.rojunaid.roacademy.dto.TeachingResourceDTO;
+import com.rojunaid.roacademy.dto.TeachingResourceRequest;
 import com.rojunaid.roacademy.dto.TeachingResourceResponse;
 import com.rojunaid.roacademy.exception.MediaTypeNotSupportedException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
@@ -57,13 +57,13 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   @Override
   @Transactional
   public TeachingResourceResponse uploadTeachingResource(
-      TeachingResourceDTO teachingResourceDTO, MultipartFile file) {
+          TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
 
     if (!isFileValid(file)) {
       throw new MediaTypeNotSupportedException(Translator.toLocale("MediaType.notsupported"));
     }
 
-    TeachingResource teachingResource = saveTeachingResource(teachingResourceDTO, file);
+    TeachingResource teachingResource = saveTeachingResource(teachingResourceRequest, file);
 
     String fileUrl = uploadFile(teachingResource, file);
 
@@ -81,10 +81,10 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   }
 
   private TeachingResource saveTeachingResource(
-      TeachingResourceDTO teachingResourceDTO, MultipartFile file) {
+          TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
 
     TeachingResource teachingResource =
-        teachingResourceDTOToTeachingResource(teachingResourceDTO, file);
+        teachingResourceDTOToTeachingResource(teachingResourceRequest, file);
     return teachingResourceRepository.save(teachingResource);
   }
 
@@ -106,15 +106,15 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   }
 
   private TeachingResource teachingResourceDTOToTeachingResource(
-      TeachingResourceDTO teachingResourceDTO, MultipartFile file) {
+          TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
 
     TeachingResource teachingResource = new TeachingResource();
 
-    teachingResource.setTitle(teachingResourceDTO.getTitle());
-    teachingResource.setDescription(teachingResourceDTO.getDescription());
-    teachingResource.setResourceOwnerId(teachingResourceDTO.getResourceOwnerId());
-    teachingResource.setResourceOwnerType(teachingResourceDTO.getResourceOwnerType());
-    teachingResource.setPrivacyStatus(teachingResourceDTO.getPrivacyStatus());
+    teachingResource.setTitle(teachingResourceRequest.getTitle());
+    teachingResource.setDescription(teachingResourceRequest.getDescription());
+    teachingResource.setResourceOwnerId(teachingResourceRequest.getResourceOwnerId());
+    teachingResource.setResourceOwnerType(teachingResourceRequest.getResourceOwnerType());
+    teachingResource.setPrivacyStatus(teachingResourceRequest.getPrivacyStatus());
 
     teachingResource.setFileName(file.getOriginalFilename());
     teachingResource.setContentType(file.getContentType());
@@ -124,7 +124,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
         (CustomUserPrincipal) authenticationFacade.getAuthentication().getPrincipal();
     teachingResource.setUser(principal.getUser());
 
-    teachingResource.setTags(tagService.findOrCreateByNames(teachingResourceDTO.getTagNames()));
+    teachingResource.setTags(tagService.findOrCreateByNames(teachingResourceRequest.getTagNames()));
 
     return teachingResource;
   }

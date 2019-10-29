@@ -1,6 +1,6 @@
 package com.rojunaid.roacademy.dto;
 
-import com.rojunaid.roacademy.validator.FieldMatch;
+import com.rojunaid.roacademy.validator.ValidEmail;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,15 +8,15 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-@FieldMatch(first = "newPassword", second = "confirmPassword", message = "{FieldMatch.password}")
-public class ResetPasswordDTO {
+public class UserUpdateRequest {
 
   @NotBlank(message = "{NotBlank.field}")
-  private String oldPassword;
+  private String firstName;
 
   @NotBlank(message = "{NotBlank.field}")
-  private String newPassword;
+  private String lastName;
 
   @NotBlank(message = "{NotBlank.field}")
-  private String confirmPassword;
+  @ValidEmail(message = "{ValidEmail.email}")
+  private String email;
 }

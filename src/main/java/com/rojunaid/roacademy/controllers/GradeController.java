@@ -1,7 +1,7 @@
 package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.dto.GradeDTO;
+import com.rojunaid.roacademy.dto.GradeRequest;
 import com.rojunaid.roacademy.dto.GradeResponse;
 import com.rojunaid.roacademy.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ public class GradeController {
   // Create a grade
   @PostMapping("")
   public ResponseEntity<GradeResponse> createGrade(
-      @PathVariable Long categoryId, @Valid @RequestBody GradeDTO gradeDTO) {
-    GradeResponse gradeResponse = gradeService.createGrade(categoryId, gradeDTO);
+      @PathVariable Long categoryId, @Valid @RequestBody GradeRequest gradeRequest) {
+    GradeResponse gradeResponse = gradeService.createGrade(categoryId, gradeRequest);
     return new ResponseEntity<>(gradeResponse, HttpStatus.CREATED);
   }
 
@@ -41,8 +41,8 @@ public class GradeController {
   public ResponseEntity<GradeResponse> updateGrade(
       @PathVariable Long categoryId,
       @PathVariable Long gradeId,
-      @Valid @RequestBody GradeDTO gradeDTO) {
-    GradeResponse gradeResponse = gradeService.updateGrade(categoryId, gradeId, gradeDTO);
+      @Valid @RequestBody GradeRequest gradeRequest) {
+    GradeResponse gradeResponse = gradeService.updateGrade(categoryId, gradeId, gradeRequest);
     return new ResponseEntity<>(gradeResponse, HttpStatus.OK);
   }
 

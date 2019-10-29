@@ -1,6 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.CourseDTO;
+import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,8 @@ public class CourseController {
   // POST /api/courses
   // Create a course
   @PostMapping("")
-  public ResponseEntity<CourseResponse> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
-    CourseResponse courseResponse = courseService.createCourse(courseDTO);
+  public ResponseEntity<CourseResponse> createCourse(@Valid @RequestBody CourseRequest courseRequest) {
+    CourseResponse courseResponse = courseService.createCourse(courseRequest);
     return new ResponseEntity<>(courseResponse, HttpStatus.CREATED);
   }
 
@@ -36,8 +36,8 @@ public class CourseController {
   // Update a course
   @PutMapping("/{courseId}")
   public ResponseEntity<CourseResponse> updateCourse(
-      @PathVariable Long courseId, @Valid @RequestBody CourseDTO courseDTO) {
-    CourseResponse courseResponse = courseService.updateCourse(courseId, courseDTO);
+      @PathVariable Long courseId, @Valid @RequestBody CourseRequest courseRequest) {
+    CourseResponse courseResponse = courseService.updateCourse(courseId, courseRequest);
     return new ResponseEntity<>(courseResponse, HttpStatus.OK);
   }
 

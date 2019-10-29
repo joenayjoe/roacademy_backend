@@ -1,7 +1,7 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.controllers.CourseController;
-import com.rojunaid.roacademy.dto.CourseDTO;
+import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Course;
@@ -37,16 +37,16 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public CourseResponse createCourse(CourseDTO courseDTO) {
-    Course course = this.courseDTOToCourse(courseDTO);
+  public CourseResponse createCourse(CourseRequest courseRequest) {
+    Course course = this.courseDTOToCourse(courseRequest);
     course = courseRepository.save(course);
     return this.courseToCourseResponse(course);
   }
 
   @Override
-  public CourseResponse updateCourse(Long courseId, CourseDTO courseDTO) {
+  public CourseResponse updateCourse(Long courseId, CourseRequest courseRequest) {
     if (courseRepository.existsById(courseId)) {
-      Course course = this.courseDTOToCourse(courseDTO);
+      Course course = this.courseDTOToCourse(courseRequest);
       course.setId(courseId);
       course = courseRepository.save(course);
       return this.courseToCourseResponse(course);
@@ -125,12 +125,12 @@ public class CourseServiceImpl implements CourseService {
         Translator.toLocale("Course.id.notfound", new Object[] {courseId}));
   }
 
-  private Course courseDTOToCourse(CourseDTO courseDTO) {
+  private Course courseDTOToCourse(CourseRequest courseRequest) {
     Course course = new Course();
-    course.setName(courseDTO.getName());
-    course.setGrade(this.getGrade(courseDTO.getGradeId()));
+    course.setName(courseRequest.getName());
+    course.setGrade(this.getGrade(courseRequest.getGradeId()));
     course.setPreRequisiteCourses(
-        this.getPreRequisiteCourses(courseDTO.getPreRequisiteCourseIds()));
+        this.getPreRequisiteCourses(courseRequest.getPreRequisiteCourseIds()));
     return course;
   }
 }

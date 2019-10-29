@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class TeachingResourceDTO {
+public class TeachingResourceRequest {
 
   @NotBlank(message = "{NotBlank.field}")
   private String title;

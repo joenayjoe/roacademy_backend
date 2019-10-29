@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class GradeDTO {
+public class GradeRequest {
 
   @NotBlank(message = "{NotBlank.field}")
   @Size(min = 2, max = 100, message = "{Size.field}")

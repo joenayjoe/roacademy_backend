@@ -1,8 +1,8 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.ResetPasswordDTO;
+import com.rojunaid.roacademy.dto.ResetPasswordRequest;
 import com.rojunaid.roacademy.dto.UserResponse;
-import com.rojunaid.roacademy.dto.UserRoleUpdateDTO;
+import com.rojunaid.roacademy.dto.UserRoleUpdateRequest;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,22 +27,22 @@ public class UserController {
   }
 
   //  @PostMapping("")
-  //  public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserDTO userDTO) {
+  //  public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userDTO) {
   //    UserResponse userResponse = userService.createUser(userDTO);
   //    return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
   //  }
   //
   //  @PutMapping("/{userId}")
   //  public ResponseEntity<UserResponse> updateUser(
-  //      @PathVariable Long userId, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+  //      @PathVariable Long userId, @Valid @RequestBody UserUpdateRequest userUpdateDTO) {
   //    UserResponse userResponse = userService.updateUser(userId, userUpdateDTO);
   //    return new ResponseEntity<>(userResponse, HttpStatus.OK);
   //  }
 
   @PostMapping("/{userId}/update_roles")
   public ResponseEntity<UserResponse> updateUserRoles(
-      @PathVariable Long userId, @Valid UserRoleUpdateDTO userRoleUpdateDTO) {
-    UserResponse userResponse = userService.updateUserRole(userId, userRoleUpdateDTO);
+      @PathVariable Long userId, @Valid UserRoleUpdateRequest userRoleUpdateRequest) {
+    UserResponse userResponse = userService.updateUserRole(userId, userRoleUpdateRequest);
     return new ResponseEntity<>(userResponse, HttpStatus.OK);
   }
 
@@ -55,8 +55,8 @@ public class UserController {
 
   @PutMapping("/{userId}/change_password")
   public ResponseEntity<UserResponse> updateUserPassword(
-      @PathVariable Long userId, @Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
-    UserResponse userResponse = userService.resetUserPassword(userId, resetPasswordDTO);
+      @PathVariable Long userId, @Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+    UserResponse userResponse = userService.resetUserPassword(userId, resetPasswordRequest);
     return new ResponseEntity<>(userResponse, HttpStatus.OK);
   }
 

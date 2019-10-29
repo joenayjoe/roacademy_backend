@@ -1,7 +1,7 @@
 package com.rojunaid.roacademy.services;
 
 import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.dto.GradeDTO;
+import com.rojunaid.roacademy.dto.GradeRequest;
 import com.rojunaid.roacademy.dto.GradeResponse;
 import com.rojunaid.roacademy.models.Grade;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,10 +11,10 @@ public interface GradeService {
   Iterable<Grade> getAllGrade();
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  GradeResponse createGrade(Long categoryId, GradeDTO gradeDTO);
+  GradeResponse createGrade(Long categoryId, GradeRequest gradeRequest);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  GradeResponse updateGrade(Long categoryId, Long gradeId, GradeDTO gradeDTO);
+  GradeResponse updateGrade(Long categoryId, Long gradeId, GradeRequest gradeRequest);
 
   GradeResponse findGradeById(Long gradeId);
 

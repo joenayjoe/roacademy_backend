@@ -1,14 +1,14 @@
 package com.rojunaid.roacademy.dto;
 
+import com.rojunaid.roacademy.validator.FieldMatch;
 import com.rojunaid.roacademy.validator.ValidEmail;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
-@Setter
-public class UserUpdateDTO {
+@Data
+@FieldMatch(first = "password", second = "confirmPassword", message = "{FieldMatch.password}")
+public class SignUpRequest {
 
   @NotBlank(message = "{NotBlank.field}")
   private String firstName;
@@ -19,4 +19,12 @@ public class UserUpdateDTO {
   @NotBlank(message = "{NotBlank.field}")
   @ValidEmail(message = "{ValidEmail.email}")
   private String email;
+
+  @NotBlank(message = "{NotBlank.field}")
+  private String password;
+
+  @NotBlank(message = "{NotBlank.field}")
+  private String confirmPassword;
+
+  private Long roleId;
 }

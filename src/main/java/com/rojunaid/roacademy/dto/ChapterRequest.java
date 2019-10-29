@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class ChapterDTO {
+public class ChapterRequest {
 
   @NotBlank(message = "{NotBlank.field}")
   private String name;

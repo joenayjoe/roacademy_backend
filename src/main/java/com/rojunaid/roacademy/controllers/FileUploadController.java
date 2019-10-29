@@ -1,6 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.TeachingResourceDTO;
+import com.rojunaid.roacademy.dto.TeachingResourceRequest;
 import com.rojunaid.roacademy.dto.TeachingResourceResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.User;
@@ -33,10 +33,10 @@ public class FileUploadController {
       value = "/uploadFile",
       consumes = {"multipart/form-data"})
   public ResponseEntity<TeachingResourceResponse> uploadFile(
-      @Valid @RequestPart(value = "fileInfo") TeachingResourceDTO teachingResourceDTO,
+      @Valid @RequestPart(value = "fileInfo") TeachingResourceRequest teachingResourceRequest,
       @NotNull @NotBlank @RequestPart MultipartFile file) {
     TeachingResourceResponse teachingResourceResponse =
-        teachingResourceService.uploadTeachingResource(teachingResourceDTO, file);
+        teachingResourceService.uploadTeachingResource(teachingResourceRequest, file);
     return new ResponseEntity<>(teachingResourceResponse, HttpStatus.CREATED);
   }
 

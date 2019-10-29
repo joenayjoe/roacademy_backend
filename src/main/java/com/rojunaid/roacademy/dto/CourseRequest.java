@@ -4,17 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-public class UserRoleUpdateDTO {
+public class CourseRequest {
 
   @NotBlank(message = "{NotBlank.field}")
-  private List<Long> roleIds = new ArrayList<>();
+  private String name;
 
-  @NotEmpty(message = "{NotEmpty.field}")
-  private Long userId;
+  private Long gradeId;
+  private List<Long> preRequisiteCourseIds = new ArrayList<>();
 }

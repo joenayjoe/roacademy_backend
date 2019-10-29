@@ -1,6 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.ChapterDTO;
+import com.rojunaid.roacademy.dto.ChapterRequest;
 import com.rojunaid.roacademy.dto.ChapterResponse;
 import com.rojunaid.roacademy.dto.TeachingResourceResponse;
 import com.rojunaid.roacademy.services.ChapterService;
@@ -31,9 +31,9 @@ public class ChapterController {
   // POST /api/courses/:courseId/chapters
   // Create a chapter for a course
   @PostMapping("")
-  public ResponseEntity<ChapterResponse> createChapter(@Valid @RequestBody ChapterDTO chapterDTO) {
+  public ResponseEntity<ChapterResponse> createChapter(@Valid @RequestBody ChapterRequest chapterRequest) {
 
-    ChapterResponse chapterResponse = chapterService.createChapter(chapterDTO);
+    ChapterResponse chapterResponse = chapterService.createChapter(chapterRequest);
     return new ResponseEntity<>(chapterResponse, HttpStatus.CREATED);
   }
 
@@ -41,9 +41,9 @@ public class ChapterController {
   // Update a chapter of a course
   @PutMapping("/{chapterId}")
   public ResponseEntity<ChapterResponse> updateChapter(
-      @PathVariable Long chapterId, @Valid @RequestBody ChapterDTO chapterDTO) {
+      @PathVariable Long chapterId, @Valid @RequestBody ChapterRequest chapterRequest) {
 
-    ChapterResponse chapterResponse = chapterService.updateChapter(chapterId, chapterDTO);
+    ChapterResponse chapterResponse = chapterService.updateChapter(chapterId, chapterRequest);
     return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
   }
 

@@ -2,7 +2,7 @@ package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.controllers.GradeController;
 import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.dto.GradeDTO;
+import com.rojunaid.roacademy.dto.GradeRequest;
 import com.rojunaid.roacademy.dto.GradeResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Category;
@@ -38,9 +38,9 @@ public class GradeServiceImpl implements GradeService {
 
   @Override
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  public GradeResponse createGrade(Long categoryId, GradeDTO gradeDTO) {
+  public GradeResponse createGrade(Long categoryId, GradeRequest gradeRequest) {
     Category category = categoryRepository.findById(categoryId).orElse(null);
-    Grade grade = this.gradeDTOToGrade(gradeDTO);
+    Grade grade = this.gradeDTOToGrade(gradeRequest);
     grade.setCategory(category);
     grade = gradeRepository.save(grade);
 
@@ -49,10 +49,10 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
-  public GradeResponse updateGrade(Long categoryId, Long gradeId, GradeDTO gradeDTO) {
+  public GradeResponse updateGrade(Long categoryId, Long gradeId, GradeRequest gradeRequest) {
     Category category = categoryRepository.findById(categoryId).orElse(null);
     if (gradeRepository.existsById(gradeId)) {
-      Grade grade = this.gradeDTOToGrade(gradeDTO);
+      Grade grade = this.gradeDTOToGrade(gradeRequest);
       grade.setCategory(category);
       grade.setId(gradeId);
       grade = gradeRepository.save(grade);
@@ -121,9 +121,9 @@ public class GradeServiceImpl implements GradeService {
         Translator.toLocale("Grade.id.notfound", new Object[] {gradeId}));
   }
 
-  private Grade gradeDTOToGrade(GradeDTO gradeDTO) {
+  private Grade gradeDTOToGrade(GradeRequest gradeRequest) {
     Grade grade = new Grade();
-    grade.setName(gradeDTO.getName());
+    grade.setName(gradeRequest.getName());
     return grade;
   }
 }

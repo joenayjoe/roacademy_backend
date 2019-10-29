@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
   }
 
   //  @Override
-  //  public UserResponse createUser(UserDTO userDTO) {
+  //  public UserResponse createUser(UserRequest userDTO) {
   //    User existedUser = userRepository.findByEmail(userDTO.getEmail()).orElse(null);
   //    if (existedUser != null) {
   //      throw new ResourceAlreadyExistException(
@@ -64,17 +64,17 @@ public class UserServiceImpl implements UserService {
 
   // does not need to pre authorize
   @Override
-  public UserResponse registerNewUser(SignUpDTO signUpDTO) {
-    User existedUser = userRepository.findByEmail(signUpDTO.getEmail()).orElse(null);
+  public UserResponse registerNewUser(SignUpRequest signUpRequest) {
+    User existedUser = userRepository.findByEmail(signUpRequest.getEmail()).orElse(null);
     if (existedUser != null) {
       throw new ResourceAlreadyExistException(
-          Translator.toLocale("User.email.exist", new Object[] {signUpDTO.getEmail()}));
+          Translator.toLocale("User.email.exist", new Object[] {signUpRequest.getEmail()}));
     }
     User user = new User();
-    user.setFirstName(signUpDTO.getFirstName());
-    user.setLastName(signUpDTO.getLastName());
-    user.setEmail(signUpDTO.getEmail());
-    user.setHashPassword(passwordEncoder.encode(signUpDTO.getPassword()));
+    user.setFirstName(signUpRequest.getFirstName());
+    user.setLastName(signUpRequest.getLastName());
+    user.setEmail(signUpRequest.getEmail());
+    user.setHashPassword(passwordEncoder.encode(signUpRequest.getPassword()));
     Role role = this.findOrCreateStudentRole();
     Set<Role> roleSet = new HashSet<>();
     roleSet.add(role);
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
   }
 
   //  @Override
-  //  public UserResponse updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
+  //  public UserResponse updateUser(Long userId, UserUpdateRequest userUpdateDTO) {
   //    User oldUser = userRepository.findById(userId).orElse(null);
   //    if (oldUser == null) {
   //      throw this.userNotFoundException(userId);
@@ -98,12 +98,12 @@ public class UserServiceImpl implements UserService {
   //  }
 
   @Override
-  public UserResponse updateUserRole(Long userId, UserRoleUpdateDTO userRoleUpdateDTO) {
-    User user = userRepository.findById(userRoleUpdateDTO.getUserId()).orElse(null);
+  public UserResponse updateUserRole(Long userId, UserRoleUpdateRequest userRoleUpdateRequest) {
+    User user = userRepository.findById(userRoleUpdateRequest.getUserId()).orElse(null);
     if (user == null) {
       throw this.userNotFoundException(userId);
     }
-    List<Role> roles = roleRepository.findAllById(userRoleUpdateDTO.getRoleIds());
+    List<Role> roles = roleRepository.findAllById(userRoleUpdateRequest.getRoleIds());
     Set<Role> roleSet = roles.stream().collect(Collectors.toSet());
     user.setRoles(roleSet);
     return this.userToUserResponse(user);
@@ -157,12 +157,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponse resetUserPassword(Long userId, ResetPasswordDTO resetPasswordDTO) {
+  public UserResponse resetUserPassword(Long userId, ResetPasswordRequest resetPasswordRequest) {
     User user = userRepository.findById(userId).orElse(null);
     if (user == null) {
       throw this.userNotFoundException(userId);
     }
-    user.setHashPassword(passwordEncoder.encode(resetPasswordDTO.getNewPassword()));
+    user.setHashPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
     user = userRepository.save(user);
     return this.userToUserResponse(user);
   }
@@ -197,7 +197,7 @@ public class UserServiceImpl implements UserService {
         Translator.toLocale("User.id.notfound", new Object[] {userId}));
   }
 
-  //  private User userDTOToUser(UserDTO userDTO) {
+  //  private User userDTOToUser(UserRequest userDTO) {
   //    User user = new User();
   //    user.setFirstName(userDTO.getFirstName());
   //    user.setLastName(userDTO.getLastName());
