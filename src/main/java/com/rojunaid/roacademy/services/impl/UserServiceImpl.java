@@ -4,7 +4,6 @@ import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Role;
-import com.rojunaid.roacademy.models.RoleEnum;
 import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
@@ -50,19 +49,6 @@ public class UserServiceImpl implements UserService {
                     Translator.toLocale("User.email.notfound", new Object[] {email})));
   }
 
-  //  @Override
-  //  public UserResponse createUser(UserRequest userDTO) {
-  //    User existedUser = userRepository.findByEmail(userDTO.getEmail()).orElse(null);
-  //    if (existedUser != null) {
-  //      throw new ResourceAlreadyExistException(
-  //          Translator.toLocale("User.email.exist", new Object[] {userDTO.getEmail()}));
-  //    }
-  //    User user = this.userDTOToUser(userDTO);
-  //    user = userRepository.save(user);
-  //    return this.userToUserResponse(user);
-  //  }
-
-  // does not need to pre authorize
   @Override
   public UserResponse registerNewUser(SignUpRequest signUpRequest) {
     User existedUser = userRepository.findByEmail(signUpRequest.getEmail()).orElse(null);
@@ -75,27 +61,13 @@ public class UserServiceImpl implements UserService {
     user.setLastName(signUpRequest.getLastName());
     user.setEmail(signUpRequest.getEmail());
     user.setHashPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-    Role role = this.findOrCreateStudentRole();
+    Role role = this.roleService.findOrCreateStudentRole();
     Set<Role> roleSet = new HashSet<>();
     roleSet.add(role);
     user.setRoles(roleSet);
     user = userRepository.save(user);
     return this.userToUserResponse(user);
   }
-
-  //  @Override
-  //  public UserResponse updateUser(Long userId, UserUpdateRequest userUpdateDTO) {
-  //    User oldUser = userRepository.findById(userId).orElse(null);
-  //    if (oldUser == null) {
-  //      throw this.userNotFoundException(userId);
-  //    }
-  //
-  //    oldUser.setFirstName(userUpdateDTO.getFirstName());
-  //    oldUser.setLastName(userUpdateDTO.getLastName());
-  //    oldUser.setEmail(userUpdateDTO.getEmail());
-  //    oldUser = userRepository.save(oldUser);
-  //    return this.userToUserResponse(oldUser);
-  //  }
 
   @Override
   public UserResponse updateUserRole(Long userId, UserRoleUpdateRequest userRoleUpdateRequest) {
@@ -182,9 +154,9 @@ public class UserServiceImpl implements UserService {
     }
 
     userResponse.setRoles(roleResponses);
-    if(user.getImageUrl() != null) {
-      userResponse.setImageUrl(Helper.getBaseUrl()+user.getImageUrl());
-    }else {
+    if (user.getImageUrl() != null && !user.getImageUrl().startsWith("http")) {
+      userResponse.setImageUrl(Helper.getBaseUrl() + user.getImageUrl());
+    } else {
       userResponse.setImageUrl(user.getImageUrl());
     }
     return userResponse;
@@ -195,43 +167,5 @@ public class UserServiceImpl implements UserService {
   ResourceNotFoundException userNotFoundException(Long userId) {
     return new ResourceNotFoundException(
         Translator.toLocale("User.id.notfound", new Object[] {userId}));
-  }
-
-  //  private User userDTOToUser(UserRequest userDTO) {
-  //    User user = new User();
-  //    user.setFirstName(userDTO.getFirstName());
-  //    user.setLastName(userDTO.getLastName());
-  //    user.setEmail(userDTO.getEmail());
-  //    user.setHashPassword(passwordEncoder.encode(userDTO.getPassword()));
-  //    user.setRoles(this.getRoles(userDTO.getRoleIds()));
-  //    return user;
-  //  }
-
-  //  private Set<Role> getRoles(List<Long> roleIds) {
-  //    Set<Role> roles = new HashSet<>();
-  //    List<Long> notFoundIds = new ArrayList<>();
-  //    for (Long roleId : roleIds) {
-  //      Role role = roleRepository.findById(roleId).orElse(null);
-  //      if (role == null) {
-  //        notFoundIds.add(roleId);
-  //      } else {
-  //        roles.add(role);
-  //      }
-  //    }
-  //    if (notFoundIds.size() > 0) {
-  //      throw new ResourceNotFoundException(
-  //          Translator.toLocale("Role.id.notfound", notFoundIds.toArray()));
-  //    }
-  //    return roles;
-  //  }
-
-  private Role findOrCreateStudentRole() {
-    Role role = roleRepository.findByName(RoleEnum.ROLE_STUDENT).orElse(null);
-    if (role != null) {
-      return role;
-    }
-    role = new Role();
-    role.setName(RoleEnum.ROLE_STUDENT);
-    return roleRepository.save(role);
   }
 }

@@ -1,20 +1,38 @@
 package com.rojunaid.roacademy.security;
 
 import com.rojunaid.roacademy.models.User;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Getter
-public class CustomUserPrincipal implements UserDetails {
+public class CustomUserPrincipal implements UserDetails, OAuth2User {
 
   private User user;
+  private Map<String, Object> attributes;
+
+  public CustomUserPrincipal(User user) {
+    this.user = user;
+  }
+
+  public CustomUserPrincipal(User user, Map<String, Object> attributes) {
+    this.user = user;
+    this.attributes = attributes;
+  }
+
+  public static CustomUserPrincipal create(User user) {
+    return new CustomUserPrincipal(user);
+  }
+
+  public static CustomUserPrincipal create(User user, Map<String, Object> attributes) {
+    return new CustomUserPrincipal(user, attributes);
+  }
 
   @Override
   public List<GrantedAuthority> getAuthorities() {
@@ -55,7 +73,17 @@ public class CustomUserPrincipal implements UserDetails {
     return true;
   }
 
-  public User getUser() {
-    return user;
+  @Override
+  public String getName() {
+    return user.getId().toString();
   }
+
+  //  public User getUser() {
+  //    return user;
+  //  }
+  //
+  //  public Map<String, Object> getAttributes() {
+  //    return attributes;
+  //  }
+
 }

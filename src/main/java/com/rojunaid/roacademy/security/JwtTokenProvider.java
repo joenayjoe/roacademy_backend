@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.security;
 
+import com.rojunaid.roacademy.models.User;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +14,10 @@ import java.util.Date;
 public class JwtTokenProvider {
   private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-  @Value("${app.jwtSecret}")
+  @Value("${app.auth.jwtSecret}")
   private String jwtSecret;
 
-  @Value("${app.jwtExpirationInMs}")
+  @Value("${app.auth.jwtExpirationInMs}")
   private int jwtExpirationInMs;
 
   public String generateToken(Authentication authentication) {
@@ -31,6 +32,18 @@ public class JwtTokenProvider {
         .setExpiration(expiryDate)
         .signWith(SignatureAlgorithm.HS512, jwtSecret)
         .compact();
+  }
+
+  public String generateTokenForSocialUser(User user) {
+    Date now = new Date();
+    Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+
+    return Jwts.builder()
+            .setSubject(Long.toString(user.getId()))
+            .setIssuedAt(new Date())
+            .setExpiration(expiryDate)
+            .signWith(SignatureAlgorithm.HS512, jwtSecret)
+            .compact();
   }
 
   public Long getUserIdFromJwt(String token) {

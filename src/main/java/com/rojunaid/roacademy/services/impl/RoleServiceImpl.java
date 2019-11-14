@@ -4,6 +4,7 @@ import com.rojunaid.roacademy.dto.RoleResponse;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Role;
+import com.rojunaid.roacademy.models.RoleEnum;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.services.RoleService;
 import com.rojunaid.roacademy.util.Translator;
@@ -68,6 +69,17 @@ public class RoleServiceImpl implements RoleService {
     } else {
       throw this.notFoundException(roleId);
     }
+  }
+
+  @Override
+  public Role findOrCreateStudentRole() {
+    Role role = roleRepository.findByName(RoleEnum.ROLE_STUDENT).orElse(null);
+    if (role != null) {
+      return role;
+    }
+    role = new Role();
+    role.setName(RoleEnum.ROLE_STUDENT);
+    return roleRepository.save(role);
   }
 
   @Override

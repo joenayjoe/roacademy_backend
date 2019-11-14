@@ -37,6 +37,9 @@ public class User extends Auditable {
 
   private String imageUrl;
 
+  @Enumerated(EnumType.STRING)
+  private AuthProvider provider;
+
   private Boolean enable;
 
   @ManyToMany(fetch = FetchType.EAGER)

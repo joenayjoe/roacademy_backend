@@ -19,5 +19,7 @@ public interface RoleService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteRoleById(Long roleId);
 
+  Role findOrCreateStudentRole();
+
   RoleResponse roleToRoleResponse(Role role);
 }

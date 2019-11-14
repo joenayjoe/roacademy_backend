@@ -1,5 +1,7 @@
 package com.rojunaid.roacademy;
 
+import com.rojunaid.roacademy.configs.AppProperties;
+import com.rojunaid.roacademy.models.AuthProvider;
 import com.rojunaid.roacademy.models.Role;
 import com.rojunaid.roacademy.models.RoleEnum;
 import com.rojunaid.roacademy.models.User;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @SpringBootApplication
+@EnableConfigurationProperties(AppProperties.class)
 public class RoacademyApplication implements CommandLineRunner {
 
   @Autowired private RoleRepository roleRepository;
@@ -47,6 +51,7 @@ public class RoacademyApplication implements CommandLineRunner {
       user.setHashPassword(passwordEncoder.encode("password"));
       user.setEnable(true);
       user.setRoles(new HashSet<>(Arrays.asList(role)));
+      user.setProvider(AuthProvider.local);
       userRepository.save(user);
     }
 

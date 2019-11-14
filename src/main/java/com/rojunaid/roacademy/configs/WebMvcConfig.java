@@ -25,6 +25,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         .addMapping("/**")
         .allowedOrigins("*")
         .allowedMethods("HEAD", "OPTIONS", "GET", "POST", "PUT", "PATCH", "DELETE")
+        .allowCredentials(true)
+        .allowedHeaders("*")
         .maxAge(MAX_AGE_SECS);
   }
 

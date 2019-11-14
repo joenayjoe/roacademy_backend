@@ -3,6 +3,10 @@ package com.rojunaid.roacademy.configs;
 import com.rojunaid.roacademy.security.CustomUserDetailService;
 import com.rojunaid.roacademy.security.JwtAuthenticationFilter;
 import com.rojunaid.roacademy.security.RestAuthenticationEntryPoint;
+import com.rojunaid.roacademy.security.oauth2.CustomOAuth2UserService;
+import com.rojunaid.roacademy.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.rojunaid.roacademy.security.oauth2.OAuth2AuthenticationFailureHandler;
+import com.rojunaid.roacademy.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +26,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Autowired RestAuthenticationEntryPoint authenticationEntryPoint;
+  @Autowired private RestAuthenticationEntryPoint authenticationEntryPoint;
 
-  @Autowired CustomUserDetailService customUserDetailService;
+  @Autowired private CustomUserDetailService customUserDetailService;
+
+  @Autowired private CustomOAuth2UserService customOAuth2UserService;
+
+  @Autowired private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+  @Autowired private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+  @Bean
+  public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+    return new HttpCookieOAuth2AuthorizationRequestRepository();
+  }
 
   @Bean
   public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -53,6 +68,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .cors()
         .and()
         .csrf()
+        .disable()
+        .formLogin()
+        .disable()
+        .httpBasic()
         .disable()
         .exceptionHandling()
         .authenticationEntryPoint(authenticationEntryPoint)
@@ -83,7 +102,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/User/{\\d+}/{\\w+}")
         .permitAll()
         .anyRequest()
-        .authenticated();
+        .authenticated()
+        .and()
+        .oauth2Login()
+        .authorizationEndpoint()
+        .baseUri("/oauth2/authorize")
+        .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+        .and()
+        .redirectionEndpoint()
+        .baseUri("/oauth2/callback/*")
+        .and()
+        .userInfoEndpoint()
+        .userService(customOAuth2UserService)
+        .and()
+        .successHandler(oAuth2AuthenticationSuccessHandler)
+        .failureHandler(oAuth2AuthenticationFailureHandler);
     httpSecurity.addFilterBefore(
         jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
   }
