@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -81,6 +82,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     user.setFirstName(oAuth2UserInfo.getFirstName());
     user.setLastName(oAuth2UserInfo.getLastName());
     user.setEmail(oAuth2UserInfo.getEmail());
+    user.setHashPassword(UUID.randomUUID().toString());
     user.setImageUrl(oAuth2UserInfo.getImageUrl());
 
     Role role = this.roleService.findOrCreateStudentRole();

@@ -33,6 +33,13 @@ spring:
             scope:
               - email
               - public_profile
+          google:
+            clientId: 1084976434694-l1rtob24tkgelff64vm4oqp3fhio0ksp.apps.googleusercontent.com
+            clientSecret: w5E0KxDnv38V2zu2fYWDlbMY
+            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
         provider:
           facebook:
             authorizationUri: https://www.facebook.com/v5.0/dialog/oauth
