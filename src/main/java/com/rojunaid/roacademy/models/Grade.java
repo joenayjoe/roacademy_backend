@@ -15,7 +15,9 @@ import java.util.Set;
 @Setter
 public class Grade extends Auditable {
 
-  @JsonIgnore @ManyToOne Category category;
+  @JsonIgnore
+  @ManyToOne(fetch = FetchType.LAZY)
+  Category category;
 
   @NotBlank(message = "{NotBlank.field}")
   @Size(min = 3, max = 100, message = "{Size.field}")

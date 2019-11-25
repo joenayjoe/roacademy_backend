@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.services.impl;
 
-import com.rojunaid.roacademy.controllers.GradeController;
 import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.dto.GradeRequest;
 import com.rojunaid.roacademy.dto.GradeResponse;
@@ -13,11 +12,9 @@ import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.repositories.GradeRepository;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.GradeService;
-import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,10 +34,9 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   public GradeResponse createGrade(Long categoryId, GradeRequest gradeRequest) {
     Category category = categoryRepository.findById(categoryId).orElse(null);
-    Grade grade = this.gradeDTOToGrade(gradeRequest);
+    Grade grade = this.gradeRequestToGrade(gradeRequest);
     grade.setCategory(category);
     grade = gradeRepository.save(grade);
 
@@ -52,7 +48,7 @@ public class GradeServiceImpl implements GradeService {
   public GradeResponse updateGrade(Long categoryId, Long gradeId, GradeRequest gradeRequest) {
     Category category = categoryRepository.findById(categoryId).orElse(null);
     if (gradeRepository.existsById(gradeId)) {
-      Grade grade = this.gradeDTOToGrade(gradeRequest);
+      Grade grade = this.gradeRequestToGrade(gradeRequest);
       grade.setCategory(category);
       grade.setId(gradeId);
       grade = gradeRepository.save(grade);
@@ -68,6 +64,16 @@ public class GradeServiceImpl implements GradeService {
         gradeRepository.findById(gradeId).orElseThrow(() -> this.gradeNotFoundException(gradeId));
 
     GradeResponse gradeResponse = this.gradeToGradeResponse(grade);
+    return gradeResponse;
+  }
+
+  @Override
+  public GradeResponse findGradeWithCoursesById(Long gradeId) {
+    Grade grade =
+        gradeRepository
+            .findGradeWithCoursesById(gradeId)
+            .orElseThrow(() -> this.gradeNotFoundException(gradeId));
+    GradeResponse gradeResponse = this.gradeToGradeResponseWithCourses(grade);
     return gradeResponse;
   }
 
@@ -107,21 +113,26 @@ public class GradeServiceImpl implements GradeService {
     gradeResponse.setName(grade.getName());
     gradeResponse.setCategoryId(grade.getCategory().getId());
 
-    String url =
-        Helper.buildURL(
-            GradeController.class, "getGradeById", grade.getId(), grade.getCategory().getId());
-    gradeResponse.setUrl(url);
     return gradeResponse;
   }
 
   // private methods
+  private GradeResponse gradeToGradeResponseWithCourses(Grade grade) {
+    GradeResponse gradeResponse = gradeToGradeResponse(grade);
+    List<CourseResponse> courseResponses = new ArrayList<>();
+    for (Course course : grade.getCourses()) {
+      courseResponses.add(courseService.courseToCourseResponse(course));
+    }
+    gradeResponse.setCourses(courseResponses);
+    return gradeResponse;
+  }
 
   private ResourceNotFoundException gradeNotFoundException(Long gradeId) {
     return new ResourceNotFoundException(
         Translator.toLocale("Grade.id.notfound", new Object[] {gradeId}));
   }
 
-  private Grade gradeDTOToGrade(GradeRequest gradeRequest) {
+  private Grade gradeRequestToGrade(GradeRequest gradeRequest) {
     Grade grade = new Grade();
     grade.setName(gradeRequest.getName());
     return grade;

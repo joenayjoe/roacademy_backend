@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.services.impl;
 
-import com.rojunaid.roacademy.controllers.CourseController;
 import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
@@ -9,7 +8,6 @@ import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.repositories.GradeRepository;
 import com.rojunaid.roacademy.services.CourseService;
-import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +36,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public CourseResponse createCourse(CourseRequest courseRequest) {
-    Course course = this.courseDTOToCourse(courseRequest);
+    Course course = this.courseRequestToCourse(courseRequest);
     course = courseRepository.save(course);
     return this.courseToCourseResponse(course);
   }
@@ -46,7 +44,7 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public CourseResponse updateCourse(Long courseId, CourseRequest courseRequest) {
     if (courseRepository.existsById(courseId)) {
-      Course course = this.courseDTOToCourse(courseRequest);
+      Course course = this.courseRequestToCourse(courseRequest);
       course.setId(courseId);
       course = courseRepository.save(course);
       return this.courseToCourseResponse(course);
@@ -76,7 +74,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public Iterable<CourseResponse> search(String query) {
-    Iterable<Course> courses= courseRepository.search(query);
+    Iterable<Course> courses = courseRepository.search(query);
     List<CourseResponse> courseResponses = new ArrayList<>();
     for (Course course : courses) {
       courseResponses.add(this.courseToCourseResponse(course));
@@ -89,11 +87,8 @@ public class CourseServiceImpl implements CourseService {
     CourseResponse courseResponse = new CourseResponse();
     courseResponse.setId(course.getId());
     courseResponse.setName(course.getName());
+    courseResponse.setDescription(course.getDescription());
     courseResponse.setGradeId(course.getGrade().getId());
-
-    String url = Helper.buildURL(CourseController.class, "getCourseById", course.getId());
-
-    courseResponse.setUrl(url);
     return courseResponse;
   }
 
@@ -125,12 +120,13 @@ public class CourseServiceImpl implements CourseService {
         Translator.toLocale("Course.id.notfound", new Object[] {courseId}));
   }
 
-  private Course courseDTOToCourse(CourseRequest courseRequest) {
+  private Course courseRequestToCourse(CourseRequest courseRequest) {
     Course course = new Course();
     course.setName(courseRequest.getName());
     course.setGrade(this.getGrade(courseRequest.getGradeId()));
     course.setPreRequisiteCourses(
         this.getPreRequisiteCourses(courseRequest.getPreRequisiteCourseIds()));
+    course.setDescription(courseRequest.getDescription());
     return course;
   }
 }

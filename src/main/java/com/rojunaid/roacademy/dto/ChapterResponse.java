@@ -15,5 +15,4 @@ public class ChapterResponse {
   private Long id;
   private String name;
   private Long courseId;
-  private String url;
 }

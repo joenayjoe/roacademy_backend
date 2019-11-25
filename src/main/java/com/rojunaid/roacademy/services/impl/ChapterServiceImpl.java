@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.services.impl;
 
-import com.rojunaid.roacademy.controllers.ChapterController;
 import com.rojunaid.roacademy.dto.ChapterRequest;
 import com.rojunaid.roacademy.dto.ChapterResponse;
 import com.rojunaid.roacademy.dto.TagResponse;
@@ -12,7 +11,6 @@ import com.rojunaid.roacademy.repositories.ChapterRepository;
 import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.services.ChapterService;
 import com.rojunaid.roacademy.services.TagService;
-import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,10 +94,6 @@ public class ChapterServiceImpl implements ChapterService {
     }
     chapterResponse.setTags(tagResponses);
 
-    String url =
-        Helper.buildURL(ChapterController.class, "getChapterById", courseId, chapterId, courseId);
-
-    chapterResponse.setUrl(url);
     return chapterResponse;
   }
 

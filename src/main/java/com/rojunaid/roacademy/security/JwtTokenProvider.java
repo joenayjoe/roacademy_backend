@@ -34,18 +34,6 @@ public class JwtTokenProvider {
         .compact();
   }
 
-  public String generateTokenForSocialUser(User user) {
-    Date now = new Date();
-    Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-
-    return Jwts.builder()
-            .setSubject(Long.toString(user.getId()))
-            .setIssuedAt(new Date())
-            .setExpiration(expiryDate)
-            .signWith(SignatureAlgorithm.HS512, jwtSecret)
-            .compact();
-  }
-
   public Long getUserIdFromJwt(String token) {
     Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     return Long.parseLong(claims.getSubject());

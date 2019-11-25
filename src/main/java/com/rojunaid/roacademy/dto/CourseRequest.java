@@ -13,7 +13,7 @@ public class CourseRequest {
 
   @NotBlank(message = "{NotBlank.field}")
   private String name;
-
+  private String description;
   private Long gradeId;
   private List<Long> preRequisiteCourseIds = new ArrayList<>();
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 public class Category extends Auditable {
 
-  @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
   @OrderBy("name asc")
   Set<Grade> grades = new HashSet<>();
 

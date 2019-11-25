@@ -23,22 +23,27 @@ public class Course extends Auditable {
   @NotBlank(message = "{NotBlank.field}")
   private String description;
 
-  @JsonIgnore @ManyToOne private Grade grade;
+  @JsonIgnore
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Grade grade;
 
   @ManyToMany(
       mappedBy = "preRequisiteCourses",
-      cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+      cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+      fetch = FetchType.LAZY)
   @JsonIgnore
   private Set<Course> parentCourses = new HashSet<>();
 
-  @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @ManyToMany(
+      cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+      fetch = FetchType.LAZY)
   @JoinTable(
       name = "CourseRel",
       joinColumns = {@JoinColumn(name = "ChildCourseId")},
       inverseJoinColumns = {@JoinColumn(name = "ParentCourseId")})
   private Set<Course> preRequisiteCourses = new HashSet<>();
 
-  @OneToMany(mappedBy = "course")
+  @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
   @JsonIgnore
   private Set<Chapter> chapters = new HashSet<>();
 }

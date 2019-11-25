@@ -50,8 +50,18 @@ public class GradeController {
   // Get a section by :gradeId
 
   @GetMapping("/{gradeId}")
-  public ResponseEntity<GradeResponse> getGradeById(@PathVariable Long gradeId) {
-    GradeResponse gradeResponse = gradeService.findGradeById(gradeId);
+  public ResponseEntity<GradeResponse> getGradeById(
+      @PathVariable Long gradeId,
+      @RequestParam(value = "withCourse", required = false, defaultValue = "false")
+          boolean withCourse) {
+
+    GradeResponse gradeResponse;
+    if(withCourse) {
+      gradeResponse = gradeService.findGradeWithCoursesById(gradeId);
+    }else{
+      gradeResponse = gradeService.findGradeById(gradeId);
+    }
+
     return new ResponseEntity<>(gradeResponse, HttpStatus.OK);
   }
 

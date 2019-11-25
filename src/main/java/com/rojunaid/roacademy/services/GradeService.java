@@ -17,6 +17,7 @@ public interface GradeService {
   GradeResponse updateGrade(Long categoryId, Long gradeId, GradeRequest gradeRequest);
 
   GradeResponse findGradeById(Long gradeId);
+  GradeResponse findGradeWithCoursesById(Long gradeId);
 
   Iterable<GradeResponse> findGradesByCategoryId(Long categoryId);
 

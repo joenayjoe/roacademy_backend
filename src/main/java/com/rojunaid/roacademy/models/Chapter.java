@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 public class Chapter extends Auditable {
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "chapter_tag",
       joinColumns = @JoinColumn(name = "chapter_id"),
@@ -24,5 +24,7 @@ public class Chapter extends Auditable {
   @NotBlank(message = "{NotBlank.field}")
   private String name;
 
-  @JsonBackReference @ManyToOne private Course course;
+  @JsonBackReference
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Course course;
 }
