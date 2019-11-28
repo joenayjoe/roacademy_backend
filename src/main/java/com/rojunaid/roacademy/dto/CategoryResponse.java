@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CategoryResponse {
+public class CategoryResponse extends AuditableDTO{
   private Long id;
   private String name;
   private List<GradeResponse> grades = new ArrayList<>();

@@ -140,6 +140,8 @@ public class CategoryServiceImpl implements CategoryService {
     CategoryResponse categoryResponse = new CategoryResponse();
     categoryResponse.setId(category.getId());
     categoryResponse.setName(category.getName());
+    categoryResponse.setCreatedAt(category.getCreatedAt());
+    categoryResponse.setUpdatedAt(category.getUpdatedAt());
 
     return categoryResponse;
   }
