@@ -4,6 +4,7 @@ import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Course;
+import com.rojunaid.roacademy.models.CourseObjective;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.repositories.GradeRepository;
@@ -87,8 +88,11 @@ public class CourseServiceImpl implements CourseService {
     CourseResponse courseResponse = new CourseResponse();
     courseResponse.setId(course.getId());
     courseResponse.setName(course.getName());
+    courseResponse.setHeadline(course.getHeadline());
     courseResponse.setDescription(course.getDescription());
     courseResponse.setGradeId(course.getGrade().getId());
+    courseResponse.setHits(course.getHits());
+    courseResponse.setObjectives(course.getObjectives());
     return courseResponse;
   }
 
@@ -123,10 +127,19 @@ public class CourseServiceImpl implements CourseService {
   private Course courseRequestToCourse(CourseRequest courseRequest) {
     Course course = new Course();
     course.setName(courseRequest.getName());
+    course.setHeadline(courseRequest.getHeadline());
+    course.setDescription(courseRequest.getDescription());
     course.setGrade(this.getGrade(courseRequest.getGradeId()));
     course.setPreRequisiteCourses(
         this.getPreRequisiteCourses(courseRequest.getPreRequisiteCourseIds()));
-    course.setDescription(courseRequest.getDescription());
+
+    // save objectives
+    for (String objectiveName : courseRequest.getObjectives()) {
+      CourseObjective courseObjective = new CourseObjective();
+      courseObjective.setName(objectiveName);
+      course.addCourseObjective(courseObjective);
+    }
+
     return course;
   }
 }

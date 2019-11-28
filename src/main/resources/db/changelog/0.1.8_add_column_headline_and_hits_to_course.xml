@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="18" author="junaid">
+        <addColumn tableName="course">
+            <column name="headline" type="varchar(500)"/>
+            <column name="hits" type="BIGINT" defaultValue="0"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

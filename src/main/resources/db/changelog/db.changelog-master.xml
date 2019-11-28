@@ -23,5 +23,7 @@
     <include file="db/changelog/0.1.5_add_column_description_to_course.xml"/>
     <include file="db/changelog/0.1.6_add_column_image_url_to_user.xml"/>
     <include file="db/changelog/0.1.7_add_column_provider_to_user.xml"/>
+    <include file="db/changelog/0.1.8_add_column_headline_and_hits_to_course.xml"/>
+    <include file="db/changelog/0.1.9_create_table_course_objective.xml"/>
 
 </databaseChangeLog>

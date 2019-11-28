@@ -8,27 +8,19 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.HashSet;
-import java.util.Set;
+import javax.validation.constraints.Size;
 
 @Entity
 @Getter
 @Setter
-public class Chapter extends Auditable {
-
-  @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(
-      name = "chapter_tag",
-      joinColumns = @JoinColumn(name = "chapter_id"),
-      inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  private Set<Tag> tags = new HashSet<>();
+public class CourseObjective extends Auditable {
 
   @NotBlank(message = "{NotBlank.field}")
+  @Size(min = 3, max = 250, message = "{Size.field}")
   private String name;
 
   @JsonBackReference
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id", nullable = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
   private Course course;
 }

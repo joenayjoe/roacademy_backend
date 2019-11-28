@@ -1,6 +1,7 @@
 package com.rojunaid.roacademy.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,11 +22,16 @@ public class Course extends Auditable {
   private String name;
 
   @NotBlank(message = "{NotBlank.field}")
+  private String headline;
+
+  @NotBlank(message = "{NotBlank.field}")
   private String description;
 
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)
   private Grade grade;
+
+  private Long hits;
 
   @ManyToMany(
       mappedBy = "preRequisiteCourses",
@@ -46,4 +52,17 @@ public class Course extends Auditable {
   @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
   @JsonIgnore
   private Set<Chapter> chapters = new HashSet<>();
+
+  @OneToMany(
+      mappedBy = "course",
+      fetch = FetchType.EAGER,
+      orphanRemoval = true,
+      cascade = CascadeType.ALL)
+  @JsonManagedReference
+  private Set<CourseObjective> objectives = new HashSet<>();
+
+  public void addCourseObjective(CourseObjective objective) {
+    this.getObjectives().add(objective);
+    objective.setCourse(this);
+  }
 }
