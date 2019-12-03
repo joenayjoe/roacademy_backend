@@ -29,6 +29,5 @@ public class Chapter extends Auditable {
   @JsonBackReference
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id", nullable = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
   private Course course;
 }

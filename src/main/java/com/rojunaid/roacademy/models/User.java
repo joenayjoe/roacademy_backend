@@ -52,4 +52,14 @@ public class User extends Auditable {
   @OneToMany(mappedBy = "user")
   @JsonIgnore
   Set<TeachingResource> teachingResources = new HashSet<>();
+
+  @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
+  Set<Course> teachingCourses = new HashSet<>();
+
+  @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
+  Set<Course> enrolledCourses = new HashSet<>();
+
+  @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
+  @JsonIgnore
+  private Set<Course> createdCourses = new HashSet<>();
 }

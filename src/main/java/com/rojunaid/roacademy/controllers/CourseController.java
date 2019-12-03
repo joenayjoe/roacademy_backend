@@ -27,7 +27,8 @@ public class CourseController {
   // POST /api/courses
   // Create a course
   @PostMapping("")
-  public ResponseEntity<CourseResponse> createCourse(@Valid @RequestBody CourseRequest courseRequest) {
+  public ResponseEntity<CourseResponse> createCourse(
+      @Valid @RequestBody CourseRequest courseRequest) {
     CourseResponse courseResponse = courseService.createCourse(courseRequest);
     return new ResponseEntity<>(courseResponse, HttpStatus.CREATED);
   }

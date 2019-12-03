@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.dto;
 
-import com.rojunaid.roacademy.models.CourseObjective;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +16,16 @@ public class CourseResponse {
   private String name;
   private String headline;
   private String description;
+  private Long categoryId;
   private Long gradeId;
   private Long hits;
-  private Set<CourseObjective> objectives = new HashSet<>();
+  private String level;
+  private String imageUrl;
+  private String status;
+  private UserResponse createdBy;
+  private Set<UserResponse> instructors = new HashSet<>();
+  private Set<UserResponse> students = new HashSet<>();
+  private List<String> objectives = new ArrayList<>();
+  private List<String> requirements = new ArrayList<>();
+  private Set<ChapterResponse> chapters = new HashSet<>();
 }

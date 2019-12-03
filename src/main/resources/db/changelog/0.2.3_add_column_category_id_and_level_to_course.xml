@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="23" author="junaid">
+        <addColumn tableName="course">
+            <column name="category_id" type="BIGINT">
+                <constraints foreignKeyName="fk_course_category_id" references="category(id)"></constraints>
+            </column>
+            <column name="level" type="varchar(50)">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="created_by" type="BIGINT">
+                <constraints foreignKeyName="fk_course_created_by" references="user(id)"></constraints>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
