@@ -1,6 +1,7 @@
 package com.rojunaid.roacademy.repositories;
 
 import com.rojunaid.roacademy.models.Category;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,7 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   @Query("select distinct category from Category category left outer join fetch  category.grades")
-  List<Category> findAllWithGrades();
+  List<Category> findAllWithGrades(Sort sort);
 
   @Query(
       "select category from Category category left join fetch category.grades where category.id=:categoryId")

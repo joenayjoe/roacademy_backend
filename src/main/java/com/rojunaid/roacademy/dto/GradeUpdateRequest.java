@@ -9,7 +9,10 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class GradeRequest {
+public class GradeUpdateRequest {
+
+  @NotNull(message = "{NotNull.field}")
+  private Long id;
 
   @NotBlank(message = "{NotBlank.field}")
   @Size(min = 2, max = 100, message = "{Size.field}")

@@ -9,8 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 public interface CategoryService {
-  Iterable<CategoryResponse> getAllCategory();
-  Iterable<CategoryResponse> getAllCategoryWithGrades();
+  Iterable<CategoryResponse> getAllCategory(String order);
+  Iterable<CategoryResponse> getAllCategoryWithGrades(String order);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   CategoryResponse createCategory(Category category);

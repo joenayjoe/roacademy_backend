@@ -20,12 +20,13 @@ public class CategoryController {
   @GetMapping("")
   public ResponseEntity<Iterable<CategoryResponse>> getAllCategory(
       @RequestParam(value = "withGrade", required = false, defaultValue = "false")
-          boolean withGrade) {
+          boolean withGrade,
+      @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
     if (!withGrade) {
-      Iterable<CategoryResponse> categoryResponses = categoryService.getAllCategory();
+      Iterable<CategoryResponse> categoryResponses = categoryService.getAllCategory(order);
       return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     } else {
-      Iterable<CategoryResponse> categoryResponses = categoryService.getAllCategoryWithGrades();
+      Iterable<CategoryResponse> categoryResponses = categoryService.getAllCategoryWithGrades(order);
       return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     }
   }
@@ -59,8 +60,10 @@ public class CategoryController {
   }
 
   @GetMapping("/{category_id}/get_courses")
-  public ResponseEntity<Iterable<CourseResponse>> getCoursesForCategory(@PathVariable Long category_id) {
-    Iterable<CourseResponse> courseResponses = this.categoryService.findCoursesForCategory(category_id);
+  public ResponseEntity<Iterable<CourseResponse>> getCoursesForCategory(
+      @PathVariable Long category_id) {
+    Iterable<CourseResponse> courseResponses =
+        this.categoryService.findCoursesForCategory(category_id);
     return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 

@@ -3,6 +3,7 @@ package com.rojunaid.roacademy.services.impl;
 import com.rojunaid.roacademy.dto.CategoryResponse;
 import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.dto.GradeResponse;
+import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.models.Course;
@@ -11,6 +12,7 @@ import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.services.CategoryService;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.GradeService;
+import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,9 @@ public class CategoryServiceImpl implements CategoryService {
   @Autowired private CourseService courseService;
 
   @Override
-  public Iterable<CategoryResponse> getAllCategory() {
-    Iterable<Category> categories = categoryRepository.findAll();
+  public Iterable<CategoryResponse> getAllCategory(String order) {
+
+    Iterable<Category> categories = categoryRepository.findAll(SortingUtils.SortBy(order));
     List<CategoryResponse> categoryResponses = new ArrayList<>();
     for (Category category : categories) {
       categoryResponses.add(this.categoryToCategoryResponse(category));
@@ -38,8 +41,9 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public Iterable<CategoryResponse> getAllCategoryWithGrades() {
-    Iterable<Category> categories = categoryRepository.findAllWithGrades();
+  public Iterable<CategoryResponse> getAllCategoryWithGrades(String order) {
+    Iterable<Category> categories =
+        categoryRepository.findAllWithGrades(SortingUtils.SortBy(order));
     List<CategoryResponse> categoryResponses = new ArrayList<>();
     for (Category category : categories) {
       categoryResponses.add(this.categoryToCategoryResponseWithGrades(category));
@@ -94,12 +98,17 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public Iterable<GradeResponse> finGradesByCategoryId(Long category_id) {
-    return gradeService.findGradesByCategoryId(category_id);
+    return gradeService.findGradesByCategoryId(category_id, "id_asc");
   }
 
   @Override
   public void deleteCategoryById(Long categoryId) {
-    if (categoryRepository.existsById(categoryId)) {
+    Category category = categoryRepository.findById(categoryId).orElse(null);
+    if (category != null) {
+      if (category.getGrades().size() > 0) {
+        throw new BadRequestException(
+            "Category with associated grades cannot be deleted. Delete associated grades first.");
+      }
       categoryRepository.deleteById(categoryId);
     } else {
       this.categoryNotFoundException(categoryId);
