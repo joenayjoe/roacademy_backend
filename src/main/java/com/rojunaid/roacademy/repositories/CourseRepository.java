@@ -22,6 +22,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   Iterable<Course> search(String query);
 
   @Override
-  @Query("SELECT crs FROM Course  crs left join fetch crs.courseRequirements left join fetch crs.objectives")
+  @Query("SELECT distinct crs FROM Course  crs left join fetch crs.courseRequirements left join fetch crs.objectives")
   List<Course> findAll();
 }

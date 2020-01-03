@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
+import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.*;
 import com.rojunaid.roacademy.repositories.CategoryRepository;
@@ -9,6 +10,7 @@ import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.repositories.GradeRepository;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.UserService;
+import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +33,9 @@ public class CourseServiceImpl implements CourseService {
   @Autowired private UserService userService;
 
   @Override
-  public Iterable<CourseResponse> getAllCourse() {
+  public Iterable<CourseResponse> getAllCourse(String order) {
 
-    Iterable<Course> courses = courseRepository.findAll();
+    Iterable<Course> courses = courseRepository.findAll(SortingUtils.SortBy(order));
 
     List<CourseResponse> courseResponses = new ArrayList<>();
     for (Course course : courses) {
@@ -73,11 +75,16 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public void deleteCourseById(Long courseId) {
 
-    if (courseRepository.existsById(courseId)) {
-      courseRepository.deleteById(courseId);
-    } else {
-      throw this.courseNotFoundException(courseId);
+    Course course = courseRepository.findById(courseId).orElse(null);
+    if (course != null) {
+      if (course.getStudents().size() > 0) {
+        throw new BadRequestException(
+            "This course has enrolled students, therefore cannot be deleted.");
+      } else {
+        courseRepository.deleteById(courseId);
+      }
     }
+    throw this.courseNotFoundException(courseId);
   }
 
   @Override
@@ -97,6 +104,8 @@ public class CourseServiceImpl implements CourseService {
     courseResponse.setName(course.getName());
     courseResponse.setHeadline(course.getHeadline());
     courseResponse.setDescription(course.getDescription());
+    courseResponse.setCreatedAt(course.getCreatedAt());
+    courseResponse.setUpdatedAt(course.getUpdatedAt());
 
     if (course.getGrade() != null) {
       courseResponse.setGradeId(course.getGrade().getId());

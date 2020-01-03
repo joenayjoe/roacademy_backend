@@ -19,8 +19,8 @@ public class CourseController {
   // GET /api/courses
   // Get all courses
   @GetMapping("")
-  public ResponseEntity<Iterable<CourseResponse>> getAllCourse() {
-    Iterable<CourseResponse> courseResponses = courseService.getAllCourse();
+  public ResponseEntity<Iterable<CourseResponse>> getAllCourse(@RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
+    Iterable<CourseResponse> courseResponses = courseService.getAllCourse(order);
     return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 

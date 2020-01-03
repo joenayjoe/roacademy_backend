@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class CourseResponse {
+public class CourseResponse extends AuditableDTO {
 
   private Long id;
   private String name;

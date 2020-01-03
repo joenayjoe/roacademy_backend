@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface CourseService {
 
-  Iterable<CourseResponse> getAllCourse();
+  Iterable<CourseResponse> getAllCourse(String order);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   CourseResponse createCourse(CourseRequest courseRequest);
