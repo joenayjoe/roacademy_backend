@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
+import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,31 @@ public class CourseController {
   // GET /api/courses
   // Get all courses
   @GetMapping("")
-  public ResponseEntity<Iterable<CourseResponse>> getAllCourse(@RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
-    Iterable<CourseResponse> courseResponses = courseService.getAllCourse(order);
+  public ResponseEntity<Iterable<CourseResponse>> getAllCourses(
+      @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
+    Iterable<CourseResponse> courseResponses = courseService.findAll(order);
+    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
+  }
+
+  // GET /api/courses
+  // Get all courses for a category
+  @GetMapping(value = "", params = "category_id")
+  public ResponseEntity<Iterable<CourseResponse>> getAllCoursesByCategoryId(
+          @RequestParam Long category_id,
+          @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order,
+          @RequestParam(name = "status", required = false, defaultValue = "PUBLISHED") CourseStatusEnum[] status) {
+    Iterable<CourseResponse> courseResponses = courseService.findCoursesByCategoryId(category_id, status, order);
+    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
+  }
+
+  // GET /api/courses
+  // Get all courses for a grade
+  @GetMapping(value = "", params = "grade_id")
+  public ResponseEntity<Iterable<CourseResponse>> getAllCoursesByGradeId(
+      @RequestParam Long grade_id,
+      @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order,
+  @RequestParam(name = "status", required = false, defaultValue = "PUBLISHED") CourseStatusEnum[] status) {
+    Iterable<CourseResponse> courseResponses = courseService.findCoursesByGradeId(grade_id, status, order);
     return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 

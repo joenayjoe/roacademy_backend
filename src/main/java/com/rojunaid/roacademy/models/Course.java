@@ -73,7 +73,7 @@ public class Course extends Auditable {
 
   @OneToMany(
       mappedBy = "course",
-      fetch = FetchType.EAGER,
+      fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.ALL)
   @JsonManagedReference
@@ -81,7 +81,7 @@ public class Course extends Auditable {
 
   @OneToMany(
       mappedBy = "course",
-      fetch = FetchType.EAGER,
+      fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.ALL)
   @JsonManagedReference
@@ -101,7 +101,7 @@ public class Course extends Auditable {
       inverseJoinColumns = {@JoinColumn(name = "student_id")})
   private Set<User> students = new HashSet<>();
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "created_by")
   private User createdBy;
 

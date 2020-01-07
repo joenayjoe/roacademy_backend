@@ -9,13 +9,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface GradeService {
 
-  Iterable<Grade> getAllGrade();
+  Iterable<GradeResponse> findAll(String order);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  GradeResponse createGrade(Long categoryId, GradeRequest gradeRequest);
+  GradeResponse createGrade(GradeRequest gradeRequest);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  GradeResponse updateGrade(Long categoryId, Long gradeId, GradeUpdateRequest gradeUpdateRequest);
+  GradeResponse updateGrade(Long gradeId, GradeUpdateRequest gradeUpdateRequest);
 
   GradeResponse findGradeById(Long gradeId);
   GradeResponse findGradeWithCoursesById(Long gradeId);
@@ -24,8 +24,6 @@ public interface GradeService {
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteGradeById(Long gradeId);
-
-  Iterable<CourseResponse> findCoursesByGradeId(Long gradeId);
 
   GradeResponse gradeToGradeResponse(Grade grade);
 }

@@ -33,9 +33,44 @@ public class CourseServiceImpl implements CourseService {
   @Autowired private UserService userService;
 
   @Override
-  public Iterable<CourseResponse> getAllCourse(String order) {
+  public Iterable<CourseResponse> findAll(String order) {
 
     Iterable<Course> courses = courseRepository.findAll(SortingUtils.SortBy(order));
+
+    List<CourseResponse> courseResponses = new ArrayList<>();
+    for (Course course : courses) {
+      courseResponses.add(this.courseToCourseResponse(course));
+    }
+    return courseResponses;
+  }
+
+  @Override
+  public Iterable<CourseResponse> findCoursesByCategoryId(
+      Long category_id, CourseStatusEnum[] statuses, String order) {
+
+    List<String> statusList = new ArrayList<>();
+    for (CourseStatusEnum st : statuses) {
+      statusList.add(st.name());
+    }
+    Iterable<Course> courses =
+        courseRepository.findAllByCategoryId(category_id, statusList, SortingUtils.SortBy(order));
+
+    List<CourseResponse> courseResponses = new ArrayList<>();
+    for (Course course : courses) {
+      courseResponses.add(this.courseToCourseResponse(course));
+    }
+    return courseResponses;
+  }
+
+  @Override
+  public Iterable<CourseResponse> findCoursesByGradeId(
+      Long grade_id, CourseStatusEnum[] statuses, String order) {
+    List<String> statusList = new ArrayList<>();
+    for (CourseStatusEnum st : statuses) {
+      statusList.add(st.name());
+    }
+    Iterable<Course> courses =
+        courseRepository.findAllByGradeId(grade_id, statusList, SortingUtils.SortBy(order));
 
     List<CourseResponse> courseResponses = new ArrayList<>();
     for (Course course : courses) {
@@ -69,7 +104,7 @@ public class CourseServiceImpl implements CourseService {
             .findById(courseId)
             .orElseThrow(() -> this.courseNotFoundException(courseId));
 
-    return this.courseToCourseResponse(course);
+    return this.courseToCourseResponseWithObjectivesAndRequirements(course);
   }
 
   @Override
@@ -117,10 +152,6 @@ public class CourseServiceImpl implements CourseService {
 
     courseResponse.setLevel(course.getLevel().name());
     courseResponse.setHits(course.getHits());
-    courseResponse.setObjectives(
-        course.getObjectives().stream().map(x -> x.getName()).collect(Collectors.toList()));
-    courseResponse.setRequirements(
-        course.getCourseRequirements().stream().map(x -> x.getName()).collect(Collectors.toList()));
     courseResponse.setCreatedBy(this.userService.userToUserResponse(course.getCreatedBy()));
     courseResponse.setImageUrl(course.getImageUrl());
     courseResponse.setStatus(course.getStatus().name());
@@ -129,6 +160,15 @@ public class CourseServiceImpl implements CourseService {
 
   // util methods
 
+  private CourseResponse courseToCourseResponseWithObjectivesAndRequirements(Course course) {
+    CourseResponse courseResponse = this.courseToCourseResponse(course);
+
+    courseResponse.setObjectives(
+            course.getObjectives().stream().map(x -> x.getName()).collect(Collectors.toList()));
+    courseResponse.setRequirements(
+            course.getCourseRequirements().stream().map(x -> x.getName()).collect(Collectors.toList()));
+    return courseResponse;
+  }
   private Grade getGrade(Long gradeId) {
     return gradeRepository
         .findById(gradeId)

@@ -1,16 +1,13 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.CategoryResponse;
-import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.dto.GradeResponse;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Category;
-import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.services.CategoryService;
-import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.GradeService;
 import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
@@ -27,10 +24,8 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Autowired private GradeService gradeService;
 
-  @Autowired private CourseService courseService;
-
   @Override
-  public Iterable<CategoryResponse> getAllCategory(String order) {
+  public Iterable<CategoryResponse> findAllCategory(String order) {
 
     Iterable<Category> categories = categoryRepository.findAll(SortingUtils.SortBy(order));
     List<CategoryResponse> categoryResponses = new ArrayList<>();
@@ -41,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public Iterable<CategoryResponse> getAllCategoryWithGrades(String order) {
+  public Iterable<CategoryResponse> findAllCategoryWithGrades(String order) {
     Iterable<Category> categories =
         categoryRepository.findAllWithGrades(SortingUtils.SortBy(order));
     List<CategoryResponse> categoryResponses = new ArrayList<>();
@@ -87,21 +82,6 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public List<CourseResponse> findCoursesForCategory(Long categoryId) {
-    Category category =
-        categoryRepository
-            .finCategoryWithGradesAndCoursesById(categoryId)
-            .orElseThrow(() -> this.categoryNotFoundException(categoryId));
-
-    return this.extractCourseResponsesFromCategory(category);
-  }
-
-  @Override
-  public Iterable<GradeResponse> finGradesByCategoryId(Long category_id) {
-    return gradeService.findGradesByCategoryId(category_id, "id_asc");
-  }
-
-  @Override
   public void deleteCategoryById(Long categoryId) {
     Category category = categoryRepository.findById(categoryId).orElse(null);
     if (category != null) {
@@ -131,18 +111,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
     categoryResponse.setGrades(gradeResponses);
     return categoryResponse;
-  }
-
-  private List<CourseResponse> extractCourseResponsesFromCategory(Category category) {
-
-    List<CourseResponse> courseResponses = new ArrayList<>();
-    for (Grade grade : category.getGrades()) {
-      for (Course course : grade.getCourses()) {
-        courseResponses.add(this.courseService.courseToCourseResponse(course));
-      }
-    }
-
-    return courseResponses;
   }
 
   private CategoryResponse categoryToCategoryResponse(Category category) {

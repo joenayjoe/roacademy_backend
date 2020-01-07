@@ -1,7 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.CategoryResponse;
-import com.rojunaid.roacademy.dto.CourseResponse;
 import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +22,11 @@ public class CategoryController {
           boolean withGrade,
       @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
     if (!withGrade) {
-      Iterable<CategoryResponse> categoryResponses = categoryService.getAllCategory(order);
+      Iterable<CategoryResponse> categoryResponses = categoryService.findAllCategory(order);
       return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     } else {
-      Iterable<CategoryResponse> categoryResponses = categoryService.getAllCategoryWithGrades(order);
+      Iterable<CategoryResponse> categoryResponses =
+          categoryService.findAllCategoryWithGrades(order);
       return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     }
   }
@@ -57,14 +57,6 @@ public class CategoryController {
       CategoryResponse categoryResponse = categoryService.findCategoryById(category_id);
       return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
-  }
-
-  @GetMapping("/{category_id}/get_courses")
-  public ResponseEntity<Iterable<CourseResponse>> getCoursesForCategory(
-      @PathVariable Long category_id) {
-    Iterable<CourseResponse> courseResponses =
-        this.categoryService.findCoursesForCategory(category_id);
-    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 
   @DeleteMapping("/{category_id}")

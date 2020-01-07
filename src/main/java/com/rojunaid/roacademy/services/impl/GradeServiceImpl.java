@@ -8,6 +8,7 @@ import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.models.Course;
+import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.repositories.CourseRepository;
@@ -17,7 +18,6 @@ import com.rojunaid.roacademy.services.GradeService;
 import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,12 +32,17 @@ public class GradeServiceImpl implements GradeService {
   @Autowired CourseService courseService;
 
   @Override
-  public Iterable<Grade> getAllGrade() {
-    return gradeRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+  public Iterable<GradeResponse> findAll(String order) {
+    Iterable<Grade> grades = gradeRepository.findAll(SortingUtils.SortBy(order));
+    List<GradeResponse> gradeResponses = new ArrayList<>();
+    for (Grade grade : grades) {
+      gradeResponses.add(this.gradeToGradeResponse(grade));
+    }
+    return gradeResponses;
   }
 
   @Override
-  public GradeResponse createGrade(Long categoryId, GradeRequest gradeRequest) {
+  public GradeResponse createGrade(GradeRequest gradeRequest) {
     Category category = categoryRepository.findById(gradeRequest.getCategoryId()).orElse(null);
     if (category != null) {
       Grade grade = this.gradeRequestToGrade(gradeRequest);
@@ -52,8 +57,7 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
-  public GradeResponse updateGrade(
-      Long categoryId, Long gradeId, GradeUpdateRequest gradeUpdateRequest) {
+  public GradeResponse updateGrade(Long gradeId, GradeUpdateRequest gradeUpdateRequest) {
     Category category =
         categoryRepository
             .findById(gradeUpdateRequest.getCategoryId())
@@ -85,7 +89,7 @@ public class GradeServiceImpl implements GradeService {
   public GradeResponse findGradeWithCoursesById(Long gradeId) {
     Grade grade =
         gradeRepository
-            .findGradeWithCoursesById(gradeId)
+            .findById(gradeId)
             .orElseThrow(() -> this.gradeNotFoundException(gradeId));
     GradeResponse gradeResponse = this.gradeToGradeResponseWithCourses(grade);
     return gradeResponse;
@@ -117,16 +121,6 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
-  public Iterable<CourseResponse> findCoursesByGradeId(Long gradeId) {
-    Iterable<Course> courses = courseRepository.findAllByGradeId(gradeId);
-    List<CourseResponse> courseResponses = new ArrayList<>();
-    for (Course course : courses) {
-      courseResponses.add(courseService.courseToCourseResponse(course));
-    }
-    return courseResponses;
-  }
-
-  @Override
   public GradeResponse gradeToGradeResponse(Grade grade) {
     GradeResponse gradeResponse = new GradeResponse();
     gradeResponse.setId(grade.getId());
@@ -141,11 +135,11 @@ public class GradeServiceImpl implements GradeService {
   // private methods
   private GradeResponse gradeToGradeResponseWithCourses(Grade grade) {
     GradeResponse gradeResponse = gradeToGradeResponse(grade);
-    List<CourseResponse> courseResponses = new ArrayList<>();
-    for (Course course : grade.getCourses()) {
-      courseResponses.add(courseService.courseToCourseResponse(course));
-    }
-    gradeResponse.setCourses(courseResponses);
+    CourseStatusEnum[] states = {CourseStatusEnum.PUBLISHED};
+    Iterable<CourseResponse> courseResponses = courseService.findCoursesByGradeId(grade.getId(), states, "id_asc");
+    List<CourseResponse> cList = new ArrayList<>();
+    courseResponses.forEach(cList::add);
+    gradeResponse.setCourses(cList);
     return gradeResponse;
   }
 

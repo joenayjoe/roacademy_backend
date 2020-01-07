@@ -13,18 +13,28 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/categories/{categoryId}/grades")
+@RequestMapping("/api/grades")
 public class GradeController {
 
   @Autowired private GradeService gradeService;
 
-  // GET /api/categories/:categoryId/grades
+  // GET /api/grades
   // Get all grades
   @GetMapping("")
-  public ResponseEntity<Iterable<GradeResponse>> getAllGrade(
-      @PathVariable Long categoryId,
+  public ResponseEntity<Iterable<GradeResponse>> getAllGrades(
       @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
-    Iterable<GradeResponse> gradeResponses = gradeService.findGradesByCategoryId(categoryId, order);
+    Iterable<GradeResponse> gradeResponses = gradeService.findAll(order);
+
+    return new ResponseEntity<>(gradeResponses, HttpStatus.OK);
+  }
+
+  // GET /api/grades?category_id=:categoryId
+  // Get all grades by categoryId
+  @GetMapping(value = "", params = "category_id")
+  public ResponseEntity<Iterable<GradeResponse>> getGradesByCategoryId(
+          @RequestParam Long category_id,
+          @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
+    Iterable<GradeResponse> gradeResponses = gradeService.findGradesByCategoryId(category_id, order);
 
     return new ResponseEntity<>(gradeResponses, HttpStatus.OK);
   }
@@ -32,9 +42,8 @@ public class GradeController {
   // POST /api/categories/:categoryId/grades
   // Create a grade
   @PostMapping("")
-  public ResponseEntity<GradeResponse> createGrade(
-      @PathVariable Long categoryId, @Valid @RequestBody GradeRequest gradeRequest) {
-    GradeResponse gradeResponse = gradeService.createGrade(categoryId, gradeRequest);
+  public ResponseEntity<GradeResponse> createGrade(@Valid @RequestBody GradeRequest gradeRequest) {
+    GradeResponse gradeResponse = gradeService.createGrade(gradeRequest);
     return new ResponseEntity<>(gradeResponse, HttpStatus.CREATED);
   }
 
@@ -42,10 +51,9 @@ public class GradeController {
   // Update a section
   @PutMapping("/{gradeId}")
   public ResponseEntity<GradeResponse> updateGrade(
-      @PathVariable Long categoryId,
       @PathVariable Long gradeId,
       @Valid @RequestBody GradeUpdateRequest gradeUpdateRequest) {
-    GradeResponse gradeResponse = gradeService.updateGrade(categoryId, gradeId, gradeUpdateRequest);
+    GradeResponse gradeResponse = gradeService.updateGrade(gradeId, gradeUpdateRequest);
     return new ResponseEntity<>(gradeResponse, HttpStatus.OK);
   }
 
@@ -74,12 +82,5 @@ public class GradeController {
   public ResponseEntity<HttpStatus> deleteGradeById(@PathVariable Long gradeId) {
     gradeService.deleteGradeById(gradeId);
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @GetMapping("/{gradeId}/courses")
-  public ResponseEntity<Iterable<CourseResponse>> getCoursesByGradeId(@PathVariable Long gradeId) {
-
-    Iterable<CourseResponse> courseResponses = gradeService.findCoursesByGradeId(gradeId);
-    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 }

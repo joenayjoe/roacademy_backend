@@ -14,7 +14,4 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
   // @Query(value = "SELECT * FROM grade g where g.category_id = ?1", nativeQuery = true)
   @Query("select g from Grade g join g.category c where c.id = :categoryId")
   Iterable<Grade> findAllByCategoryId(Long categoryId, Sort sort);
-
-  @Query("select g from Grade g left join fetch g.courses where g.id=:gradeId")
-  Optional<Grade> findGradeWithCoursesById(Long gradeId);
 }
