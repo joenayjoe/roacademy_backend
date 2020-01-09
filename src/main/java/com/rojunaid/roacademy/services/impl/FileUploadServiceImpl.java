@@ -56,16 +56,18 @@ public class FileUploadServiceImpl implements FileUploadService {
 
   @Override
   public Resource getFileAsResource(String fileUrl) {
-    try{
+    try {
       Path filePath = Paths.get(uploadDir, fileUrl).normalize();
       Resource resource = new UrlResource(filePath.toUri());
-      if(resource.exists()) {
+      if (resource.exists()) {
         return resource;
       } else {
-        throw new ResourceNotFoundException("File with url ["+fileUrl+"] not found");
+        throw new ResourceNotFoundException(
+            Translator.toLocale("File.notfound", new Object[] {fileUrl}));
       }
-    }catch (MalformedURLException ex) {
-      throw new ResourceNotFoundException("File with url ["+fileUrl+"] not found");
+    } catch (MalformedURLException ex) {
+      throw new ResourceNotFoundException(
+          Translator.toLocale("File.notfound", new Object[] {fileUrl}));
     }
   }
 }

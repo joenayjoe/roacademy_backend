@@ -1,6 +1,8 @@
 package com.rojunaid.roacademy.controllers;
 
+import com.rojunaid.roacademy.dto.CategoryRequest;
 import com.rojunaid.roacademy.dto.CategoryResponse;
+import com.rojunaid.roacademy.dto.CategoryUpdateRequest;
 import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +34,14 @@ public class CategoryController {
   }
 
   @PostMapping("")
-  public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody Category category) {
+  public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest category) {
     CategoryResponse categoryResponse = categoryService.createCategory(category);
     return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
   }
 
   @PutMapping("/{category_id}")
   public ResponseEntity<CategoryResponse> updateCategory(
-      @Valid @RequestBody Category category, @PathVariable Long category_id) {
+          @Valid @RequestBody CategoryUpdateRequest category, @PathVariable Long category_id) {
     CategoryResponse categoryResponse = categoryService.updateCategory(category_id, category);
     return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
   }

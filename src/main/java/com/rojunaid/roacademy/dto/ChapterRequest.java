@@ -12,10 +12,10 @@ import java.util.Set;
 @Setter
 public class ChapterRequest {
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.Chapter.name}")
   private String name;
 
-  @NotNull(message = "{NotNull.field}")
+  @NotNull(message = "{NotNull.Chapter.courseId}")
   private Long courseId;
 
   private Set<String> tagNames = new HashSet<>();

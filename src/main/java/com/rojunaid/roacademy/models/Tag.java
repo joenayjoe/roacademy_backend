@@ -21,6 +21,6 @@ public class Tag extends Auditable {
   @ManyToMany(mappedBy = "tags")
   @JsonIgnore
   Set<TeachingResource> teachingResources = new HashSet<>();
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.Tag.name}")
   private String name;
 }

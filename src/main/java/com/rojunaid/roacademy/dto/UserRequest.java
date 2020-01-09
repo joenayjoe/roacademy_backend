@@ -12,19 +12,19 @@ import javax.validation.constraints.NotBlank;
 @FieldMatch(first = "password", second = "confirmPassword", message = "{FieldMatch.password}")
 public class UserRequest {
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.User.firstName}")
   private String firstName;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.User.lastName}")
   private String lastName;
 
   @ValidEmail(message = "{ValidEmail.email}")
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.User.email}")
   private String email;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.User.password}")
   private String password;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.User.confirmPassword}")
   private String confirmPassword;
 }

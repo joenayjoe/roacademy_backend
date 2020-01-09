@@ -12,9 +12,9 @@ import java.util.List;
 @Setter
 public class UserRoleUpdateRequest {
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.Role.id}")
   private List<Long> roleIds = new ArrayList<>();
 
-  @NotEmpty(message = "{NotEmpty.field}")
+  @NotEmpty(message = "{NotEmpty.User.id}")
   private Long userId;
 }

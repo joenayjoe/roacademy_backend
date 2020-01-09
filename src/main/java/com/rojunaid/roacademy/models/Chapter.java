@@ -23,7 +23,6 @@ public class Chapter extends Auditable {
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private Set<Tag> tags = new HashSet<>();
 
-  @NotBlank(message = "{NotBlank.field}")
   private String name;
 
   @JsonBackReference

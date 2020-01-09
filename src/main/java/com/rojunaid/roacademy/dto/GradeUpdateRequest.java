@@ -11,13 +11,13 @@ import javax.validation.constraints.Size;
 @Setter
 public class GradeUpdateRequest {
 
-  @NotNull(message = "{NotNull.field}")
+  @NotNull(message = "{NotNull.Grade.id}")
   private Long id;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.Grade.name}")
   @Size(min = 2, max = 100, message = "{Size.field}")
   private String name;
 
-  @NotNull(message = "{NotNull.field}")
+  @NotNull(message = "{NotNull.Grade.categoryId}")
   private Long categoryId;
 }

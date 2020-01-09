@@ -12,19 +12,19 @@ import java.util.Set;
 @Setter
 public class TeachingResourceRequest {
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.TeachingResource.title}")
   private String title;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.TeachingResource.description}")
   private String description;
 
   private Set<String> tagNames = new HashSet<>();
 
   private String privacyStatus;
 
-  @NotNull(message = "{NotNull.field}")
+  @NotNull(message = "{NotNull.TeachingResource.resourceOwnerId}")
   private Long resourceOwnerId;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.TeachingResource.resourceOwnerType}")
   private String resourceOwnerType;
 }

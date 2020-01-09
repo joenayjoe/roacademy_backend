@@ -12,6 +12,6 @@ public class GradeResponse extends AuditableDTO {
 
   private Long id;
   private String name;
-  private Long categoryId;
+  private PrimaryCategory primaryCategory;
   private List<CourseResponse> courses = new ArrayList<>();
 }

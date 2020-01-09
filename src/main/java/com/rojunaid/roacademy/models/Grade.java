@@ -19,8 +19,6 @@ public class Grade extends Auditable {
   @ManyToOne(fetch = FetchType.LAZY)
   Category category;
 
-  @NotBlank(message = "{NotBlank.field}")
-  @Size(min = 3, max = 100, message = "{Size.field}")
   @Column(unique = true)
   private String name;
 

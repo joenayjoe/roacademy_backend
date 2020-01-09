@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.ChapterRequest;
 import com.rojunaid.roacademy.dto.ChapterResponse;
+import com.rojunaid.roacademy.dto.PrimaryCourse;
 import com.rojunaid.roacademy.dto.TagResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Chapter;
@@ -70,7 +71,8 @@ public class ChapterServiceImpl implements ChapterService {
 
   @Override
   public void deleteChapter(Long chapterId) {
-    if (chapterRepository.existsById(chapterId)) {
+    Chapter chapter = chapterRepository.findById(chapterId).orElse(null);
+    if (chapter != null) {
       chapterRepository.deleteById(chapterId);
     } else {
       throw this.chapterNotFoundException(chapterId);
@@ -80,13 +82,19 @@ public class ChapterServiceImpl implements ChapterService {
   @Override
   public ChapterResponse chapterToChapterResponse(Chapter chapter) {
 
-    Long courseId = chapter.getCourse().getId();
+    Course course = chapter.getCourse();
     Long chapterId = chapter.getId();
 
     ChapterResponse chapterResponse = new ChapterResponse();
     chapterResponse.setId(chapterId);
     chapterResponse.setName(chapter.getName());
-    chapterResponse.setCourseId(courseId);
+    chapterResponse.setCreatedAt(chapter.getCreatedAt());
+    chapterResponse.setUpdatedAt(chapter.getUpdatedAt());
+
+    PrimaryCourse primaryCourse = new PrimaryCourse();
+    primaryCourse.setId(course.getId());
+    primaryCourse.setName(course.getName());
+    chapterResponse.setPrimaryCourse(primaryCourse);
 
     List<TagResponse> tagResponses = new ArrayList<>();
     for (Tag tag : chapter.getTags()) {

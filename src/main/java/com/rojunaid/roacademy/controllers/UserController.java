@@ -26,19 +26,6 @@ public class UserController {
     return new ResponseEntity<>(userResponses, HttpStatus.OK);
   }
 
-  //  @PostMapping("")
-  //  public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userDTO) {
-  //    UserResponse userResponse = userService.createUser(userDTO);
-  //    return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
-  //  }
-  //
-  //  @PutMapping("/{userId}")
-  //  public ResponseEntity<UserResponse> updateUser(
-  //      @PathVariable Long userId, @Valid @RequestBody UserUpdateRequest userUpdateDTO) {
-  //    UserResponse userResponse = userService.updateUser(userId, userUpdateDTO);
-  //    return new ResponseEntity<>(userResponse, HttpStatus.OK);
-  //  }
-
   @PostMapping("/{userId}/update_roles")
   public ResponseEntity<UserResponse> updateUserRoles(
       @PathVariable Long userId, @Valid UserRoleUpdateRequest userRoleUpdateRequest) {

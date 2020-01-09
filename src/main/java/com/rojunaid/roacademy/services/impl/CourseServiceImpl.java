@@ -1,7 +1,6 @@
 package com.rojunaid.roacademy.services.impl;
 
-import com.rojunaid.roacademy.dto.CourseRequest;
-import com.rojunaid.roacademy.dto.CourseResponse;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.*;
@@ -9,16 +8,13 @@ import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.repositories.GradeRepository;
 import com.rojunaid.roacademy.services.CourseService;
-import com.rojunaid.roacademy.services.UserService;
 import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,8 +25,6 @@ public class CourseServiceImpl implements CourseService {
   @Autowired private GradeRepository gradeRepository;
 
   @Autowired private CategoryRepository categoryRepository;
-
-  @Autowired private UserService userService;
 
   @Override
   public Iterable<CourseResponse> findAll(String order) {
@@ -113,8 +107,7 @@ public class CourseServiceImpl implements CourseService {
     Course course = courseRepository.findById(courseId).orElse(null);
     if (course != null) {
       if (course.getStudents().size() > 0) {
-        throw new BadRequestException(
-            "This course has enrolled students, therefore cannot be deleted.");
+        throw new BadRequestException(Translator.toLocale("Course.cannotdelete"));
       } else {
         courseRepository.deleteById(courseId);
       }
@@ -143,16 +136,30 @@ public class CourseServiceImpl implements CourseService {
     courseResponse.setUpdatedAt(course.getUpdatedAt());
 
     if (course.getGrade() != null) {
-      courseResponse.setGradeId(course.getGrade().getId());
+      PrimaryGrade primaryGrade = new PrimaryGrade();
+      primaryGrade.setId(course.getGrade().getId());
+      primaryGrade.setName(course.getGrade().getName());
+      courseResponse.setPrimaryGrade(primaryGrade);
     }
 
     if (course.getCategory() != null) {
-      courseResponse.setCategoryId(course.getCategory().getId());
+      PrimaryCategory primaryCategory = new PrimaryCategory();
+      primaryCategory.setId(course.getCategory().getId());
+      primaryCategory.setName(course.getCategory().getName());
+      courseResponse.setPrimaryCategory(primaryCategory);
     }
 
     courseResponse.setLevel(course.getLevel().name());
     courseResponse.setHits(course.getHits());
-    courseResponse.setCreatedBy(this.userService.userToUserResponse(course.getCreatedBy()));
+
+    PrimaryUser primaryUser = new PrimaryUser();
+    primaryUser.setId(course.getCreatedBy().getId());
+    primaryUser.setFirstName(course.getCreatedBy().getFirstName());
+    primaryUser.setLastName(course.getCreatedBy().getLastName());
+    primaryUser.setEmail(course.getCreatedBy().getEmail());
+
+    courseResponse.setCreatedBy(primaryUser);
+
     courseResponse.setImageUrl(course.getImageUrl());
     courseResponse.setStatus(course.getStatus().name());
     return courseResponse;
@@ -164,11 +171,12 @@ public class CourseServiceImpl implements CourseService {
     CourseResponse courseResponse = this.courseToCourseResponse(course);
 
     courseResponse.setObjectives(
-            course.getObjectives().stream().map(x -> x.getName()).collect(Collectors.toList()));
+        course.getObjectives().stream().map(x -> x.getName()).collect(Collectors.toList()));
     courseResponse.setRequirements(
-            course.getCourseRequirements().stream().map(x -> x.getName()).collect(Collectors.toList()));
+        course.getCourseRequirements().stream().map(x -> x.getName()).collect(Collectors.toList()));
     return courseResponse;
   }
+
   private Grade getGrade(Long gradeId) {
     return gradeRepository
         .findById(gradeId)
@@ -185,16 +193,6 @@ public class CourseServiceImpl implements CourseService {
             () ->
                 new ResourceNotFoundException(
                     Translator.toLocale("Category.id.notfound", new Object[] {categoryId})));
-  }
-
-  private Set<Course> getPreRequisiteCourses(List<Long> preReqCourseIds) {
-    Set<Course> preReqCourses = new HashSet<>();
-    for (Long id : preReqCourseIds) {
-      Course course1 =
-          courseRepository.findById(id).orElseThrow(() -> this.courseNotFoundException(id));
-      preReqCourses.add(course1);
-    }
-    return preReqCourses;
   }
 
   // private methods
@@ -217,8 +215,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
     course.setLevel(courseRequest.getLevel());
-    course.setPreRequisiteCourses(
-        this.getPreRequisiteCourses(courseRequest.getPreRequisiteCourseIds()));
 
     // save objectives
     for (String objectiveName : courseRequest.getObjectives()) {

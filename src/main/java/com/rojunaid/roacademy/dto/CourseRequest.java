@@ -16,25 +16,24 @@ import java.util.List;
 @Setter
 public class CourseRequest {
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.Course.name}")
   private String name;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.Course.headline}")
   private String headline;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.Course.description}")
   private String description;
 
+  @NotNull(message = "{NotNull.Course.categoryId}")
   private Long categoryId;
 
-  @NotNull(message = "{NotNull.field}")
+  @NotNull(message = "{NotNull.Course.gradeId}")
   private Long gradeId;
 
-  @NotNull(message = "{NotNull.field}")
+  @NotNull(message = "{NotNull.Course.level}")
   @Enumerated(EnumType.STRING)
   private LevelEnum level;
-
-  private List<Long> preRequisiteCourseIds = new ArrayList<>();
 
   private List<String> objectives = new ArrayList<>();
 

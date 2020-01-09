@@ -8,8 +8,6 @@ import lombok.Setter;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,15 +16,11 @@ import java.util.Set;
 @Setter
 public class Course extends Auditable {
 
-  @NotBlank(message = "{NotBlank.field}")
-  @Size(min = 3, max = 100, message = "{Size.field}")
   @Column(unique = true)
   private String name;
 
-  @NotBlank(message = "{NotBlank.field}")
   private String headline;
 
-  @NotBlank(message = "{NotBlank.field}")
   private String description;
 
   @JsonIgnore

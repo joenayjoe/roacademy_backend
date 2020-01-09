@@ -14,24 +14,24 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class OAuth2Credential extends Auditable {
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.OAuth2Credential.clientId}")
   private String clientId;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.OAuth2Credential.clientSecret}")
   private String clientSecret;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.OAuth2Credential.accessToken}")
   private String accessToken;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.OAuth2Credential.refreshToken}")
   private String refreshToken;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.OAuth2Credential.scope}")
   private String scope;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.OAuth2Credential.tokenType}")
   private String tokenType;
 
-  @NotNull(message = "{NotNull.field}")
+  @NotNull(message = "{NotNull.OAuth2Credential.expiresInSeconds}")
   private Long expiresInSeconds;
 }

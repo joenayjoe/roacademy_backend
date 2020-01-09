@@ -8,10 +8,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class LoginRequest {
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.User.email}")
   @ValidEmail(message = "{ValidEmail.email}")
   private String email;
 
-  @NotBlank(message = "{NotBlank.field}")
+  @NotBlank(message = "{NotBlank.User.password}")
   private String password;
 }

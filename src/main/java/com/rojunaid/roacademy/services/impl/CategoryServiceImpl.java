@@ -1,6 +1,8 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.dto.CategoryRequest;
 import com.rojunaid.roacademy.dto.CategoryResponse;
+import com.rojunaid.roacademy.dto.CategoryUpdateRequest;
 import com.rojunaid.roacademy.dto.GradeResponse;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
@@ -47,14 +49,16 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   @Override
-  public CategoryResponse createCategory(Category category) {
-    Category category1 = categoryRepository.save(category);
+  public CategoryResponse createCategory(CategoryRequest category) {
+    Category category1 = new Category();
+    category1.setName(category.getName());
+    category1 = categoryRepository.save(category1);
     return this.categoryToCategoryResponse(category1);
   }
 
   @Override
-  public CategoryResponse updateCategory(Long categoryId, Category updatedCategory) {
-    Category category = categoryRepository.findById(categoryId).orElse(null);
+  public CategoryResponse updateCategory(Long categoryId, CategoryUpdateRequest updatedCategory) {
+    Category category = categoryRepository.findById(updatedCategory.getId()).orElse(null);
     if (category != null) {
       category.setName(updatedCategory.getName());
       category = categoryRepository.save(category);
@@ -86,8 +90,7 @@ public class CategoryServiceImpl implements CategoryService {
     Category category = categoryRepository.findById(categoryId).orElse(null);
     if (category != null) {
       if (category.getGrades().size() > 0) {
-        throw new BadRequestException(
-            "Category with associated grades cannot be deleted. Delete associated grades first.");
+        throw new BadRequestException(Translator.toLocale("Category.cannotdelete"));
       }
       categoryRepository.deleteById(categoryId);
     } else {

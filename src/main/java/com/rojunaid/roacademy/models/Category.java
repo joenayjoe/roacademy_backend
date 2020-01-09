@@ -15,8 +15,6 @@ import java.util.Set;
 @Setter
 public class Category extends Auditable {
 
-  @NotBlank(message = "{NotBlank.field}")
-  @Size(min = 2, max = 100, message = "{Size.field}")
   @Column(unique = true)
   private String name;
 

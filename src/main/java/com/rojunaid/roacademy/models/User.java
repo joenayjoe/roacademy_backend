@@ -1,13 +1,10 @@
 package com.rojunaid.roacademy.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rojunaid.roacademy.validator.ValidEmail;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,24 +13,13 @@ import java.util.Set;
 @Setter
 public class User extends Auditable {
 
-  @NotBlank(message = "First Name: {NotBlank.field}")
-  @Size(min = 1, max = 100, message = "{Size.field}")
   private String firstName;
-
-  @NotBlank(message = "Last Name: {NotBlank.field}")
-  @Size(min = 1, max = 100, message = "{Size.field}")
   private String lastName;
 
-  @NotBlank(message = "Email: {NotBlank.field}")
-  @Size(min = 3, max = 100, message = "{Size.field}")
   @Column(unique = true)
-  @ValidEmail(message = "{ValidEmail.email}")
   private String email;
 
-  @NotBlank(message = "Password: {NotBlank.field}")
-  @Size(min = 8, max = 100, message = "{Size.field}")
-  @JsonIgnore
-  private String hashPassword;
+  @JsonIgnore private String hashPassword;
 
   private String imageUrl;
 

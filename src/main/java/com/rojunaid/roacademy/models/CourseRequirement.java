@@ -8,13 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @Getter
 @Setter
 public class CourseRequirement extends Auditable {
-  @NotBlank(message = "{NotBlank.field}")
+
   private String name;
 
   @JsonBackReference

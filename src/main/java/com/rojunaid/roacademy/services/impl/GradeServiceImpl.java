@@ -1,13 +1,9 @@
 package com.rojunaid.roacademy.services.impl;
 
-import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.dto.GradeRequest;
-import com.rojunaid.roacademy.dto.GradeResponse;
-import com.rojunaid.roacademy.dto.GradeUpdateRequest;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Category;
-import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.models.Grade;
 import com.rojunaid.roacademy.repositories.CategoryRepository;
@@ -53,7 +49,7 @@ public class GradeServiceImpl implements GradeService {
       return gradeResponse;
     }
     throw new ResourceNotFoundException(
-        "Category with ID [" + gradeRequest.getCategoryId() + "] not found");
+        Translator.toLocale("Category.id.notfound", new Object[] {gradeRequest.getCategoryId()}));
   }
 
   @Override
@@ -64,7 +60,9 @@ public class GradeServiceImpl implements GradeService {
             .orElseThrow(
                 () ->
                     new ResourceNotFoundException(
-                        "Category with ID " + gradeUpdateRequest.getCategoryId() + " not found."));
+                        Translator.toLocale(
+                            "Category.id.notfound",
+                            new Object[] {gradeUpdateRequest.getCategoryId()})));
     Grade grade = gradeRepository.findById(gradeUpdateRequest.getId()).orElse(null);
     if (grade != null) {
       grade.setName(gradeUpdateRequest.getName());
@@ -88,9 +86,7 @@ public class GradeServiceImpl implements GradeService {
   @Override
   public GradeResponse findGradeWithCoursesById(Long gradeId) {
     Grade grade =
-        gradeRepository
-            .findById(gradeId)
-            .orElseThrow(() -> this.gradeNotFoundException(gradeId));
+        gradeRepository.findById(gradeId).orElseThrow(() -> this.gradeNotFoundException(gradeId));
     GradeResponse gradeResponse = this.gradeToGradeResponseWithCourses(grade);
     return gradeResponse;
   }
@@ -111,8 +107,7 @@ public class GradeServiceImpl implements GradeService {
     Grade grade = gradeRepository.findById(gradeId).orElse(null);
     if (grade != null) {
       if (grade.getCourses().size() > 0) {
-        throw new BadRequestException(
-            "Grade with associated courses cannot be deleted. Delete associated courses first.");
+        throw new BadRequestException(Translator.toLocale("Grade.cannotdelete"));
       }
       gradeRepository.deleteById(gradeId);
     } else {
@@ -125,7 +120,13 @@ public class GradeServiceImpl implements GradeService {
     GradeResponse gradeResponse = new GradeResponse();
     gradeResponse.setId(grade.getId());
     gradeResponse.setName(grade.getName());
-    gradeResponse.setCategoryId(grade.getCategory().getId());
+
+    PrimaryCategory primaryCategory = new PrimaryCategory();
+    primaryCategory.setId(grade.getCategory().getId());
+    primaryCategory.setName(grade.getCategory().getName());
+
+    gradeResponse.setPrimaryCategory(primaryCategory);
+
     gradeResponse.setCreatedAt(grade.getCreatedAt());
     gradeResponse.setUpdatedAt(grade.getUpdatedAt());
 
@@ -136,7 +137,8 @@ public class GradeServiceImpl implements GradeService {
   private GradeResponse gradeToGradeResponseWithCourses(Grade grade) {
     GradeResponse gradeResponse = gradeToGradeResponse(grade);
     CourseStatusEnum[] states = {CourseStatusEnum.PUBLISHED};
-    Iterable<CourseResponse> courseResponses = courseService.findCoursesByGradeId(grade.getId(), states, "id_asc");
+    Iterable<CourseResponse> courseResponses =
+        courseService.findCoursesByGradeId(grade.getId(), states, "id_asc");
     List<CourseResponse> cList = new ArrayList<>();
     courseResponses.forEach(cList::add);
     gradeResponse.setCourses(cList);
