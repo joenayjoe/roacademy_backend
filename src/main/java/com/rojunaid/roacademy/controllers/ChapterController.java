@@ -1,9 +1,8 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.ChapterRequest;
-import com.rojunaid.roacademy.dto.ChapterResponse;
-import com.rojunaid.roacademy.dto.TeachingResourceResponse;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.services.ChapterService;
+import com.rojunaid.roacademy.services.LectureService;
 import com.rojunaid.roacademy.services.TeachingResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +17,7 @@ public class ChapterController {
 
   @Autowired ChapterService chapterService;
   @Autowired TeachingResourceService teachingResourceService;
+  @Autowired LectureService lectureService;
 
   // GET /api/courses/:courseId/chapters
   // Get all chapter for a course
@@ -31,7 +31,8 @@ public class ChapterController {
   // POST /api/courses/:courseId/chapters
   // Create a chapter for a course
   @PostMapping("")
-  public ResponseEntity<ChapterResponse> createChapter(@Valid @RequestBody ChapterRequest chapterRequest) {
+  public ResponseEntity<ChapterResponse> createChapter(
+      @Valid @RequestBody ChapterRequest chapterRequest) {
 
     ChapterResponse chapterResponse = chapterService.createChapter(chapterRequest);
     return new ResponseEntity<>(chapterResponse, HttpStatus.CREATED);
@@ -41,7 +42,7 @@ public class ChapterController {
   // Update a chapter of a course
   @PutMapping("/{chapterId}")
   public ResponseEntity<ChapterResponse> updateChapter(
-      @PathVariable Long chapterId, @Valid @RequestBody ChapterRequest chapterRequest) {
+      @PathVariable Long chapterId, @Valid @RequestBody ChapterUpdateRequest chapterRequest) {
 
     ChapterResponse chapterResponse = chapterService.updateChapter(chapterId, chapterRequest);
     return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
@@ -56,19 +57,18 @@ public class ChapterController {
     return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
   }
 
+  @PostMapping("/{chapterId}/lectures")
+  public ResponseEntity<LectureResponse> addLecture(
+      @PathVariable Long courseId, @PathVariable Long chapterId, @Valid @RequestBody LectureRequest lectureRequest) {
+    LectureResponse lectureResponse = lectureService.createLecture(lectureRequest);
+    return new ResponseEntity<>(lectureResponse, HttpStatus.OK);
+  }
+
   // DELETE /api/courses/:courseId/chapters/:chapterId
   // Delete a chapter from a course
   @DeleteMapping("/{chapterId}")
   public ResponseEntity<HttpStatus> deleteChapterById(@PathVariable Long chapterId) {
     chapterService.deleteChapter(chapterId);
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @GetMapping("/{chapterId}/resources")
-  public ResponseEntity<Iterable<TeachingResourceResponse>> getTeachingResourcesByChapterId(
-      @PathVariable Long chapterId) {
-    Iterable<TeachingResourceResponse> teachingResources =
-        teachingResourceService.getTeachingResourceByChapter(chapterId);
-    return new ResponseEntity<>(teachingResources, HttpStatus.OK);
   }
 }

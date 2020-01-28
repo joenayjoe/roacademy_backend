@@ -1,6 +1,7 @@
 package com.rojunaid.roacademy.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +29,7 @@ public class User extends Auditable {
 
   private Boolean enable;
 
+  @JsonManagedReference
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_role",
@@ -35,17 +37,23 @@ public class User extends Auditable {
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   Set<Role> roles = new HashSet<>();
 
-  @OneToMany(mappedBy = "user")
   @JsonIgnore
+  @OneToMany(mappedBy = "user")
   Set<TeachingResource> teachingResources = new HashSet<>();
 
+  @JsonIgnore
   @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
   Set<Course> teachingCourses = new HashSet<>();
 
+  @JsonIgnore
   @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
   Set<Course> enrolledCourses = new HashSet<>();
 
-  @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
   @JsonIgnore
+  @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
   private Set<Course> createdCourses = new HashSet<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
+  private Set<Lecture> createdLectures = new HashSet<>();
 }

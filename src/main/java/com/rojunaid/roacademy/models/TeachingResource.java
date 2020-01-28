@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +13,9 @@ import java.util.Set;
 @Setter
 public class TeachingResource extends Auditable {
 
-  @ManyToOne User user;
+  @JsonIgnore @ManyToOne User user;
 
+  @JsonIgnore
   @ManyToMany
   @JoinTable(
       name = "teaching_resource_tag",

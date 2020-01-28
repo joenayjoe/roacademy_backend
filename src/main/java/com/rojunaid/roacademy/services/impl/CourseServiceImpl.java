@@ -11,6 +11,8 @@ import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,14 +29,12 @@ public class CourseServiceImpl implements CourseService {
   @Autowired private CategoryRepository categoryRepository;
 
   @Override
-  public Iterable<CourseResponse> findAll(String order) {
+  public Page<CourseResponse> findAll(int page, int size, String order) {
 
-    Iterable<Course> courses = courseRepository.findAll(SortingUtils.SortBy(order));
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<Course> courses = courseRepository.findAll(pageable);
 
-    List<CourseResponse> courseResponses = new ArrayList<>();
-    for (Course course : courses) {
-      courseResponses.add(this.courseToCourseResponse(course));
-    }
+    Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponse(course));
     return courseResponses;
   }
 
@@ -81,10 +81,10 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public CourseResponse updateCourse(Long courseId, CourseRequest courseRequest) {
-    if (courseRepository.existsById(courseId)) {
-      Course course = this.courseRequestToCourse(courseRequest);
-      course.setId(courseId);
+  public CourseResponse updateCourse(Long courseId, CourseUpdateRequest courseRequest) {
+    Course course = courseRepository.findById(courseRequest.getId()).orElse(null);
+    if (course != null) {
+      course = courseUpdateRequestToCourse(course, courseRequest);
       course = courseRepository.save(course);
       return this.courseToCourseResponse(course);
     }
@@ -229,7 +229,42 @@ public class CourseServiceImpl implements CourseService {
       courseRequirement.setName(requirement);
       course.addCourseRequirement(courseRequirement);
     }
+    return course;
+  }
 
+  private Course courseUpdateRequestToCourse(Course course, CourseUpdateRequest updateRequest) {
+
+    course.setId(updateRequest.getId());
+    course.setName(updateRequest.getName());
+    course.setHeadline(updateRequest.getHeadline());
+    course.setDescription(updateRequest.getDescription());
+
+    if (updateRequest.getCategoryId() != null) {
+      course.addCategory(this.getCategory(updateRequest.getCategoryId()));
+    }
+
+    if (updateRequest.getGradeId() != null) {
+      course.addGrade(this.getGrade(updateRequest.getGradeId()));
+    }
+
+    course.setLevel(updateRequest.getLevel());
+
+    // save objectives
+    course.getObjectives().clear();
+    for (String objectiveName : updateRequest.getObjectives()) {
+
+      CourseObjective courseObjective = new CourseObjective();
+      courseObjective.setName(objectiveName);
+      course.addCourseObjective(courseObjective);
+    }
+
+    // save requirements
+    course.getCourseRequirements().clear();
+    for (String requirement : updateRequest.getRequirements()) {
+      CourseRequirement courseRequirement = new CourseRequirement();
+      courseRequirement.setName(requirement);
+      course.addCourseRequirement(courseRequirement);
+    }
     return course;
   }
 }

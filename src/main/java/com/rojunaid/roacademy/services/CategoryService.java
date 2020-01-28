@@ -3,7 +3,6 @@ package com.rojunaid.roacademy.services;
 import com.rojunaid.roacademy.dto.CategoryRequest;
 import com.rojunaid.roacademy.dto.CategoryResponse;
 import com.rojunaid.roacademy.dto.CategoryUpdateRequest;
-import com.rojunaid.roacademy.models.Category;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface CategoryService {

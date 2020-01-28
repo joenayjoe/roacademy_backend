@@ -14,6 +14,8 @@ import com.rojunaid.roacademy.services.GradeService;
 import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,12 +30,10 @@ public class GradeServiceImpl implements GradeService {
   @Autowired CourseService courseService;
 
   @Override
-  public Iterable<GradeResponse> findAll(String order) {
-    Iterable<Grade> grades = gradeRepository.findAll(SortingUtils.SortBy(order));
-    List<GradeResponse> gradeResponses = new ArrayList<>();
-    for (Grade grade : grades) {
-      gradeResponses.add(this.gradeToGradeResponse(grade));
-    }
+  public Page<GradeResponse> findAll(int page, int size, String order) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<Grade> gradePage = gradeRepository.findAll(pageable);
+    Page<GradeResponse> gradeResponses = gradePage.map(p -> gradeToGradeResponse(p));
     return gradeResponses;
   }
 

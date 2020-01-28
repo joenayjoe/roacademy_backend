@@ -27,5 +27,4 @@ public class CourseResponse extends AuditableDTO {
   private Set<PrimaryUser> students = new HashSet<>();
   private List<String> objectives = new ArrayList<>();
   private List<String> requirements = new ArrayList<>();
-  private Set<ChapterResponse> chapters = new HashSet<>();
 }

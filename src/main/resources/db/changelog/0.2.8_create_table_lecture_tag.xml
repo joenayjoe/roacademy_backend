@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="28" author="junaid">
+        <createTable tableName="lecture_tag">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"></constraints>
+            </column>
+
+            <column name="lecture_id" type="BIGINT">
+                <constraints foreignKeyName="fk_lecture_tag_lecture" references="lecture(id)" nullable="false"></constraints>
+            </column>
+
+            <column name="tag_id" type="BIGINT">
+                <constraints foreignKeyName="fk_lecture_tag_tag" references="tag(id)" nullable="false"></constraints>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

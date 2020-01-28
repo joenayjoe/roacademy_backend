@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rojunaid.roacademy.security.CustomUserPrincipal;
@@ -23,15 +24,15 @@ public class Course extends Auditable {
 
   private String description;
 
-  @JsonIgnore
+  @JsonManagedReference
   @ManyToOne(fetch = FetchType.LAZY)
   private Grade grade;
 
-  @JsonIgnore
+  @JsonManagedReference
   @ManyToOne(fetch = FetchType.LAZY)
   private Category category;
 
-  private Long hits;
+  private Long hits = 0L;
 
   @Enumerated(EnumType.STRING)
   private LevelEnum level = LevelEnum.BEGINNER;
@@ -41,46 +42,31 @@ public class Course extends Auditable {
   @Enumerated(EnumType.STRING)
   private CourseStatusEnum status = CourseStatusEnum.DRAFT;
 
-  @ManyToMany(
-      mappedBy = "preRequisiteCourses",
-      cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
-      fetch = FetchType.LAZY)
-  @JsonIgnore
-  private Set<Course> parentCourses = new HashSet<>();
-
-  @ManyToMany(
-      cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
-      fetch = FetchType.LAZY)
-  @JoinTable(
-      name = "CourseRel",
-      joinColumns = {@JoinColumn(name = "ChildCourseId")},
-      inverseJoinColumns = {@JoinColumn(name = "ParentCourseId")})
-  private Set<Course> preRequisiteCourses = new HashSet<>();
-
+  @JsonBackReference
   @OneToMany(
       mappedBy = "course",
       fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.ALL)
-  @JsonIgnore
   private Set<Chapter> chapters = new HashSet<>();
 
+  @JsonManagedReference
   @OneToMany(
       mappedBy = "course",
       fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.ALL)
-  @JsonManagedReference
   private Set<CourseObjective> objectives = new HashSet<>();
 
+  @JsonManagedReference
   @OneToMany(
       mappedBy = "course",
       fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.ALL)
-  @JsonManagedReference
   private Set<CourseRequirement> courseRequirements = new HashSet<>();
 
+  @JsonManagedReference
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "course_instructor",
@@ -88,6 +74,7 @@ public class Course extends Auditable {
       inverseJoinColumns = {@JoinColumn(name = "instructor_id")})
   private Set<User> instructors = new HashSet<>();
 
+  @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "course_student",
@@ -95,8 +82,9 @@ public class Course extends Auditable {
       inverseJoinColumns = {@JoinColumn(name = "student_id")})
   private Set<User> students = new HashSet<>();
 
+  @JsonManagedReference
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "created_by")
+  @JoinColumn(name = "created_by", updatable = false)
   private User createdBy;
 
   public void addCategory(Category category) {

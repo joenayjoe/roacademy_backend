@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,12 +16,14 @@ import java.util.Set;
 @Setter
 public class Tag extends Auditable {
 
+  @JsonBackReference
   @ManyToMany(mappedBy = "tags")
+  Set<Lecture> lectures = new HashSet<>();
+
   @JsonIgnore
-  Set<Chapter> chapters = new HashSet<>();
   @ManyToMany(mappedBy = "tags")
-  @JsonIgnore
   Set<TeachingResource> teachingResources = new HashSet<>();
+
   @NotBlank(message = "{NotBlank.Tag.name}")
   private String name;
 }

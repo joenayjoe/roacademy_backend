@@ -7,7 +7,9 @@ import com.rojunaid.roacademy.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -34,6 +36,17 @@ public class TagServiceImpl implements TagService {
       tags.add(this.findOrCreateByName(name.trim()));
     }
     return tags;
+  }
+
+  @Override
+  public List<TagResponse> search(String name) {
+    Iterable<Tag> tags = tagRepository.search(name);
+
+    List<TagResponse> responses = new ArrayList<>();
+    for(Tag tag : tags) {
+      responses.add(tagToTagResponse(tag));
+    }
+    return responses;
   }
 
   @Override

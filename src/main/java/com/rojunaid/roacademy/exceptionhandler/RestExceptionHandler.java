@@ -39,6 +39,7 @@ public class RestExceptionHandler {
             put("user_email_uk", "Email.exist");
             put("uk_role_name", "Name.exist");
             put("uk_resource_title", "Title.exist");
+            put("uk_lecture_name", "Name.exist");
           }
         };
   }

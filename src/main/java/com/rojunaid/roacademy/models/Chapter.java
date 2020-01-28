@@ -1,32 +1,31 @@
 package com.rojunaid.roacademy.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Data
 public class Chapter extends Auditable {
-
-  @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(
-      name = "chapter_tag",
-      joinColumns = @JoinColumn(name = "chapter_id"),
-      inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  private Set<Tag> tags = new HashSet<>();
 
   private String name;
 
-  @JsonBackReference
+  @JsonManagedReference
+  @OneToMany(
+      mappedBy = "chapter",
+      fetch = FetchType.LAZY,
+      orphanRemoval = true,
+      cascade = CascadeType.ALL)
+  @EqualsAndHashCode.Exclude
+  private Set<Lecture> lectures = new HashSet<>();
+
+  @JsonManagedReference
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id", nullable = false)
+  @EqualsAndHashCode.Exclude
   private Course course;
 }

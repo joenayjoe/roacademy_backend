@@ -2,14 +2,20 @@ package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
+import com.rojunaid.roacademy.dto.CourseUpdateRequest;
 import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.services.CourseService;
+import com.rojunaid.roacademy.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -21,8 +27,10 @@ public class CourseController {
   // Get all courses
   @GetMapping("")
   public ResponseEntity<Iterable<CourseResponse>> getAllCourses(
-      @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
-    Iterable<CourseResponse> courseResponses = courseService.findAll(order);
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order) {
+    Page<CourseResponse> courseResponses = courseService.findAll(page, size, order);
     return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 
@@ -30,10 +38,11 @@ public class CourseController {
   // Get all courses for a category
   @GetMapping(value = "", params = "category_id")
   public ResponseEntity<Iterable<CourseResponse>> getAllCoursesByCategoryId(
-          @RequestParam Long category_id,
-          @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order,
-          @RequestParam(name = "status", required = false, defaultValue = "PUBLISHED") CourseStatusEnum[] status) {
-    Iterable<CourseResponse> courseResponses = courseService.findCoursesByCategoryId(category_id, status, order);
+      @RequestParam Long category_id,
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order,
+      @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) CourseStatusEnum[] status) {
+    Iterable<CourseResponse> courseResponses =
+        courseService.findCoursesByCategoryId(category_id, status, order);
     return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 
@@ -42,9 +51,10 @@ public class CourseController {
   @GetMapping(value = "", params = "grade_id")
   public ResponseEntity<Iterable<CourseResponse>> getAllCoursesByGradeId(
       @RequestParam Long grade_id,
-      @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order,
-  @RequestParam(name = "status", required = false, defaultValue = "PUBLISHED") CourseStatusEnum[] status) {
-    Iterable<CourseResponse> courseResponses = courseService.findCoursesByGradeId(grade_id, status, order);
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order,
+      @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) CourseStatusEnum[] status) {
+    Iterable<CourseResponse> courseResponses =
+        courseService.findCoursesByGradeId(grade_id, status, order);
     return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 
@@ -61,7 +71,7 @@ public class CourseController {
   // Update a course
   @PutMapping("/{courseId}")
   public ResponseEntity<CourseResponse> updateCourse(
-      @PathVariable Long courseId, @Valid @RequestBody CourseRequest courseRequest) {
+      @PathVariable Long courseId, @Valid @RequestBody CourseUpdateRequest courseRequest) {
     CourseResponse courseResponse = courseService.updateCourse(courseId, courseRequest);
     return new ResponseEntity<>(courseResponse, HttpStatus.OK);
   }

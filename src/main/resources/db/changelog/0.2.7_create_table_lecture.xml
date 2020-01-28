@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="27" author="junaid">
+        <createTable tableName="lecture">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"></constraints>
+            </column>
+
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="description" type="text"></column>
+
+            <column name="chapter_id" type="BIGINT">
+                <constraints foreignKeyName="fk_lecture_chapter_id" references="chapter(id)" nullable="false"></constraints>
+            </column>
+
+            <column name="created_by" type="BIGINT">
+                <constraints foreignKeyName="fk_lecture_creator_id" references="user(id)" nullable="false"></constraints>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"></constraints>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"></constraints>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

@@ -4,6 +4,7 @@ import com.rojunaid.roacademy.dto.TagResponse;
 import com.rojunaid.roacademy.models.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.List;
 import java.util.Set;
 
 public interface TagService {
@@ -16,4 +17,6 @@ public interface TagService {
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   TagResponse tagToTagResponse(Tag tag);
+
+  List<TagResponse> search(String name);
 }

@@ -3,8 +3,8 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.CategoryRequest;
 import com.rojunaid.roacademy.dto.CategoryResponse;
 import com.rojunaid.roacademy.dto.CategoryUpdateRequest;
-import com.rojunaid.roacademy.models.Category;
 import com.rojunaid.roacademy.services.CategoryService;
+import com.rojunaid.roacademy.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +20,8 @@ public class CategoryController {
 
   @GetMapping("")
   public ResponseEntity<Iterable<CategoryResponse>> getAllCategory(
-      @RequestParam(value = "withGrade", required = false, defaultValue = "false")
-          boolean withGrade,
-      @RequestParam(value = "order", required = false, defaultValue = "id_asc") String order) {
+      @RequestParam(defaultValue = "false") boolean withGrade,
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order) {
     if (!withGrade) {
       Iterable<CategoryResponse> categoryResponses = categoryService.findAllCategory(order);
       return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
@@ -34,23 +33,22 @@ public class CategoryController {
   }
 
   @PostMapping("")
-  public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest category) {
+  public ResponseEntity<CategoryResponse> createCategory(
+      @Valid @RequestBody CategoryRequest category) {
     CategoryResponse categoryResponse = categoryService.createCategory(category);
     return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
   }
 
   @PutMapping("/{category_id}")
   public ResponseEntity<CategoryResponse> updateCategory(
-          @Valid @RequestBody CategoryUpdateRequest category, @PathVariable Long category_id) {
+      @Valid @RequestBody CategoryUpdateRequest category, @PathVariable Long category_id) {
     CategoryResponse categoryResponse = categoryService.updateCategory(category_id, category);
     return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
   }
 
   @GetMapping("/{category_id}")
   public ResponseEntity<CategoryResponse> getCategoryById(
-      @PathVariable Long category_id,
-      @RequestParam(value = "withGrade", required = false, defaultValue = "false")
-          boolean withGrade) {
+      @PathVariable Long category_id, @RequestParam(defaultValue = "false") boolean withGrade) {
 
     if (withGrade) {
       CategoryResponse categoryResponse = categoryService.finCategoryWithGradesById(category_id);
