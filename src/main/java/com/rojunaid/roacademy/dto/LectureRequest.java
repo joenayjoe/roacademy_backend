@@ -17,7 +17,7 @@ public class LectureRequest {
   @NotBlank(message = "${NotBlank.Lecture.description}")
   private String description;
 
-  @NotNull(message = "${NotNull.Lecture.lectureId}")
+  @NotNull(message = "${NotNull.Lecture.chapterId}")
   private Long chapterId;
 
   private Set<String> tags = new HashSet<>();

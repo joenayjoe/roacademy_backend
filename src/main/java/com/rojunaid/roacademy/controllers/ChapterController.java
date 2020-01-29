@@ -57,18 +57,42 @@ public class ChapterController {
     return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
   }
 
-  @PostMapping("/{chapterId}/lectures")
-  public ResponseEntity<LectureResponse> addLecture(
-      @PathVariable Long courseId, @PathVariable Long chapterId, @Valid @RequestBody LectureRequest lectureRequest) {
-    LectureResponse lectureResponse = lectureService.createLecture(lectureRequest);
-    return new ResponseEntity<>(lectureResponse, HttpStatus.OK);
-  }
-
   // DELETE /api/courses/:courseId/chapters/:chapterId
   // Delete a chapter from a course
   @DeleteMapping("/{chapterId}")
   public ResponseEntity<HttpStatus> deleteChapterById(@PathVariable Long chapterId) {
     chapterService.deleteChapter(chapterId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  //  LECTURE API ENDPOINTS
+
+  // Create lecture
+  @PostMapping("/{chapterId}/lectures")
+  public ResponseEntity<LectureResponse> createLecture(
+      @PathVariable Long courseId,
+      @PathVariable Long chapterId,
+      @Valid @RequestBody LectureRequest lectureRequest) {
+    LectureResponse lectureResponse = lectureService.createLecture(lectureRequest);
+    return new ResponseEntity<>(lectureResponse, HttpStatus.CREATED);
+  }
+
+  // Update lecture
+
+  @PutMapping("/{chapterId}/lectures/{lectureId}")
+  public ResponseEntity<LectureResponse> updateLecture(
+      @PathVariable Long chapterId,
+      @PathVariable Long lectureId,
+      @Valid @RequestBody LectureUpdateRequest lecture) {
+    LectureResponse lectureResponse = lectureService.updateLecture(lectureId, lecture);
+    return new ResponseEntity<>(lectureResponse, HttpStatus.OK);
+  }
+
+  // Delete lecture
+  @DeleteMapping("/{chapterId}/lectures/{lectureId}")
+  public ResponseEntity<HttpStatus> deleteLecture(
+      @PathVariable Long chapterId, @PathVariable Long lectureId) {
+    lectureService.deleteLecture(lectureId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

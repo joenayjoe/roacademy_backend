@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class LectureResponse extends AuditableDTO {
 
+  private Long id;
   private String name;
   private String description;
   private List<String> tags = new ArrayList<>();

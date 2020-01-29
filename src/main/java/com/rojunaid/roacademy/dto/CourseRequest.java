@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.dto;
 
-import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.models.LevelEnum;
 import lombok.Getter;
 import lombok.Setter;

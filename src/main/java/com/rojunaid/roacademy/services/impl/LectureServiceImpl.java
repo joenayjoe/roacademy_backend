@@ -2,7 +2,7 @@ package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.LectureRequest;
 import com.rojunaid.roacademy.dto.LectureResponse;
-import com.rojunaid.roacademy.dto.PrimaryChapter;
+import com.rojunaid.roacademy.dto.LectureUpdateRequest;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Chapter;
 import com.rojunaid.roacademy.models.Lecture;
@@ -15,7 +15,6 @@ import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.OneToOne;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,14 +32,34 @@ public class LectureServiceImpl implements LectureService {
     return lectureToLectureResponse(lecture);
   }
 
-  @OneToOne
+  @Override
+  public LectureResponse updateLecture(Long lectureId, LectureUpdateRequest request) {
+    Lecture lecture = getLecture(lectureId);
+    lecture.setName(request.getName());
+    lecture.setDescription(request.getDescription());
+    lecture.setChapter(this.getChapter(request.getChapterId()));
+
+    Set<Tag> tags = tagService.findOrCreateByNames(request.getTags());
+    lecture.setTags(tags);
+    return lectureToLectureResponse(lectureRepository.save(lecture));
+  }
+
+  @Override
+  public void deleteLecture(Long lectureId) {
+    Lecture lecture = getLecture(lectureId);
+    lectureRepository.delete(lecture);
+  }
+
+  @Override
   public LectureResponse lectureToLectureResponse(Lecture lecture) {
     LectureResponse response = new LectureResponse();
+    response.setId(lecture.getId());
     response.setName(lecture.getName());
     response.setDescription(lecture.getDescription());
 
     response.setLectureResource(lecture.getLectureResource());
-    response.setTags(lecture.getTags().stream().map(tag -> tag.getName()).collect(Collectors.toList()));
+    response.setTags(
+        lecture.getTags().stream().map(tag -> tag.getName()).collect(Collectors.toList()));
     response.setCreatedAt(lecture.getCreatedAt());
     response.setUpdatedAt(lecture.getUpdatedAt());
 
@@ -54,6 +73,15 @@ public class LectureServiceImpl implements LectureService {
             () ->
                 new ResourceNotFoundException(
                     Translator.toLocale("${Chapter.id.notfound}", new Object[] {chapterId})));
+  }
+
+  private Lecture getLecture(Long lectureId) {
+    return lectureRepository
+        .findById(lectureId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("${Lecture.id.notfound}", new Object[] {lectureId})));
   }
 
   private Lecture lectureRequestToLecture(LectureRequest lectureRequest) {
