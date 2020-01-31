@@ -17,6 +17,7 @@ import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,7 +40,6 @@ public class LectureServiceImpl implements LectureService {
     Lecture lecture = getLecture(lectureId);
     lecture.setName(request.getName());
     lecture.setDescription(request.getDescription());
-    lecture.setPosition(request.getPosition());
     lecture.setChapter(this.getChapter(request.getChapterId()));
 
     Set<Tag> tags = tagService.findOrCreateByNames(request.getTags());

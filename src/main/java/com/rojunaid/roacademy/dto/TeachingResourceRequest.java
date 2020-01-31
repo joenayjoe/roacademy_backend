@@ -5,7 +5,9 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -18,7 +20,7 @@ public class TeachingResourceRequest {
   @NotBlank(message = "{NotBlank.TeachingResource.description}")
   private String description;
 
-  private Set<String> tagNames = new HashSet<>();
+  private List<String> tagNames = new ArrayList<>();
 
   private String privacyStatus;
 

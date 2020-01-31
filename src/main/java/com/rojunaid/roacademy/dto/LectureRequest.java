@@ -1,12 +1,11 @@
 package com.rojunaid.roacademy.dto;
 
-import com.rojunaid.roacademy.models.Tag;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class LectureRequest {
@@ -22,5 +21,5 @@ public class LectureRequest {
 
   private int position;
 
-  private Set<String> tags = new HashSet<>();
+  private List<String> tags = new ArrayList<>();
 }

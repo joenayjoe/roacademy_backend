@@ -30,7 +30,7 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public Set<Tag> findOrCreateByNames(Set<String> tag_names) {
+  public Set<Tag> findOrCreateByNames(List<String> tag_names) {
     Set<Tag> tags = new HashSet<>();
     for (String name : tag_names) {
       tags.add(this.findOrCreateByName(name.trim()));
@@ -43,7 +43,7 @@ public class TagServiceImpl implements TagService {
     Iterable<Tag> tags = tagRepository.search(name);
 
     List<TagResponse> responses = new ArrayList<>();
-    for(Tag tag : tags) {
+    for (Tag tag : tags) {
       responses.add(tagToTagResponse(tag));
     }
     return responses;
