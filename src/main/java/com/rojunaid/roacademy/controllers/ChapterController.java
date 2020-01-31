@@ -22,9 +22,11 @@ public class ChapterController {
   // GET /api/courses/:courseId/chapters
   // Get all chapter for a course
   @GetMapping("")
-  public ResponseEntity<Iterable<ChapterResponse>> getAllChapter(@PathVariable Long courseId) {
+  public ResponseEntity<Iterable<ChapterResponse>> getAllByCourseId(
+      @PathVariable Long courseId, @RequestParam(defaultValue = "position_asc") String order) {
 
-    Iterable<ChapterResponse> chapterResponses = chapterService.getAllChapterForCourse(courseId);
+    Iterable<ChapterResponse> chapterResponses =
+        chapterService.getAllChapterForCourse(courseId, order);
     return new ResponseEntity<>(chapterResponses, HttpStatus.OK);
   }
 
@@ -46,6 +48,16 @@ public class ChapterController {
 
     ChapterResponse chapterResponse = chapterService.updateChapter(chapterId, chapterRequest);
     return new ResponseEntity<>(chapterResponse, HttpStatus.OK);
+  }
+
+  // Update position of the chapters
+
+  @PostMapping("/update_positions")
+  public ResponseEntity<HttpStatus> updateChapterPosition(
+          @PathVariable Long courseId,
+          @Valid @RequestBody ChapterPositionUpdateRequest[] positionUpdateRequests) {
+    chapterService.updateChapterPosition(courseId, positionUpdateRequests);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   // GET /api/courses/:courseId/chapters/:chapterId

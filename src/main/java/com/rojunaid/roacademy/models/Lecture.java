@@ -19,6 +19,8 @@ public class Lecture extends Auditable {
 
   private String description;
 
+  private int position;
+
   @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(

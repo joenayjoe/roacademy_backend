@@ -12,6 +12,7 @@ public class LectureResponse extends AuditableDTO {
   private Long id;
   private String name;
   private String description;
+  private int position;
   private List<String> tags = new ArrayList<>();
   private LectureResource lectureResource;
 }

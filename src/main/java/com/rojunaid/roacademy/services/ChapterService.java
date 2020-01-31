@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.services;
 
+import com.rojunaid.roacademy.dto.ChapterPositionUpdateRequest;
 import com.rojunaid.roacademy.dto.ChapterRequest;
 import com.rojunaid.roacademy.dto.ChapterResponse;
 import com.rojunaid.roacademy.dto.ChapterUpdateRequest;
@@ -8,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface ChapterService {
 
-  Iterable<ChapterResponse> getAllChapterForCourse(Long courseId);
+  Iterable<ChapterResponse> getAllChapterForCourse(Long courseId, String order);
 
   ChapterResponse getChapterById(Long courseId, Long chapterId);
 
@@ -17,6 +18,9 @@ public interface ChapterService {
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   ChapterResponse updateChapter(Long chapterId, ChapterUpdateRequest chapterRequest);
+
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  void updateChapterPosition(Long courseId, ChapterPositionUpdateRequest[] positionUpdateRequests);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteChapter(Long chapterId);

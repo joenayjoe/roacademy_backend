@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.services;
 
+import com.rojunaid.roacademy.dto.LecturePositionUpdateRequest;
 import com.rojunaid.roacademy.dto.LectureRequest;
 import com.rojunaid.roacademy.dto.LectureResponse;
 import com.rojunaid.roacademy.dto.LectureUpdateRequest;
@@ -13,6 +14,9 @@ public interface LectureService {
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   LectureResponse updateLecture(Long lectureId, LectureUpdateRequest lectureUpdateRequest);
+
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  void updatePositions(LecturePositionUpdateRequest[] positions);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteLecture(Long lectureId);

@@ -20,5 +20,7 @@ public class LectureRequest {
   @NotNull(message = "${NotNull.Lecture.chapterId}")
   private Long chapterId;
 
+  private int position;
+
   private Set<String> tags = new HashSet<>();
 }

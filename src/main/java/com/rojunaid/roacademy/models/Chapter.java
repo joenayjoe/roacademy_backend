@@ -13,6 +13,7 @@ import java.util.Set;
 public class Chapter extends Auditable {
 
   private String name;
+  private int position;
 
   @JsonManagedReference
   @OneToMany(

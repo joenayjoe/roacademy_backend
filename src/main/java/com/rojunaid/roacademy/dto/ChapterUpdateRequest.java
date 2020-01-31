@@ -10,16 +10,9 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class ChapterUpdateRequest {
+public class ChapterUpdateRequest extends ChapterRequest {
 
   @NotNull(message = "{NotNull.Chapter.id}")
   private Long id;
 
-  @NotBlank(message = "{NotBlank.Chapter.name}")
-  private String name;
-
-  @NotNull(message = "{NotNull.Chapter.courseId}")
-  private Long courseId;
-
-  private Set<String> tagNames = new HashSet<>();
 }

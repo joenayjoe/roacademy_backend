@@ -36,5 +36,7 @@
     <include file="db/changelog/0.2.8_create_table_lecture_tag.xml"/>
     <include file="db/changelog/0.2.9_create_table_lecture_resource.xml"/>
     <include file="db/changelog/0.3.0_add_uk_constrain_to_lecture.xml"/>
+    <include file="db/changelog/0.3.1_add_column_position_to_chapter.xml"/>
+    <include file="db/changelog/0.3.2_add_column_position_to_lecture.xml"/>
 
 </databaseChangeLog>

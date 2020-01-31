@@ -1,8 +1,10 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.dto.LecturePositionUpdateRequest;
 import com.rojunaid.roacademy.dto.LectureRequest;
 import com.rojunaid.roacademy.dto.LectureResponse;
 import com.rojunaid.roacademy.dto.LectureUpdateRequest;
+import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Chapter;
 import com.rojunaid.roacademy.models.Lecture;
@@ -37,11 +39,33 @@ public class LectureServiceImpl implements LectureService {
     Lecture lecture = getLecture(lectureId);
     lecture.setName(request.getName());
     lecture.setDescription(request.getDescription());
+    lecture.setPosition(request.getPosition());
     lecture.setChapter(this.getChapter(request.getChapterId()));
 
     Set<Tag> tags = tagService.findOrCreateByNames(request.getTags());
     lecture.setTags(tags);
     return lectureToLectureResponse(lectureRepository.save(lecture));
+  }
+
+  @Override
+  public void updatePositions(LecturePositionUpdateRequest[] positions) {
+
+    boolean isFailed = false;
+    for (LecturePositionUpdateRequest request : positions) {
+      Lecture lecture = lectureRepository.findById(request.getLectureId()).orElse(null);
+      Chapter chapter = chapterRepository.findById(request.getChapterId()).orElse(null);
+      if (lecture != null && chapter != null) {
+        lecture.setChapter(chapter);
+        lecture.setPosition(request.getPosition());
+        lectureRepository.save(lecture);
+      } else {
+        isFailed = true;
+      }
+    }
+
+    if (isFailed) {
+      throw new BadRequestException(Translator.toLocale("${BadRequest}"));
+    }
   }
 
   @Override
@@ -56,7 +80,7 @@ public class LectureServiceImpl implements LectureService {
     response.setId(lecture.getId());
     response.setName(lecture.getName());
     response.setDescription(lecture.getDescription());
-
+    response.setPosition(lecture.getPosition());
     response.setLectureResource(lecture.getLectureResource());
     response.setTags(
         lecture.getTags().stream().map(tag -> tag.getName()).collect(Collectors.toList()));
@@ -88,6 +112,7 @@ public class LectureServiceImpl implements LectureService {
     Lecture lecture = new Lecture();
     lecture.setName(lectureRequest.getName());
     lecture.setDescription(lectureRequest.getDescription());
+    lecture.setPosition(lectureRequest.getPosition());
     lecture.setChapter(getChapter(lectureRequest.getChapterId()));
 
     Set<Tag> tags = tagService.findOrCreateByNames(lectureRequest.getTags());
