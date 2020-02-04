@@ -8,15 +8,17 @@ import com.rojunaid.roacademy.models.CourseStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.List;
+
 public interface CourseService {
 
-  Page<CourseResponse> findAll(int page, int size, String order);
+  Page<CourseResponse> findAll(int page, int size, String order, List<CourseStatusEnum> status);
 
   Iterable<CourseResponse> findCoursesByCategoryId(
-      Long category_id, CourseStatusEnum[] status, String order);
+          Long category_id, List<CourseStatusEnum> status, String order);
 
   Iterable<CourseResponse> findCoursesByGradeId(
-      Long grade_id, CourseStatusEnum[] status, String order);
+      Long grade_id, List<CourseStatusEnum> status, String order);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   CourseResponse createCourse(CourseRequest courseRequest);
@@ -24,7 +26,7 @@ public interface CourseService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   CourseResponse updateCourse(Long courseId, CourseUpdateRequest courseRequest);
 
-  CourseResponse findCourseById(Long courseId);
+  CourseResponse findCourseById(Long courseId, List<CourseStatusEnum> status);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteCourseById(Long courseId);

@@ -84,10 +84,10 @@ public class GradeServiceImpl implements GradeService {
   }
 
   @Override
-  public GradeResponse findGradeWithCoursesById(Long gradeId) {
+  public GradeResponse findGradeWithCoursesById(Long gradeId, List<CourseStatusEnum> status) {
     Grade grade =
         gradeRepository.findById(gradeId).orElseThrow(() -> this.gradeNotFoundException(gradeId));
-    GradeResponse gradeResponse = this.gradeToGradeResponseWithCourses(grade);
+    GradeResponse gradeResponse = this.gradeToGradeResponseWithCourses(grade, status);
     return gradeResponse;
   }
 
@@ -134,11 +134,11 @@ public class GradeServiceImpl implements GradeService {
   }
 
   // private methods
-  private GradeResponse gradeToGradeResponseWithCourses(Grade grade) {
+  private GradeResponse gradeToGradeResponseWithCourses(
+      Grade grade, List<CourseStatusEnum> status) {
     GradeResponse gradeResponse = gradeToGradeResponse(grade);
-    CourseStatusEnum[] states = {CourseStatusEnum.PUBLISHED};
     Iterable<CourseResponse> courseResponses =
-        courseService.findCoursesByGradeId(grade.getId(), states, "id_asc");
+        courseService.findCoursesByGradeId(grade.getId(), status, "id_asc");
     List<CourseResponse> cList = new ArrayList<>();
     courseResponses.forEach(cList::add);
     gradeResponse.setCourses(cList);

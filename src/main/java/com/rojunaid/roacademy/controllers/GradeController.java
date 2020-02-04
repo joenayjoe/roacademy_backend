@@ -3,18 +3,17 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.GradeRequest;
 import com.rojunaid.roacademy.dto.GradeResponse;
 import com.rojunaid.roacademy.dto.GradeUpdateRequest;
+import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.services.GradeService;
 import com.rojunaid.roacademy.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/grades")
@@ -58,8 +57,7 @@ public class GradeController {
   // Update a section
   @PutMapping("/{gradeId}")
   public ResponseEntity<GradeResponse> updateGrade(
-      @PathVariable Long gradeId,
-      @Valid @RequestBody GradeUpdateRequest gradeUpdateRequest) {
+      @PathVariable Long gradeId, @Valid @RequestBody GradeUpdateRequest gradeUpdateRequest) {
     GradeResponse gradeResponse = gradeService.updateGrade(gradeId, gradeUpdateRequest);
     return new ResponseEntity<>(gradeResponse, HttpStatus.OK);
   }
@@ -69,11 +67,13 @@ public class GradeController {
 
   @GetMapping("/{gradeId}")
   public ResponseEntity<GradeResponse> getGradeById(
-      @PathVariable Long gradeId, @RequestParam(defaultValue = "false") boolean withCourse) {
+      @PathVariable Long gradeId,
+      @RequestParam(defaultValue = "false") boolean withCourse,
+      @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status) {
 
     GradeResponse gradeResponse;
     if (withCourse) {
-      gradeResponse = gradeService.findGradeWithCoursesById(gradeId);
+      gradeResponse = gradeService.findGradeWithCoursesById(gradeId, status);
     } else {
       gradeResponse = gradeService.findGradeById(gradeId);
     }

@@ -57,7 +57,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   @Override
   @Transactional
   public TeachingResourceResponse uploadTeachingResource(
-          TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
+      TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
 
     if (!isFileValid(file)) {
       throw new MediaTypeNotSupportedException(Translator.toLocale("MediaType.notsupported"));
@@ -81,7 +81,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   }
 
   private TeachingResource saveTeachingResource(
-          TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
+      TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
 
     TeachingResource teachingResource =
         teachingResourceDTOToTeachingResource(teachingResourceRequest, file);
@@ -106,7 +106,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   }
 
   private TeachingResource teachingResourceDTOToTeachingResource(
-          TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
+      TeachingResourceRequest teachingResourceRequest, MultipartFile file) {
 
     TeachingResource teachingResource = new TeachingResource();
 

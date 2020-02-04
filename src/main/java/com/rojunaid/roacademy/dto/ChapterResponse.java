@@ -1,15 +1,11 @@
 package com.rojunaid.roacademy.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-@Getter
-@Setter
+@Data
 public class ChapterResponse extends AuditableDTO {
   private Long id;
   private String name;

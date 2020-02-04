@@ -29,10 +29,11 @@ public class CourseServiceImpl implements CourseService {
   @Autowired private CategoryRepository categoryRepository;
 
   @Override
-  public Page<CourseResponse> findAll(int page, int size, String order) {
+  public Page<CourseResponse> findAll(
+      int page, int size, String order, List<CourseStatusEnum> status) {
 
     PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
-    Page<Course> courses = courseRepository.findAll(pageable);
+    Page<Course> courses = courseRepository.findAll(status, pageable);
 
     Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponse(course));
     return courseResponses;
@@ -40,14 +41,9 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public Iterable<CourseResponse> findCoursesByCategoryId(
-      Long category_id, CourseStatusEnum[] statuses, String order) {
-
-    List<String> statusList = new ArrayList<>();
-    for (CourseStatusEnum st : statuses) {
-      statusList.add(st.name());
-    }
+      Long category_id, List<CourseStatusEnum> status, String order) {
     Iterable<Course> courses =
-        courseRepository.findAllByCategoryId(category_id, statusList, SortingUtils.SortBy(order));
+        courseRepository.findAllByCategoryId(category_id, status, SortingUtils.SortBy(order));
 
     List<CourseResponse> courseResponses = new ArrayList<>();
     for (Course course : courses) {
@@ -58,13 +54,9 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public Iterable<CourseResponse> findCoursesByGradeId(
-      Long grade_id, CourseStatusEnum[] statuses, String order) {
-    List<String> statusList = new ArrayList<>();
-    for (CourseStatusEnum st : statuses) {
-      statusList.add(st.name());
-    }
+      Long grade_id, List<CourseStatusEnum> status, String order) {
     Iterable<Course> courses =
-        courseRepository.findAllByGradeId(grade_id, statusList, SortingUtils.SortBy(order));
+        courseRepository.findAllByGradeId(grade_id, status, SortingUtils.SortBy(order));
 
     List<CourseResponse> courseResponses = new ArrayList<>();
     for (Course course : courses) {
@@ -92,10 +84,11 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public CourseResponse findCourseById(Long courseId) {
+  public CourseResponse findCourseById(Long courseId, List<CourseStatusEnum> status) {
+    List<String> statusList = status.stream().map(s -> s.name()).collect(Collectors.toList());
     Course course =
         courseRepository
-            .findById(courseId)
+            .findById(courseId, statusList)
             .orElseThrow(() -> this.courseNotFoundException(courseId));
 
     return this.courseToCourseResponseWithObjectivesAndRequirements(course);
