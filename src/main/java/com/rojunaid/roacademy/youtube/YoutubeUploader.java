@@ -9,15 +9,12 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
-import com.rojunaid.roacademy.models.Tag;
-import com.rojunaid.roacademy.models.TeachingResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,7 +24,7 @@ public class YoutubeUploader {
   private static YouTube youtube;
   @Autowired private Auth authProvider;
 
-  public Video upload(MultipartFile file, TeachingResource teachingResource) {
+  public Video upload(YoutubeMetaData metaData, MultipartFile file) {
 
     try {
 
@@ -39,15 +36,13 @@ public class YoutubeUploader {
               .setApplicationName("roacademy-youtube-video-upload")
               .build();
 
-      System.out.println("Uploading: " + file.getOriginalFilename());
-
       // Add extra information to the video before uploading.
       Video videoObjectDefiningMetadata = new Video();
 
       // Set the video to be publicly visible. This is the default
       // setting. Other supporting settings are "unlisted" and "private."
       VideoStatus status = new VideoStatus();
-      status.setPrivacyStatus(teachingResource.getPrivacyStatus());
+      status.setPrivacyStatus(metaData.getStatus());
       videoObjectDefiningMetadata.setStatus(status);
 
       // Most of the video's metadata is set on the VideoSnippet object.
@@ -57,17 +52,15 @@ public class YoutubeUploader {
       // description for test purposes so that you can easily upload
       // multiple files. You should remove this code from your project
       // and use your own standard names instead.
-      snippet.setTitle(teachingResource.getTitle());
+      snippet.setTitle(metaData.getTitle());
       snippet.setCategoryId("27"); // 27 = Education
 
-      // Set the keyword tags that you want to associate with the video.
-      List<String> tags =
-          teachingResource.getTags().stream().map(Tag::getName).collect(Collectors.toList());
-      snippet.setTags(tags);
+      snippet.setTags(metaData.getTags());
 
-      String hashTags = tags.stream().map(tag -> "#" + tag).collect(Collectors.joining(" "));
+      String hashTags =
+          metaData.getTags().stream().map(tag -> "#" + tag).collect(Collectors.joining(" "));
 
-      snippet.setDescription(teachingResource.getDescription() + "\n\n" + hashTags);
+      snippet.setDescription(metaData.getDescription() + "\n\n" + hashTags);
 
       // Add the completed snippet object to the video resource.
       videoObjectDefiningMetadata.setSnippet(snippet);

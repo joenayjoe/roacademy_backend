@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.services;
 
 import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
+import com.rojunaid.roacademy.dto.CourseStatusUpdateRequest;
 import com.rojunaid.roacademy.dto.CourseUpdateRequest;
 import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.CourseStatusEnum;
@@ -27,6 +28,9 @@ public interface CourseService {
   CourseResponse updateCourse(Long courseId, CourseUpdateRequest courseRequest);
 
   CourseResponse findCourseById(Long courseId, List<CourseStatusEnum> status);
+
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  void updateStatus(Long courseId, CourseStatusUpdateRequest request);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteCourseById(Long courseId);

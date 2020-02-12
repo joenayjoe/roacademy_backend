@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.CourseRequest;
 import com.rojunaid.roacademy.dto.CourseResponse;
+import com.rojunaid.roacademy.dto.CourseStatusUpdateRequest;
 import com.rojunaid.roacademy.dto.CourseUpdateRequest;
 import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.services.CourseService;
@@ -83,6 +84,15 @@ public class CourseController {
       @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status) {
     CourseResponse courseResponse = courseService.findCourseById(courseId, status);
     return new ResponseEntity<>(courseResponse, HttpStatus.OK);
+  }
+
+  // Update course status
+
+  @PostMapping("/{courseId}")
+  public ResponseEntity<HttpStatus> updateCourseStatus(
+      @PathVariable Long courseId, @Valid @RequestBody CourseStatusUpdateRequest request) {
+    courseService.updateStatus(courseId, request);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   // DELETE /api/courses/:courseId

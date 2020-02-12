@@ -16,6 +16,7 @@ import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.TagService;
 import com.rojunaid.roacademy.services.TeachingResourceService;
 import com.rojunaid.roacademy.util.Translator;
+import com.rojunaid.roacademy.youtube.YoutubeMetaData;
 import com.rojunaid.roacademy.youtube.YoutubeUploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TeachingResourceServiceImpl implements TeachingResourceService {
@@ -102,7 +104,13 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   }
 
   private Video uploadToYoutube(TeachingResource teachingResource, MultipartFile file) {
-    return youtubeUploader.upload(file, teachingResource);
+    YoutubeMetaData metaData = new YoutubeMetaData();
+    metaData.setTitle(teachingResource.getTitle());
+    metaData.setDescription(teachingResource.getDescription());
+    metaData.setStatus(teachingResource.getPrivacyStatus());
+    metaData.setTags(
+        teachingResource.getTags().stream().map(t -> t.getName()).collect(Collectors.toList()));
+    return youtubeUploader.upload(metaData, file);
   }
 
   private TeachingResource teachingResourceDTOToTeachingResource(

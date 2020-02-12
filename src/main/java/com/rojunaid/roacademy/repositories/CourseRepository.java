@@ -30,5 +30,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
   @Query(
       "SELECT crs FROM Course  crs left join fetch crs.courseRequirements left join fetch crs.objectives left  join fetch crs.grade left  join  fetch crs.category left join fetch crs.createdBy where crs.id = ?1 and crs.status in (?2)")
-  Optional<Course> findById(Long courseId, List<String> status);
+  Optional<Course> findById(Long courseId, List<CourseStatusEnum> status);
 }

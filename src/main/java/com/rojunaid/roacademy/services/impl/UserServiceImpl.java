@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -71,10 +72,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponse updateUserRole(Long userId, UserRoleUpdateRequest userRoleUpdateRequest) {
-    User user = userRepository.findById(userRoleUpdateRequest.getUserId()).orElse(null);
-    if (user == null) {
-      throw this.userNotFoundException(userId);
-    }
+    User user = this.getUser(userId);
     List<Role> roles = roleRepository.findAllById(userRoleUpdateRequest.getRoleIds());
     Set<Role> roleSet = roles.stream().collect(Collectors.toSet());
     user.setRoles(roleSet);
@@ -110,12 +108,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public void deleteUserById(Long userId) {
-    if (userRepository.existsById(userId)) {
-      userRepository.deleteById(userId);
-    } else {
-      throw this.userNotFoundException(userId);
-    }
+    User user = this.getUser(userId);
+    userRepository.delete(user);
+    String uri = User.class.getSimpleName() + "/" + user.getId().toString();
+    fileUploadService.deleteFileOrDirectory(uri);
   }
 
   @Override
@@ -163,6 +161,10 @@ public class UserServiceImpl implements UserService {
   }
 
   // private method
+
+  User getUser(Long userId) {
+    return userRepository.findById(userId).orElseThrow(() -> this.userNotFoundException(userId));
+  }
 
   ResourceNotFoundException userNotFoundException(Long userId) {
     return new ResourceNotFoundException(

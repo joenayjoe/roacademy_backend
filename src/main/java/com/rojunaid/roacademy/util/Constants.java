@@ -1,7 +1,8 @@
 package com.rojunaid.roacademy.util;
 
-import com.rojunaid.roacademy.models.CourseStatusEnum;
+import org.springframework.stereotype.Component;
 
+@Component
 public final class Constants {
   private Constants() {
     // restrict instantiation

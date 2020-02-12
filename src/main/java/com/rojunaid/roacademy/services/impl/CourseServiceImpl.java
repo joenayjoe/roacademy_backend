@@ -74,38 +74,34 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public CourseResponse updateCourse(Long courseId, CourseUpdateRequest courseRequest) {
-    Course course = courseRepository.findById(courseRequest.getId()).orElse(null);
-    if (course != null) {
-      course = courseUpdateRequestToCourse(course, courseRequest);
-      course = courseRepository.save(course);
-      return this.courseToCourseResponse(course);
-    }
-    throw this.courseNotFoundException(courseId);
+    Course course = getCourse(courseRequest.getId());
+    course = courseUpdateRequestToCourse(course, courseRequest);
+    course = courseRepository.save(course);
+    return this.courseToCourseResponse(course);
+  }
+
+  @Override
+  public void updateStatus(Long courseId, CourseStatusUpdateRequest request) {
+    Course course = getCourse(request.getId());
+    course.setStatus(request.getStatus());
+    courseRepository.save(course);
   }
 
   @Override
   public CourseResponse findCourseById(Long courseId, List<CourseStatusEnum> status) {
-    List<String> statusList = status.stream().map(s -> s.name()).collect(Collectors.toList());
-    Course course =
-        courseRepository
-            .findById(courseId, statusList)
-            .orElseThrow(() -> this.courseNotFoundException(courseId));
-
+    Course course = getCourse(courseId, status);
     return this.courseToCourseResponseWithObjectivesAndRequirements(course);
   }
 
   @Override
   public void deleteCourseById(Long courseId) {
 
-    Course course = courseRepository.findById(courseId).orElse(null);
-    if (course != null) {
-      if (course.getStudents().size() > 0) {
-        throw new BadRequestException(Translator.toLocale("Course.cannotdelete"));
-      } else {
-        courseRepository.deleteById(courseId);
-      }
+    Course course = getCourse(courseId);
+    if (course.getStudents().size() > 0) {
+      throw new BadRequestException(Translator.toLocale("Course.cannotdelete"));
+    } else {
+      courseRepository.deleteById(courseId);
     }
-    throw this.courseNotFoundException(courseId);
   }
 
   @Override
@@ -170,6 +166,8 @@ public class CourseServiceImpl implements CourseService {
     return courseResponse;
   }
 
+  // private methods
+
   private Grade getGrade(Long gradeId) {
     return gradeRepository
         .findById(gradeId)
@@ -188,11 +186,22 @@ public class CourseServiceImpl implements CourseService {
                     Translator.toLocale("Category.id.notfound", new Object[] {categoryId})));
   }
 
-  // private methods
+  private Course getCourse(Long courseId) {
+    return courseRepository
+        .findById(courseId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("Course.id.notfound", new Object[] {courseId})));
+  }
 
-  private ResourceNotFoundException courseNotFoundException(Long courseId) {
-    return new ResourceNotFoundException(
-        Translator.toLocale("Course.id.notfound", new Object[] {courseId}));
+  private Course getCourse(Long courseId, List<CourseStatusEnum> status) {
+    return courseRepository
+        .findById(courseId, status)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("Course.id.notfound", new Object[] {courseId})));
   }
 
   private Course courseRequestToCourse(CourseRequest courseRequest) {
