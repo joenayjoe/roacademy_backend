@@ -2,10 +2,7 @@ package com.rojunaid.roacademy.exceptionhandler;
 
 import com.rojunaid.roacademy.dto.error.ErrorDetail;
 import com.rojunaid.roacademy.dto.error.ValidationError;
-import com.rojunaid.roacademy.exception.DirectoryCreationException;
-import com.rojunaid.roacademy.exception.MediaTypeNotSupportedException;
-import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
-import com.rojunaid.roacademy.exception.ResourceNotFoundException;
+import com.rojunaid.roacademy.exception.*;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -55,6 +52,20 @@ public class RestExceptionHandler {
     errorDetail.setStatus(HttpStatus.NOT_FOUND.value());
 
     return new ResponseEntity<>(errorDetail, null, HttpStatus.NOT_FOUND);
+  }
+
+  // youtube upload exception handler
+  @ExceptionHandler(YoutubeUploadException.class)
+  public ResponseEntity<?> handleYoutubeUploadException(
+      YoutubeUploadException ytue, HttpServletRequest request) {
+    ErrorDetail errorDetail = new ErrorDetail();
+    errorDetail.setTitle("Resource Upload Error");
+    errorDetail.setOccurredAt(LocalDateTime.now());
+    errorDetail.setDetail(ytue.getLocalizedMessage());
+    errorDetail.setDeveloperMessage(ytue.getClass().getName());
+    errorDetail.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+
+    return new ResponseEntity<>(errorDetail, null, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   // field validation

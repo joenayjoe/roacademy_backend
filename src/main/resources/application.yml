@@ -30,19 +30,25 @@ spring:
       client:
         registration:
           facebook:
-            clientId: 2618998111521346
-            clientSecret: 079ca926adfe31a58c427a8c80bd6d69
+            clientId: ${ROACADEMY_FACEBOOK_CLIENT_ID}
+            clientSecret: ${ROACADEMY_FACEBOOK_CLIENT_SECRET}
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - public_profile
           google:
-            clientId: 1084976434694-l1rtob24tkgelff64vm4oqp3fhio0ksp.apps.googleusercontent.com
-            clientSecret: w5E0KxDnv38V2zu2fYWDlbMY
+            clientId: ${ROACADEMY_GOOGLE_CLIENT_ID}
+            clientSecret: ${ROACADEMY_GOOGLE_CLIENT_SECRET}
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - profile
+          youtube:
+            provider: google
+            clientId: ${ROACADEMY_YOUTUBE_CLIENT_ID}
+            clientSecret: ${ROACADEMY_YOUTUBE_CLIENT_SECRET}
+            scope:
+              - ${ROACADEMY_YOUTUBE_SCOPE}
         provider:
           facebook:
             authorizationUri: https://www.facebook.com/v5.0/dialog/oauth
@@ -72,12 +78,11 @@ app:
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect
 
-
-  social:
-    facebook:
-      appId: 2618998111521346
-      secret: 079ca926adfe31a58c427a8c80bd6d69
-      scope: public_profile,email
-      redirectUrl: http://localhost:8080/callback/facebook
+#  social:
+#    facebook:
+#      appId: 2618998111521346
+#      secret: 079ca926adfe31a58c427a8c80bd6d69
+#      scope: public_profile,email
+#      redirectUrl: http://localhost:8080/callback/facebook
 
 

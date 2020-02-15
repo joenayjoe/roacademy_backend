@@ -12,6 +12,7 @@ import com.google.common.reflect.TypeToken;
 import com.rojunaid.roacademy.auth.oauth2.OAuth2CredentialService;
 import com.rojunaid.roacademy.models.OAuth2Credential;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class Auth {
   public static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
   public static final JsonFactory JSON_FACTORY = new JacksonFactory();
   private static final String TOKEN_URI = "https://oauth2.googleapis.com/token";
+  @Autowired private Environment environment;
 
   private OAuth2CredentialService oAuth2CredentialService;
 
@@ -37,9 +39,19 @@ public class Auth {
 
   public Credential authorize() {
 
-    OAuth2Credential credential = oAuth2CredentialService.getYoutubeCredential();
+    OAuth2Credential credential = oAuth2CredentialService.getCredential();
 
     if (!isValidToken(credential)) {
+      if (credential == null) {
+        credential = new OAuth2Credential();
+        credential.setClientId(
+            environment.getProperty("spring.security.oauth2.client.registration.youtube.clientId"));
+        credential.setClientSecret(
+            environment.getProperty("spring.security.oauth2.client.registration.youtube.clientSecret"));
+        credential.setScope(
+            environment.getProperty("spring.security.oauth2.client.registration.youtube.scope"));
+        credential = oAuth2CredentialService.createOrUpdateCredential(credential);
+      }
       // refresh access token
       try {
 
@@ -72,7 +84,7 @@ public class Auth {
         credential.setScope(tokenResponse.getScope());
         credential.setTokenType(tokenResponse.getTokenType());
 
-        credential = oAuth2CredentialService.storeYoutubeCredential(credential);
+        credential = oAuth2CredentialService.createOrUpdateCredential(credential);
 
       } catch (IOException e) {
         System.out.println(e);
@@ -96,6 +108,9 @@ public class Auth {
   // private method
 
   private boolean isValidToken(OAuth2Credential credential) {
+    if (credential == null) {
+      return false;
+    }
     Long currentTimeInSeconds = System.currentTimeMillis() / 1000;
     return credential.getExpiresInSeconds() - currentTimeInSeconds > 120L ? true : false;
   }

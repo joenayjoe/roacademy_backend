@@ -74,6 +74,7 @@ public class LectureServiceImpl implements LectureService {
     }
   }
 
+  @Transactional
   @Override
   public LectureResource uploadResource(Long lectureId, MultipartFile file) {
     Lecture lecture = getLecture(lectureId);

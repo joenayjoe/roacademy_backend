@@ -1,10 +1,8 @@
 package com.rojunaid.roacademy;
 
+import com.rojunaid.roacademy.auth.oauth2.OAuth2CredentialService;
 import com.rojunaid.roacademy.configs.AppProperties;
-import com.rojunaid.roacademy.models.AuthProvider;
-import com.rojunaid.roacademy.models.Role;
-import com.rojunaid.roacademy.models.RoleEnum;
-import com.rojunaid.roacademy.models.User;
+import com.rojunaid.roacademy.models.*;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,7 @@ public class RoacademyApplication implements CommandLineRunner {
   @Autowired private UserRepository userRepository;
   @Autowired private PasswordEncoder passwordEncoder;
   @Autowired private Environment environment;
+  @Autowired private OAuth2CredentialService oAuth2CredentialService;
 
   public static void main(String[] args) {
     SpringApplication.run(RoacademyApplication.class, args);
@@ -53,6 +52,19 @@ public class RoacademyApplication implements CommandLineRunner {
       user.setRoles(new HashSet<>(Arrays.asList(role)));
       user.setProvider(AuthProvider.local);
       userRepository.save(user);
+    }
+
+    // insert client id and client secret for youtube oauth_credential if does not exist
+    OAuth2Credential oAuth2Credential = oAuth2CredentialService.getCredential();
+    if (oAuth2Credential == null) {
+      oAuth2Credential = new OAuth2Credential();
+      oAuth2Credential.setClientId(
+          environment.getProperty("spring.security.oauth2.client.registration.youtube.clientId"));
+      oAuth2Credential.setClientSecret(
+          environment.getProperty("spring.security.oauth2.client.registration.youtube.clientSecret"));
+      oAuth2Credential.setScope(
+          environment.getProperty("spring.security.oauth2.client.registration.youtube.scope"));
+      oAuth2CredentialService.createOrUpdateCredential(oAuth2Credential);
     }
 
     // create upload directory if does not exist
