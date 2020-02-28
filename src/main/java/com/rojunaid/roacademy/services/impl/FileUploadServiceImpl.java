@@ -27,15 +27,18 @@ public class FileUploadServiceImpl implements FileUploadService {
   @Value("${file.upload-dir}")
   private String uploadDir;
 
+  private static final String resourceFolder = "resources";
+
   @Autowired private YoutubeUploader youtubeUploader;
 
   @Override
   public String uploadFile(String resourceClassName, Long resourceId, MultipartFile file) {
 
+    resourceClassName = resourceClassName.toLowerCase();
     String fileName = file.getOriginalFilename();
 
     // create a directory with resource type, eg: LectureResource
-    Path resourceTypePath = Paths.get(uploadDir, resourceClassName).normalize();
+    Path resourceTypePath = Paths.get(uploadDir, resourceFolder, resourceClassName).normalize();
     try {
       Files.createDirectories(resourceTypePath);
     } catch (Exception exp) {
@@ -63,7 +66,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     } catch (Exception exp) {
       throw new DirectoryCreationException(Translator.toLocale("FileSave.error"));
     }
-    Path fileUrl = Paths.get("/", resourceClassName, resourceId.toString(), fileName).normalize();
+    Path fileUrl = Paths.get("/", resourceFolder, resourceClassName, resourceId.toString(), fileName).normalize();
     return fileUrl.toString();
   }
 

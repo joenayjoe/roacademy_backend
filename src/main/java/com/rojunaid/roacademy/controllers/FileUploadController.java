@@ -3,10 +3,13 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.TeachingResourceRequest;
 import com.rojunaid.roacademy.dto.TeachingResourceResponse;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
+import com.rojunaid.roacademy.models.LectureResource;
 import com.rojunaid.roacademy.models.User;
+import com.rojunaid.roacademy.repositories.LectureResourceRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.TeachingResourceService;
+import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +31,7 @@ public class FileUploadController {
   @Autowired private TeachingResourceService teachingResourceService;
   @Autowired private FileUploadService fileUploadService;
   @Autowired private UserRepository userRepository;
+  @Autowired private LectureResourceRepository lectureResourceRepository;
 
   @PostMapping(
       value = "/uploadFile",
@@ -40,21 +44,73 @@ public class FileUploadController {
     return new ResponseEntity<>(teachingResourceResponse, HttpStatus.CREATED);
   }
 
-  @GetMapping("/User/{userId}/{fileName:.+}")
-  public ResponseEntity<Resource> getProfilePhoto(
-      @PathVariable Long userId, @PathVariable String fileName, HttpServletRequest request) {
+  //  @GetMapping("/User/{userId}/{fileName:.+}")
+  //  public ResponseEntity<Resource> getProfilePhoto(
+  //      @PathVariable Long userId, @PathVariable String fileName, HttpServletRequest request) {
+  //
+  //    User user = userRepository.findById(userId).orElse(null);
+  //    if (user == null) {
+  //      throw new ResourceNotFoundException("Resource not found");
+  //    }
+  //    String imageUrl = user.getImageUrl();
+  //
+  //    if (!request.getRequestURI().equals(imageUrl)) {
+  //      throw new ResourceNotFoundException("Resource not found");
+  //    }
+  //
+  //    Resource resource = fileUploadService.getFileAsResource(imageUrl);
+  //    String contentType = null;
+  //    try {
+  //      contentType =
+  // request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+  //    } catch (IOException ex) {
+  //      System.out.println("Count not determine mimeType");
+  //    }
+  //
+  //    if (contentType == null) {
+  //      contentType = "application/octet-stream";
+  //    }
+  //
+  //    return ResponseEntity.ok()
+  //        .contentType(MediaType.parseMediaType(contentType))
+  //        .header(
+  //            HttpHeaders.CONTENT_DISPOSITION,
+  //            "attachment; filename=\"" + resource.getFilename() + "\"")
+  //        .body(resource);
+  //  }
 
-    User user = userRepository.findById(userId).orElse(null);
-    if (user == null) {
-      throw new ResourceNotFoundException("Resource not found");
+  @GetMapping("/resources/{resourceClass}/{resourceId}/{resourceName:.+}")
+  public ResponseEntity<Resource> getFileAsResource(
+      @PathVariable String resourceClass,
+      @PathVariable Long resourceId,
+      @PathVariable String resourceName,
+      HttpServletRequest request) {
+
+    String receivedResourceUrl =
+        "/resources/" + resourceClass + "/" + resourceId + "/" + resourceName;
+    String resourceUrl = "";
+    if (resourceClass.equals(User.class.getSimpleName().toLowerCase())) {
+      User user = userRepository.findById(resourceId).orElse(null);
+      if (user == null) {
+        throw new ResourceNotFoundException(
+            Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
+      }
+      resourceUrl = user.getImageUrl();
+    } else if (resourceClass.equals(LectureResource.class.getSimpleName().toLowerCase())) {
+      LectureResource lectureResource = lectureResourceRepository.findById(resourceId).orElse(null);
+      if (lectureResource == null) {
+        throw new ResourceNotFoundException(
+            Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
+      }
+      resourceUrl = lectureResource.getFileUrl();
     }
-    String imageUrl = user.getImageUrl();
 
-    if (!request.getRequestURI().equals(imageUrl)) {
-      throw new ResourceNotFoundException("Resource not found");
+    if (!receivedResourceUrl.equals(resourceUrl)) {
+      throw new ResourceNotFoundException(
+          Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
     }
 
-    Resource resource = fileUploadService.getFileAsResource(imageUrl);
+    Resource resource = fileUploadService.getFileAsResource(resourceUrl);
     String contentType = null;
     try {
       contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());

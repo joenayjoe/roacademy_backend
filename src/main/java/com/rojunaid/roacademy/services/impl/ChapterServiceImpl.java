@@ -1,7 +1,6 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.*;
-import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Chapter;
 import com.rojunaid.roacademy.models.Course;
@@ -60,46 +59,30 @@ public class ChapterServiceImpl implements ChapterService {
 
   @Override
   public ChapterResponse updateChapter(Long chapterId, ChapterUpdateRequest chapterRequest) {
-    Course course = this.getCourse(chapterRequest.getCourseId());
-    Chapter chapter = chapterRepository.findById(chapterRequest.getId()).orElse(null);
-    if (chapter != null) {
-      chapter.setName(chapterRequest.getName());
-      chapter.setPosition(chapterRequest.getPosition());
-      chapter.setCourse(course);
-      chapter = chapterRepository.save(chapter);
-      return this.chapterToChapterResponse(chapter);
-    }
-    throw this.chapterNotFoundException(chapterRequest.getId());
+    Chapter chapter = this.getChapter(chapterId);
+    chapter.setName(chapterRequest.getName());
+    chapter = chapterRepository.save(chapter);
+    return this.chapterToChapterResponse(chapter);
   }
 
   @Override
   public void updateChapterPosition(
       Long courseId, ChapterPositionUpdateRequest[] positionUpdateRequests) {
-    boolean isFailed = false;
     for (ChapterPositionUpdateRequest request : positionUpdateRequests) {
       Long chapterId = request.getChapterId();
       int position = request.getPosition();
       Chapter chapter = chapterRepository.findById(chapterId).orElse(null);
-      if (chapter == null) {
-        isFailed = true;
-      } else {
+      if (chapter != null) {
         chapter.setPosition(position);
         chapterRepository.save(chapter);
       }
-    }
-    if (isFailed) {
-      throw new BadRequestException(Translator.toLocale("${BadRequest}"));
     }
   }
 
   @Override
   public void deleteChapter(Long chapterId) {
-    Chapter chapter = chapterRepository.findById(chapterId).orElse(null);
-    if (chapter != null) {
-      chapterRepository.deleteById(chapterId);
-    } else {
-      throw this.chapterNotFoundException(chapterId);
-    }
+    Chapter chapter = this.getChapter(chapterId);
+    chapterRepository.delete(chapter);
   }
 
   @Override
@@ -132,7 +115,18 @@ public class ChapterServiceImpl implements ChapterService {
   // private methods
 
   private Course getCourse(Long courseId) {
-    return courseRepository.findById(courseId).orElse(null);
+    return courseRepository
+        .findById(courseId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("Course.id.notfound", new Object[] {courseId})));
+  }
+
+  private Chapter getChapter(Long chapterId) {
+    return chapterRepository
+        .findById(chapterId)
+        .orElseThrow(() -> chapterNotFoundException(chapterId));
   }
 
   // private methods

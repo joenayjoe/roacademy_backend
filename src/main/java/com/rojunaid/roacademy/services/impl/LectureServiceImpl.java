@@ -15,6 +15,7 @@ import com.rojunaid.roacademy.repositories.LectureRepository;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.LectureService;
 import com.rojunaid.roacademy.services.TagService;
+import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
 import com.rojunaid.roacademy.youtube.YoutubeMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +140,8 @@ public class LectureServiceImpl implements LectureService {
     response.setName(lecture.getName());
     response.setDescription(lecture.getDescription());
     response.setPosition(lecture.getPosition());
-    response.setLectureResource(lecture.getLectureResource());
+    response.setLectureResource(
+        lectureResourceToLectureResourceResponse(lecture.getLectureResource()));
     response.setTags(
         lecture.getTags().stream().map(tag -> tag.getName()).collect(Collectors.toList()));
     response.setCreatedAt(lecture.getCreatedAt());
@@ -164,6 +166,19 @@ public class LectureServiceImpl implements LectureService {
             () ->
                 new ResourceNotFoundException(
                     Translator.toLocale("${Lecture.id.notfound}", new Object[] {lectureId})));
+  }
+
+  private LectureResource lectureResourceToLectureResourceResponse(LectureResource resource) {
+    if (resource == null) {
+      return null;
+    }
+
+    if (resource.getContentType().startsWith("video")) {
+      resource.setFileUrl(resource.getFileUrl());
+    } else {
+      resource.setFileUrl(Helper.getBaseUrl() + resource.getFileUrl());
+    }
+    return resource;
   }
 
   private Lecture lectureRequestToLecture(LectureRequest lectureRequest) {

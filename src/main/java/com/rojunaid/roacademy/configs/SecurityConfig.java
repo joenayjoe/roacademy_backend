@@ -101,7 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .permitAll()
         .antMatchers("/api/search/**")
         .permitAll()
-        .antMatchers(HttpMethod.GET, "/User/{\\d+}/{\\w+}")
+        .antMatchers(HttpMethod.GET, "/resources/{\\w+}/{\\d+}/{\\w+}")
         .permitAll()
         .anyRequest()
         .authenticated()

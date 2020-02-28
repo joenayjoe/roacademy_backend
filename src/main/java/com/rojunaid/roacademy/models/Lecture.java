@@ -36,7 +36,6 @@ public class Lecture extends Auditable {
   @EqualsAndHashCode.Exclude
   private User createdBy;
 
-  @JsonIgnore
   @OneToOne(
       mappedBy = "lecture",
       fetch = FetchType.LAZY,

@@ -54,8 +54,8 @@ public class ChapterController {
 
   @PostMapping("/update_positions")
   public ResponseEntity<HttpStatus> updateChapterPosition(
-          @PathVariable Long courseId,
-          @Valid @RequestBody ChapterPositionUpdateRequest[] positionUpdateRequests) {
+      @PathVariable Long courseId,
+      @Valid @RequestBody ChapterPositionUpdateRequest[] positionUpdateRequests) {
     chapterService.updateChapterPosition(courseId, positionUpdateRequests);
     return new ResponseEntity<>(HttpStatus.OK);
   }
