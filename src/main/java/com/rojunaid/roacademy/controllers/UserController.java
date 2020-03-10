@@ -3,9 +3,11 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.ResetPasswordRequest;
 import com.rojunaid.roacademy.dto.UserResponse;
 import com.rojunaid.roacademy.dto.UserRoleUpdateRequest;
-import com.rojunaid.roacademy.services.FileUploadService;
+import com.rojunaid.roacademy.dto.UserUpdateRequest;
 import com.rojunaid.roacademy.services.UserService;
+import com.rojunaid.roacademy.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +20,25 @@ import javax.validation.Valid;
 public class UserController {
 
   @Autowired private UserService userService;
-  @Autowired private FileUploadService fileUploadService;
 
   @GetMapping("")
-  public ResponseEntity<Iterable<UserResponse>> getAllUsers() {
-    Iterable<UserResponse> userResponses = userService.findAll();
-    return new ResponseEntity<>(userResponses, HttpStatus.OK);
+  public ResponseEntity<Iterable<UserResponse>> getAllUsers(
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order) {
+    Page<UserResponse>  userPages = userService.findAll(page, size, order);
+    return new ResponseEntity<>(userPages, HttpStatus.OK);
+  }
+
+  @PostMapping("/{userId}")
+  public ResponseEntity<UserResponse> updateUser(@PathVariable Long userId, @Valid @RequestBody UserUpdateRequest request) {
+    UserResponse response = userService.updateUser(userId, request);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @PostMapping("/{userId}/update_roles")
   public ResponseEntity<UserResponse> updateUserRoles(
-      @PathVariable Long userId, @Valid UserRoleUpdateRequest userRoleUpdateRequest) {
+      @PathVariable Long userId, @Valid @RequestBody UserRoleUpdateRequest userRoleUpdateRequest) {
     UserResponse userResponse = userService.updateUserRole(userId, userRoleUpdateRequest);
     return new ResponseEntity<>(userResponse, HttpStatus.OK);
   }

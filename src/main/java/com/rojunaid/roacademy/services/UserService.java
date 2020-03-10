@@ -1,10 +1,8 @@
 package com.rojunaid.roacademy.services;
 
-import com.rojunaid.roacademy.dto.ResetPasswordRequest;
-import com.rojunaid.roacademy.dto.SignUpRequest;
-import com.rojunaid.roacademy.dto.UserResponse;
-import com.rojunaid.roacademy.dto.UserRoleUpdateRequest;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.models.User;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,8 +15,8 @@ public interface UserService {
 
   UserResponse registerNewUser(SignUpRequest signUpRequest);
 
-  //  @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
-  //  UserResponse updateUser(Long userId, UserUpdateRequest userUpdateDTO);
+    @PreAuthorize("hasRole('ADMIN')")
+    UserResponse updateUser(Long userId, UserUpdateRequest userUpdateDTO);
 
   @PreAuthorize("hasRole('ADMIN')")
   UserResponse updateUserRole(Long userId, UserRoleUpdateRequest userRoleUpdateRequest);
@@ -34,7 +32,7 @@ public interface UserService {
   void deleteUserById(Long id);
 
   @PreAuthorize("hasRole('ADMIN')")
-  Iterable<UserResponse> findAll();
+  Page<UserResponse> findAll(int page, int size, String sorting);
 
   @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
   UserResponse resetUserPassword(Long userId, ResetPasswordRequest resetPasswordRequest);

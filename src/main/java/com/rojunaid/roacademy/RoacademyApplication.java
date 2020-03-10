@@ -41,6 +41,20 @@ public class RoacademyApplication implements CommandLineRunner {
       role = roleRepository.save(role);
     }
 
+    Role teacherRole = roleRepository.findByName(RoleEnum.ROLE_TEACHER).orElse(null);
+    if(teacherRole == null) {
+      teacherRole = new Role();
+      teacherRole.setName(RoleEnum.ROLE_TEACHER);
+      roleRepository.save(teacherRole);
+    }
+
+    Role studentRole = roleRepository.findByName(RoleEnum.ROLE_STUDENT).orElse(null);
+    if(studentRole == null) {
+      studentRole = new Role();
+      studentRole.setName(RoleEnum.ROLE_STUDENT);
+      roleRepository.save(studentRole);
+    }
+
     Iterable<User> users = userRepository.findAll();
     if (!users.iterator().hasNext()) {
       User user = new User();

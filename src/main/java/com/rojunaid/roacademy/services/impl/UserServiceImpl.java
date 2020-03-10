@@ -13,9 +13,12 @@ import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.RoleService;
 import com.rojunaid.roacademy.services.UserService;
 import com.rojunaid.roacademy.util.Helper;
+import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,11 +74,24 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public UserResponse updateUser(Long userId, UserUpdateRequest request) {
+    User user = getUser(userId);
+    user.setFirstName(request.getFirstName());
+    user.setLastName(request.getLastName());
+    user.setEmail(request.getEmail());
+    List<Role> roles = roleRepository.findAllById(request.getRoleIds());
+    Set<Role> roleSet = roles.stream().collect(Collectors.toSet());
+    user.setRoles(roleSet);
+    user = userRepository.save(user);
+    return this.userToUserResponse(user);
+  }
+  @Override
   public UserResponse updateUserRole(Long userId, UserRoleUpdateRequest userRoleUpdateRequest) {
     User user = this.getUser(userId);
     List<Role> roles = roleRepository.findAllById(userRoleUpdateRequest.getRoleIds());
     Set<Role> roleSet = roles.stream().collect(Collectors.toSet());
     user.setRoles(roleSet);
+    user = userRepository.save(user);
     return this.userToUserResponse(user);
   }
 
@@ -117,12 +133,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Iterable<UserResponse> findAll() {
-    Iterable<User> users = userRepository.findAll();
-    List<UserResponse> userResponses = new ArrayList<>();
-    for (User user : users) {
-      userResponses.add(this.userToUserResponse(user));
-    }
+  public Page<UserResponse> findAll(int page, int size, String sorting) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(sorting));
+    Page<User> userPage = userRepository.findAll(pageable);
+    Page<UserResponse> userResponses = userPage.map(u -> userToUserResponse(u));
     return userResponses;
   }
 
@@ -144,6 +158,8 @@ public class UserServiceImpl implements UserService {
     userResponse.setFirstName(user.getFirstName());
     userResponse.setLastName(user.getLastName());
     userResponse.setEmail(user.getEmail());
+    userResponse.setCreatedAt(user.getCreatedAt());
+    userResponse.setUpdatedAt(user.getUpdatedAt());
 
     Set<Role> roles = user.getRoles();
     List<RoleResponse> roleResponses = new ArrayList<>();

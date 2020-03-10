@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UserResponse {
+public class UserResponse extends AuditableDTO {
 
   private Long id;
   private String firstName;
