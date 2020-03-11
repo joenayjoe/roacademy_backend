@@ -90,6 +90,8 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public CourseResponse findCourseById(Long courseId, List<CourseStatusEnum> status) {
     Course course = getCourse(courseId, status);
+    course.setHits(course.getHits() + 1);
+    course = courseRepository.save(course);
     return this.courseToCourseResponseWithObjectivesAndRequirements(course);
   }
 

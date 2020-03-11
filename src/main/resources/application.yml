@@ -1,7 +1,4 @@
 spring:
-  jackson:
-    date-format: dd-MM-yyyy hh:mm:ss
-
   datasource:
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
