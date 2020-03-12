@@ -1,6 +1,7 @@
 package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.dto.*;
+import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Role;
@@ -85,6 +86,7 @@ public class UserServiceImpl implements UserService {
     user = userRepository.save(user);
     return this.userToUserResponse(user);
   }
+
   @Override
   public UserResponse updateUserRole(Long userId, UserRoleUpdateRequest userRoleUpdateRequest) {
     User user = this.getUser(userId);
@@ -97,10 +99,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponse updatePhoto(Long userId, MultipartFile file) {
-    User user = userRepository.findById(userId).orElse(null);
-    if (user == null) {
-      throw this.userNotFoundException(userId);
-    }
+    User user = getUser(userId);
     String userClassName = User.class.getSimpleName();
     String imageUrl = this.fileUploadService.uploadFile(userClassName, userId, file);
     user.setImageUrl(imageUrl);
@@ -110,8 +109,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserResponse findUserById(Long userId) {
-    User user =
-        userRepository.findById(userId).orElseThrow(() -> this.userNotFoundException(userId));
+    User user = getUser(userId);
     return this.userToUserResponse(user);
   }
 
@@ -141,14 +139,25 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponse resetUserPassword(Long userId, ResetPasswordRequest resetPasswordRequest) {
-    User user = userRepository.findById(userId).orElse(null);
-    if (user == null) {
-      throw this.userNotFoundException(userId);
-    }
-    user.setHashPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+  public UserResponse updateEmail(Long userId, ResetEmailRequest emailRequest) {
+    User user = getUser(userId);
+    user.setEmail(emailRequest.getEmail());
     user = userRepository.save(user);
-    return this.userToUserResponse(user);
+    return userToUserResponse(user);
+  }
+
+  @Override
+  public UserResponse resetUserPassword(Long userId, ResetPasswordRequest resetPasswordRequest) {
+    User user = getUser(userId);
+    boolean match =
+        passwordEncoder.matches(resetPasswordRequest.getOldPassword(), user.getHashPassword());
+    if (match) {
+      user.setHashPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+      user = userRepository.save(user);
+      return this.userToUserResponse(user);
+    } else {
+      throw new BadRequestException(Translator.toLocale("Credential.mismatch"));
+    }
   }
 
   @Override

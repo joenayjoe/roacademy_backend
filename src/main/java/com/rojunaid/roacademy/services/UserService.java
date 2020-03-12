@@ -15,8 +15,8 @@ public interface UserService {
 
   UserResponse registerNewUser(SignUpRequest signUpRequest);
 
-    @PreAuthorize("hasRole('ADMIN')")
-    UserResponse updateUser(Long userId, UserUpdateRequest userUpdateDTO);
+  @PreAuthorize("hasRole('ADMIN')")
+  UserResponse updateUser(Long userId, UserUpdateRequest userUpdateDTO);
 
   @PreAuthorize("hasRole('ADMIN')")
   UserResponse updateUserRole(Long userId, UserRoleUpdateRequest userRoleUpdateRequest);
@@ -24,12 +24,15 @@ public interface UserService {
   @PreAuthorize("#userId == authentication.principal.user.id")
   UserResponse updatePhoto(Long userId, MultipartFile file);
 
+  @PreAuthorize("#userId == authentication.principal.user.id")
+  UserResponse updateEmail(Long userId, ResetEmailRequest emailRequest);
+
   UserResponse findUserById(Long userId);
 
   UserResponse getCurrentUser();
 
-  @PreAuthorize("#email == authentication.principal.user.email or hasRole('ADMIN')")
-  void deleteUserById(Long id);
+  @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
+  void deleteUserById(Long userId);
 
   @PreAuthorize("hasRole('ADMIN')")
   Page<UserResponse> findAll(int page, int size, String sorting);

@@ -1,9 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.ResetPasswordRequest;
-import com.rojunaid.roacademy.dto.UserResponse;
-import com.rojunaid.roacademy.dto.UserRoleUpdateRequest;
-import com.rojunaid.roacademy.dto.UserUpdateRequest;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.services.UserService;
 import com.rojunaid.roacademy.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +23,13 @@ public class UserController {
       @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
       @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
       @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order) {
-    Page<UserResponse>  userPages = userService.findAll(page, size, order);
+    Page<UserResponse> userPages = userService.findAll(page, size, order);
     return new ResponseEntity<>(userPages, HttpStatus.OK);
   }
 
   @PostMapping("/{userId}")
-  public ResponseEntity<UserResponse> updateUser(@PathVariable Long userId, @Valid @RequestBody UserUpdateRequest request) {
+  public ResponseEntity<UserResponse> updateUser(
+      @PathVariable Long userId, @Valid @RequestBody UserUpdateRequest request) {
     UserResponse response = userService.updateUser(userId, request);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
@@ -50,7 +48,14 @@ public class UserController {
     return new ResponseEntity<>(userResponse, HttpStatus.OK);
   }
 
-  @PutMapping("/{userId}/change_password")
+  @PostMapping("/{userId}/reset_email")
+  public ResponseEntity<UserResponse> updateUserEmail(
+      @PathVariable Long userId, @Valid @RequestBody ResetEmailRequest emailRequest) {
+    UserResponse userResponse = userService.updateEmail(userId, emailRequest);
+    return new ResponseEntity<>(userResponse, HttpStatus.OK);
+  }
+
+  @PostMapping("/{userId}/reset_password")
   public ResponseEntity<UserResponse> updateUserPassword(
       @PathVariable Long userId, @Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
     UserResponse userResponse = userService.resetUserPassword(userId, resetPasswordRequest);
