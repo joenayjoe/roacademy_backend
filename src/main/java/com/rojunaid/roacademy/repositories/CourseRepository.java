@@ -19,7 +19,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   Page<Course> findAll(List<CourseStatusEnum> status, Pageable page);
 
   @Query("select crs from Course  crs where crs.category.id = ?1 and crs.status in (?2)")
-  Iterable<Course> findAllByCategoryId(Long categoryId, List<CourseStatusEnum> status, Sort sort);
+  Page<Course> findAllByCategoryId(Long categoryId, List<CourseStatusEnum> status, Pageable page);
 
   @Query("select crs from Course  crs where crs.grade.id = ?1 and crs.status in (?2)")
   Iterable<Course> findAllByGradeId(Long gradeId, List<CourseStatusEnum> status, Sort sort);

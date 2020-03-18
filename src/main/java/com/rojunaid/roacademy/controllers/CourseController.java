@@ -37,12 +37,14 @@ public class CourseController {
   // GET /api/courses
   // Get all courses for a category
   @GetMapping(value = "", params = "category_id")
-  public ResponseEntity<Iterable<CourseResponse>> getAllCoursesByCategoryId(
+  public ResponseEntity<Page<CourseResponse>> getAllCoursesByCategoryId(
       @RequestParam Long category_id,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
       @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order,
       @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status) {
-    Iterable<CourseResponse> courseResponses =
-        courseService.findCoursesByCategoryId(category_id, status, order);
+    Page<CourseResponse> courseResponses =
+        courseService.findCoursesByCategoryId(category_id, page, size, status, order);
     return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 

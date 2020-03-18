@@ -15,8 +15,8 @@ public interface CourseService {
 
   Page<CourseResponse> findAll(int page, int size, String order, List<CourseStatusEnum> status);
 
-  Iterable<CourseResponse> findCoursesByCategoryId(
-          Long category_id, List<CourseStatusEnum> status, String order);
+  Page<CourseResponse> findCoursesByCategoryId(
+      Long category_id, int page, int size, List<CourseStatusEnum> status, String order);
 
   Iterable<CourseResponse> findCoursesByGradeId(
       Long grade_id, List<CourseStatusEnum> status, String order);
