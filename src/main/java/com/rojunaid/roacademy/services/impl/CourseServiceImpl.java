@@ -50,16 +50,24 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public Iterable<CourseResponse> findCoursesByGradeId(
-      Long grade_id, List<CourseStatusEnum> status, String order) {
-    Iterable<Course> courses =
-        courseRepository.findAllByGradeId(grade_id, status, SortingUtils.SortBy(order));
+  public Page<CourseResponse> findCoursesByGradeId(
+      Long grade_id, int page, int size, List<CourseStatusEnum> status, String order) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<Course> courses =
+        courseRepository.findAllByGradeId(grade_id, status, pageable);
 
-    List<CourseResponse> courseResponses = new ArrayList<>();
-    for (Course course : courses) {
-      courseResponses.add(this.courseToCourseResponse(course));
-    }
+    Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponse(course));
     return courseResponses;
+  }
+
+  @Override
+  public Iterable<CourseResponse> findCoursesByGradeId(Long gradeId, List<CourseStatusEnum> status, String order) {
+    Iterable<Course> courses = courseRepository.findAllByGradeId(gradeId, status, SortingUtils.SortBy(order));
+    List<CourseResponse> responses = new ArrayList<>();
+    for(Course course : courses) {
+      responses.add(courseToCourseResponse(course));
+    }
+    return responses;
   }
 
   @Override

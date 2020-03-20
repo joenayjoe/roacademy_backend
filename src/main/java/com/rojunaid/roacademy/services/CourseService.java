@@ -18,8 +18,11 @@ public interface CourseService {
   Page<CourseResponse> findCoursesByCategoryId(
       Long category_id, int page, int size, List<CourseStatusEnum> status, String order);
 
+  Page<CourseResponse> findCoursesByGradeId(
+      Long grade_id, int page, int size, List<CourseStatusEnum> status, String order);
+
   Iterable<CourseResponse> findCoursesByGradeId(
-      Long grade_id, List<CourseStatusEnum> status, String order);
+      Long gradeId, List<CourseStatusEnum> status, String order);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   CourseResponse createCourse(CourseRequest courseRequest);

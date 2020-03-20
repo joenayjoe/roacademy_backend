@@ -51,13 +51,22 @@ public class CourseController {
   // GET /api/courses
   // Get all courses for a grade
   @GetMapping(value = "", params = "grade_id")
-  public ResponseEntity<Iterable<CourseResponse>> getAllCoursesByGradeId(
+  public ResponseEntity<?> getAllCoursesByGradeId(
       @RequestParam Long grade_id,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
       @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order,
-      @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status) {
-    Iterable<CourseResponse> courseResponses =
-        courseService.findCoursesByGradeId(grade_id, status, order);
-    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
+      @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status,
+      @RequestParam(defaultValue = "true") boolean pagination) {
+    if(pagination) {
+      Page<CourseResponse> courseResponses =
+              courseService.findCoursesByGradeId(grade_id, page, size, status, order);
+      return new ResponseEntity<>(courseResponses, HttpStatus.OK);
+    } else {
+      Iterable<CourseResponse> courseResponses = courseService.findCoursesByGradeId(grade_id, status, order);
+      return new ResponseEntity<>(courseResponses, HttpStatus.OK);
+    }
+
   }
 
   // POST /api/courses
