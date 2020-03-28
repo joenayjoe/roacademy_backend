@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 @Setter
 @Getter
-public class SearchResponse<T> {
-  private Long totalPage;
-  private Long starPage;
-  private Long endPage;
-  private Iterable<T> result = new ArrayList<>();
+public class SearchResponse {
+  private Long id;
+  private String name;
+  private String type;
+  private String url;
 }

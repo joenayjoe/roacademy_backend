@@ -8,6 +8,7 @@ import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.repositories.GradeRepository;
 import com.rojunaid.roacademy.services.CourseService;
+import com.rojunaid.roacademy.util.Constants;
 import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,18 +54,19 @@ public class CourseServiceImpl implements CourseService {
   public Page<CourseResponse> findCoursesByGradeId(
       Long grade_id, int page, int size, List<CourseStatusEnum> status, String order) {
     PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
-    Page<Course> courses =
-        courseRepository.findAllByGradeId(grade_id, status, pageable);
+    Page<Course> courses = courseRepository.findAllByGradeId(grade_id, status, pageable);
 
     Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponse(course));
     return courseResponses;
   }
 
   @Override
-  public Iterable<CourseResponse> findCoursesByGradeId(Long gradeId, List<CourseStatusEnum> status, String order) {
-    Iterable<Course> courses = courseRepository.findAllByGradeId(gradeId, status, SortingUtils.SortBy(order));
+  public Iterable<CourseResponse> findCoursesByGradeId(
+      Long gradeId, List<CourseStatusEnum> status, String order) {
+    Iterable<Course> courses =
+        courseRepository.findAllByGradeId(gradeId, status, SortingUtils.SortBy(order));
     List<CourseResponse> responses = new ArrayList<>();
-    for(Course course : courses) {
+    for (Course course : courses) {
       responses.add(courseToCourseResponse(course));
     }
     return responses;
@@ -112,13 +114,12 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public Iterable<CourseResponse> search(String query) {
-    Iterable<Course> courses = courseRepository.search(query);
-    List<CourseResponse> courseResponses = new ArrayList<>();
-    for (Course course : courses) {
-      courseResponses.add(this.courseToCourseResponse(course));
-    }
-    return courseResponses;
+  public Page<SearchResponse> search(
+      String query, int page, int size, String order, List<CourseStatusEnum> status) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<Course> courses = courseRepository.search(query, status, pageable);
+    Page<SearchResponse> searchResponses = courses.map(course -> CourseToSearchResponse(course));
+    return searchResponses;
   }
 
   @Override
@@ -171,6 +172,17 @@ public class CourseServiceImpl implements CourseService {
     courseResponse.setRequirements(
         course.getCourseRequirements().stream().map(x -> x.getName()).collect(Collectors.toList()));
     return courseResponse;
+  }
+
+  private SearchResponse CourseToSearchResponse(Course course) {
+    SearchResponse searchResponse = new SearchResponse();
+    searchResponse.setId(course.getId());
+    searchResponse.setName(course.getName());
+    searchResponse.setType(Course.class.getSimpleName());
+
+    String url = "/api/courses/" + course.getId() + "?status=" + Constants.DEFAULT_COURSE_STATUS;
+    searchResponse.setUrl(url);
+    return searchResponse;
   }
 
   // private methods

@@ -1,9 +1,6 @@
 package com.rojunaid.roacademy.services;
 
-import com.rojunaid.roacademy.dto.CourseRequest;
-import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.dto.CourseStatusUpdateRequest;
-import com.rojunaid.roacademy.dto.CourseUpdateRequest;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.CourseStatusEnum;
 import org.springframework.data.domain.Page;
@@ -38,7 +35,8 @@ public interface CourseService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteCourseById(Long courseId);
 
-  Iterable<CourseResponse> search(String query);
+  Page<SearchResponse> search(
+      String query, int page, int size, String order, List<CourseStatusEnum> status);
 
   // DTO Mapper
   CourseResponse courseToCourseResponse(Course course);

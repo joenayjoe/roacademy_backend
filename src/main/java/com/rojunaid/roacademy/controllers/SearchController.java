@@ -1,16 +1,19 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.dto.SearchRequest;
 import com.rojunaid.roacademy.dto.SearchResponse;
 import com.rojunaid.roacademy.dto.TagResponse;
-import com.rojunaid.roacademy.models.Tag;
-import com.rojunaid.roacademy.services.CourseService;
+import com.rojunaid.roacademy.models.CourseStatusEnum;
+import com.rojunaid.roacademy.services.SearchService;
 import com.rojunaid.roacademy.services.TagService;
+import com.rojunaid.roacademy.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -18,33 +21,26 @@ import java.util.List;
 @RequestMapping("/api/search")
 public class SearchController {
 
-  @Autowired private CourseService courseService;
+  @Autowired private SearchService searchService;
   @Autowired private TagService tagService;
 
   @GetMapping("")
-  public ResponseEntity<?> search(@RequestParam String query) {
-    Iterable<CourseResponse> courses = courseService.search(query);
+  public ResponseEntity<?> search(
+      @RequestParam String query,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order,
+      @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status) {
+    Page<SearchResponse> searchResponses = searchService.search(query, page, size, order, status);
 
-    SearchResponse<CourseResponse> searchResponse = new SearchResponse<>();
-    searchResponse.setEndPage(0L);
-    searchResponse.setStarPage(0L);
-    searchResponse.setTotalPage(1L);
-    searchResponse.setResult(courses);
-    return new ResponseEntity<>(searchResponse, HttpStatus.OK);
-  }
-
-  // For auto suggest
-  @PostMapping("")
-  ResponseEntity<Iterable<CourseResponse>> autoSuggest(@RequestBody SearchRequest request) {
-    Iterable<CourseResponse> courseResponses = courseService.search(request.getQuery());
-    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
+    return new ResponseEntity<>(searchResponses, HttpStatus.OK);
   }
 
   // For tag search
 
   @GetMapping("/tags")
   ResponseEntity<List<TagResponse>> searchTags(@RequestParam String name) {
-    List<TagResponse> tagResponses =  tagService.search(name);
+    List<TagResponse> tagResponses = tagService.search(name);
     return new ResponseEntity<>(tagResponses, HttpStatus.OK);
   }
 }
