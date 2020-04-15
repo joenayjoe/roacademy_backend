@@ -15,7 +15,11 @@ import java.util.Optional;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-  @Query("SELECT crs FROM Course  crs WHERE crs.status in (?1)")
+  @Query(
+      value =
+          "SELECT crs FROM Course  crs left join fetch crs.courseRequirements left join fetch crs.objectives left  join fetch crs.grade left  join  fetch crs.category left join fetch crs.createdBy WHERE crs.status in (?1)",
+      countQuery =
+          "SELECT COUNT(crs) FROM Course crs WHERE crs.status in (?1)")
   Page<Course> findAll(List<CourseStatusEnum> status, Pageable page);
 
   @Query("select crs from Course  crs where crs.category.id = ?1 and crs.status in (?2)")

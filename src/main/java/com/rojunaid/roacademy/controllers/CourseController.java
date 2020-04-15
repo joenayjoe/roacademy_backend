@@ -58,15 +58,15 @@ public class CourseController {
       @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order,
       @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status,
       @RequestParam(defaultValue = "true") boolean pagination) {
-    if(pagination) {
+    if (pagination) {
       Page<CourseResponse> courseResponses =
-              courseService.findCoursesByGradeId(grade_id, page, size, status, order);
+          courseService.findCoursesByGradeId(grade_id, page, size, status, order);
       return new ResponseEntity<>(courseResponses, HttpStatus.OK);
     } else {
-      Iterable<CourseResponse> courseResponses = courseService.findCoursesByGradeId(grade_id, status, order);
+      Iterable<CourseResponse> courseResponses =
+          courseService.findCoursesByGradeId(grade_id, status, order);
       return new ResponseEntity<>(courseResponses, HttpStatus.OK);
     }
-
   }
 
   // POST /api/courses
@@ -95,6 +95,19 @@ public class CourseController {
       @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status) {
     CourseResponse courseResponse = courseService.findCourseById(courseId, status);
     return new ResponseEntity<>(courseResponse, HttpStatus.OK);
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<Page<CourseResponse>> searchCourseByKeyword(
+      @RequestParam String kw,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order,
+      @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status) {
+    Page<CourseResponse> courseResponses =
+        courseService.searchCoursesByKeyword(kw, page, size, order, status);
+
+    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
   }
 
   // Update course status

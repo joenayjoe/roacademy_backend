@@ -35,8 +35,11 @@ public interface CourseService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteCourseById(Long courseId);
 
-  Page<SearchResponse> search(
+  Page<SearchResponse> getAutocompleteSuggestionsForCourse(
       String query, int page, int size, String order, List<CourseStatusEnum> status);
+
+  Page<CourseResponse> searchCoursesByKeyword(
+      String kw, int page, int size, String order, List<CourseStatusEnum> status);
 
   // DTO Mapper
   CourseResponse courseToCourseResponse(Course course);

@@ -36,7 +36,7 @@ public class CourseServiceImpl implements CourseService {
     PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
     Page<Course> courses = courseRepository.findAll(status, pageable);
 
-    Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponse(course));
+    Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponseWithObjectivesAndRequirements(course));
     return courseResponses;
   }
 
@@ -114,11 +114,20 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public Page<SearchResponse> search(
+  public Page<SearchResponse> getAutocompleteSuggestionsForCourse(
       String query, int page, int size, String order, List<CourseStatusEnum> status) {
     PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
     Page<Course> courses = courseRepository.search(query, status, pageable);
-    Page<SearchResponse> searchResponses = courses.map(course -> CourseToSearchResponse(course));
+    Page<SearchResponse> searchResponses = courses.map(course -> courseToSearchResponse(course));
+    return searchResponses;
+  }
+
+  @Override
+  public Page<CourseResponse> searchCoursesByKeyword(
+      String query, int page, int size, String order, List<CourseStatusEnum> status) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<Course> courses = courseRepository.search(query, status, pageable);
+    Page<CourseResponse> searchResponses = courses.map(course -> courseToCourseResponse(course));
     return searchResponses;
   }
 
@@ -174,7 +183,7 @@ public class CourseServiceImpl implements CourseService {
     return courseResponse;
   }
 
-  private SearchResponse CourseToSearchResponse(Course course) {
+  private SearchResponse courseToSearchResponse(Course course) {
     SearchResponse searchResponse = new SearchResponse();
     searchResponse.setId(course.getId());
     searchResponse.setName(course.getName());
