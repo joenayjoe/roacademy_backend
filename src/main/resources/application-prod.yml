@@ -15,9 +15,6 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
 
-  profiles:
-    active: @activatedProperties@
-
 
   servlet:
     multipart:
@@ -86,4 +83,4 @@ app:
 #      redirectUrl: http://localhost:8080/callback/facebook
 
 server:
-  port: 8080
+  port: 5000

@@ -1,3 +1,4 @@
+
 spring:
   datasource:
     url: ${MYSQL_URL}
@@ -14,9 +15,6 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
-
-  profiles:
-    active: @activatedProperties@
 
 
   servlet:
@@ -86,4 +84,4 @@ app:
 #      redirectUrl: http://localhost:8080/callback/facebook
 
 server:
-  port: 8080
+  port: 5000
