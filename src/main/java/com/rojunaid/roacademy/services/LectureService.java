@@ -5,7 +5,6 @@ import com.rojunaid.roacademy.dto.LectureRequest;
 import com.rojunaid.roacademy.dto.LectureResponse;
 import com.rojunaid.roacademy.dto.LectureUpdateRequest;
 import com.rojunaid.roacademy.models.Lecture;
-import com.rojunaid.roacademy.models.LectureResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +20,10 @@ public interface LectureService {
   void updatePositions(LecturePositionUpdateRequest[] positions);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  LectureResource uploadResource(Long lectureId, MultipartFile file);
+  LectureResponse uploadResource(Long lectureId, MultipartFile file);
+
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  void deleteLectureResource(Long lectureId, Long resourceId);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   void deleteLecture(Long lectureId);

@@ -16,8 +16,8 @@ import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.TagService;
 import com.rojunaid.roacademy.services.TeachingResourceService;
 import com.rojunaid.roacademy.util.Translator;
-import com.rojunaid.roacademy.youtube.YoutubeMetaData;
-import com.rojunaid.roacademy.youtube.YoutubeUploader;
+import com.rojunaid.roacademy.auth.oauth2.youtube.YoutubeMetaData;
+import com.rojunaid.roacademy.auth.oauth2.youtube.YoutubeApiManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
   @Autowired private TeachingResourceRepository teachingResourceRepository;
   @Autowired private TagService tagService;
   @Autowired private AuthenticationFacade authenticationFacade;
-  @Autowired private YoutubeUploader youtubeUploader;
+  @Autowired private YoutubeApiManager youtubeApiManager;
   @Autowired private FileUploadService fileUploadService;
 
   @Value("${file.upload-dir}")
@@ -99,7 +99,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
       return returnVideo.getId();
     } else {
       String trn = TeachingResource.class.getSimpleName();
-      return fileUploadService.uploadFile(trn, teachingResource.getId(), file);
+      return fileUploadService.uploadToLocal(trn, teachingResource.getId(), file);
     }
   }
 
@@ -110,7 +110,7 @@ public class TeachingResourceServiceImpl implements TeachingResourceService {
     metaData.setStatus(teachingResource.getPrivacyStatus());
     metaData.setTags(
         teachingResource.getTags().stream().map(t -> t.getName()).collect(Collectors.toList()));
-    return youtubeUploader.upload(metaData, file);
+    return youtubeApiManager.upload(metaData, file);
   }
 
   private TeachingResource teachingResourceDTOToTeachingResource(

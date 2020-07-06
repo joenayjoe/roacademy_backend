@@ -68,19 +68,6 @@ public class RoacademyApplication implements CommandLineRunner {
       userRepository.save(user);
     }
 
-    // insert client id and client secret for youtube oauth_credential if does not exist
-    OAuth2Credential oAuth2Credential = oAuth2CredentialService.getCredential();
-    if (oAuth2Credential == null) {
-      oAuth2Credential = new OAuth2Credential();
-      oAuth2Credential.setClientId(
-          environment.getProperty("spring.security.oauth2.client.registration.youtube.clientId"));
-      oAuth2Credential.setClientSecret(
-          environment.getProperty("spring.security.oauth2.client.registration.youtube.clientSecret"));
-      oAuth2Credential.setScope(
-          environment.getProperty("spring.security.oauth2.client.registration.youtube.scope"));
-      oAuth2CredentialService.createOrUpdateCredential(oAuth2Credential);
-    }
-
     // create upload directory if does not exist
     String path = environment.getProperty("file.upload-dir");
     File uploadDir = new File(path);

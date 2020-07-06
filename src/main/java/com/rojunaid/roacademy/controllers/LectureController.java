@@ -1,7 +1,7 @@
 package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.LecturePositionUpdateRequest;
-import com.rojunaid.roacademy.models.LectureResource;
+import com.rojunaid.roacademy.dto.LectureResponse;
 import com.rojunaid.roacademy.services.LectureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,9 +24,16 @@ public class LectureController {
   }
 
   @PostMapping("/{lectureId}/upload_content")
-  public ResponseEntity<LectureResource> uploadLectureResource(
+  public ResponseEntity<LectureResponse> uploadLectureResource(
       @PathVariable Long lectureId, @Valid @RequestParam MultipartFile file) {
-    LectureResource resource = lectureService.uploadResource(lectureId, file);
-    return new ResponseEntity<>(resource, HttpStatus.OK);
+    LectureResponse response = lectureService.uploadResource(lectureId, file);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{lectureId}/resources/{resourceId}")
+  public ResponseEntity<HttpStatus> deleteLectureResource(
+      @PathVariable Long lectureId, @PathVariable Long resourceId) {
+    lectureService.deleteLectureResource(lectureId, resourceId);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }

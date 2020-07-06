@@ -1,57 +1,38 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.auth.oauth2.OAuth2CredentialService;
-import com.rojunaid.roacademy.dto.YoutubeCredentialDTO;
-import com.rojunaid.roacademy.exception.ResourceNotFoundException;
-import com.rojunaid.roacademy.models.OAuth2Credential;
-import com.rojunaid.roacademy.util.Translator;
+import com.rojunaid.roacademy.auth.oauth2.Auth;
+import com.rojunaid.roacademy.models.AuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/oauth2")
 public class OAuth2CredentialController {
 
-  @Autowired private OAuth2CredentialService oAuth2CredentialService;
+  @Autowired private Auth authProvider;
 
-  @GetMapping()
-  public ResponseEntity<YoutubeCredentialDTO> getCredential() {
-    OAuth2Credential credential = oAuth2CredentialService.getCredential();
-    YoutubeCredentialDTO response = oauth2CredentialToDTO(credential);
-    return new ResponseEntity<>(response, HttpStatus.OK);
+  @GetMapping("/authorize/box")
+  public void authorizeBox(HttpServletRequest request, HttpServletResponse response) {
+    authProvider.authorize(AuthProvider.box, request, response);
   }
 
-  @PostMapping("")
-  public ResponseEntity<YoutubeCredentialDTO> updateCredential(
-      @Valid @RequestBody YoutubeCredentialDTO request) {
-
-    OAuth2Credential credential = oAuth2CredentialService.getCredential();
-    if (credential == null) {
-      throw new ResourceNotFoundException(Translator.toLocale("${Credential.notfound}"));
-    }
-    credential.setRefreshToken(request.getRefreshToken());
-    credential.setAccessToken(request.getAccessToken());
-    Long currentTimeInSeconds = System.currentTimeMillis() / 1000;
-    credential.setExpiresInSeconds(currentTimeInSeconds+request.getExpiresInSeconds());
-
-    credential = oAuth2CredentialService.createOrUpdateCredential(credential);
-
-    YoutubeCredentialDTO response = oauth2CredentialToDTO(credential);
-    return new ResponseEntity<>(response, HttpStatus.OK);
+  @GetMapping("/callback/box")
+  public void boxCallback(HttpServletRequest request, HttpServletResponse response) {
+    authProvider.getAccessToken(AuthProvider.box, request, response);
   }
 
-  private YoutubeCredentialDTO oauth2CredentialToDTO(OAuth2Credential credential) {
-    if (credential == null) {
-      return null;
-    }
-    YoutubeCredentialDTO response = new YoutubeCredentialDTO();
-    response.setAccessToken(credential.getAccessToken());
-    response.setRefreshToken(credential.getRefreshToken());
-    response.setExpiresInSeconds(credential.getExpiresInSeconds());
-    return response;
+  @GetMapping("/authorize/imgur")
+  public void authorizeImgur(HttpServletRequest request, HttpServletResponse response) {
+    authProvider.authorize(AuthProvider.imgur, request, response);
+  }
+
+  @GetMapping("/callback/imgur")
+  public void imgurCallback(HttpServletRequest request, HttpServletResponse response) {
+    authProvider.getAccessToken(AuthProvider.imgur, request, response);
   }
 }

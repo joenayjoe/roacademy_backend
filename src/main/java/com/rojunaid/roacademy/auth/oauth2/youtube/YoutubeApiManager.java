@@ -1,6 +1,5 @@
-package com.rojunaid.roacademy.youtube;
+package com.rojunaid.roacademy.auth.oauth2.youtube;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
@@ -19,23 +18,18 @@ import java.io.InputStream;
 import java.util.stream.Collectors;
 
 @Component
-public class YoutubeUploader {
+public class YoutubeApiManager {
 
+  public static final String BASE_URL = "https://www.youtube.com/watch?v=";
   private static final String VIDEO_FILE_FORMAT = "video/*";
   private static YouTube youtube;
-  @Autowired private Auth authProvider;
+  @Autowired private YoutubeApiConnectionProvider connectionProvider;
 
   public Video upload(YoutubeMetaData metaData, MultipartFile file) {
 
     try {
-
-      Credential credential = authProvider.authorize();
-
       // This object is used to make YouTube Data API requests.
-      youtube =
-          new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential)
-              .setApplicationName("roacademy-youtube-video-upload")
-              .build();
+      youtube = connectionProvider.getYoutubeApiProvider();
 
       // Add extra information to the video before uploading.
       Video videoObjectDefiningMetadata = new Video();
@@ -48,14 +42,8 @@ public class YoutubeUploader {
 
       // Most of the video's metadata is set on the VideoSnippet object.
       VideoSnippet snippet = new VideoSnippet();
-
-      // This code uses a Calendar instance to create a unique name and
-      // description for test purposes so that you can easily upload
-      // multiple files. You should remove this code from your project
-      // and use your own standard names instead.
       snippet.setTitle(metaData.getTitle());
       snippet.setCategoryId("27"); // 27 = Education
-
       snippet.setTags(metaData.getTags());
 
       String hashTags =

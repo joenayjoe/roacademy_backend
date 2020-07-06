@@ -1,4 +1,4 @@
-package com.rojunaid.roacademy.youtube;
+package com.rojunaid.roacademy.auth.oauth2.youtube;
 
 import lombok.Data;
 

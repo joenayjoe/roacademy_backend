@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.auth.oauth2.UploadedResourceInfo;
 import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
@@ -100,9 +101,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse updatePhoto(Long userId, MultipartFile file) {
     User user = getUser(userId);
-    String userClassName = User.class.getSimpleName();
-    String imageUrl = this.fileUploadService.uploadFile(userClassName, userId, file);
-    user.setImageUrl(imageUrl);
+    UploadedResourceInfo uploadedResourceInfo = this.fileUploadService.uploadToImgur(file);
+    user.setImageUrl(uploadedResourceInfo.getResourceUrl());
     user = userRepository.save(user);
     return this.userToUserResponse(user);
   }

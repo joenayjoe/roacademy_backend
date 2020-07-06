@@ -8,7 +8,9 @@ import lombok.EqualsAndHashCode;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,13 +38,22 @@ public class Lecture extends Auditable {
   @EqualsAndHashCode.Exclude
   private User createdBy;
 
-  @OneToOne(
+  //  @OneToOne(
+  //      mappedBy = "lecture",
+  //      fetch = FetchType.LAZY,
+  //      orphanRemoval = true,
+  //      cascade = CascadeType.ALL)
+  //  @EqualsAndHashCode.Exclude
+  //  private VideoResource videoResource;
+
+  @JsonBackReference
+  @OneToMany(
       mappedBy = "lecture",
       fetch = FetchType.LAZY,
       orphanRemoval = true,
       cascade = CascadeType.ALL)
   @EqualsAndHashCode.Exclude
-  private LectureResource lectureResource;
+  private List<LectureResource> lectureResources = new ArrayList<>();
 
   @JsonBackReference
   @ManyToOne(fetch = FetchType.LAZY)
@@ -56,5 +67,10 @@ public class Lecture extends Auditable {
         (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     User user = principal.getUser();
     this.setCreatedBy(user);
+  }
+
+  public void addLectureResource(LectureResource resource) {
+    this.getLectureResources().add(resource);
+    resource.setLecture(this);
   }
 }

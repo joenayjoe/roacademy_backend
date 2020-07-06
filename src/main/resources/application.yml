@@ -43,12 +43,6 @@ spring:
             scope:
               - email
               - profile
-          youtube:
-            provider: google
-            clientId: ${ROACADEMY_YOUTUBE_CLIENT_ID}
-            clientSecret: ${ROACADEMY_YOUTUBE_CLIENT_SECRET}
-            scope:
-              - ${ROACADEMY_YOUTUBE_SCOPE}
         provider:
           facebook:
             authorizationUri: https://www.facebook.com/v5.0/dialog/oauth
@@ -75,6 +69,25 @@ app:
     jwtExpirationInMs: ${ROACADEMY_JWT_EXPIRATION_IN_MS}
 
   oauth2:
+    box:
+      clientId: 2dyhehgrgnd3hur6lws8b7aw90ulvnjb
+      clientSecret: 6Ed2B4a4ke8zt2kfYraaHFAP38XcOBKJ
+      authorizationUri: "https://account.box.com/api/oauth2/authorize"
+      tokenUri: "https://api.box.com/oauth2/token"
+
+    youtube:
+      clientId: ${ROACADEMY_YOUTUBE_CLIENT_ID}
+      clientSecret: ${ROACADEMY_YOUTUBE_CLIENT_SECRET}
+      authorizationUri: "https://accounts.google.com/o/oauth2/v2/auth"
+      tokenUri: "https://oauth2.googleapis.com/token"
+      scope:
+        - ${ROACADEMY_YOUTUBE_SCOPE}
+    imgur:
+      clientId: 0310cb46dabb718
+      clientSecret: 5f6c9298262bbaa6b0867fad6625ff11723e09f5
+      authorizationUri: "https://api.imgur.com/oauth2/authorize"
+      tokenUri: "https://api.imgur.com/oauth2/token"
+
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect
 

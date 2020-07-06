@@ -2,28 +2,21 @@ package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.TeachingResourceRequest;
 import com.rojunaid.roacademy.dto.TeachingResourceResponse;
-import com.rojunaid.roacademy.exception.ResourceNotFoundException;
-import com.rojunaid.roacademy.models.LectureResource;
-import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.repositories.LectureResourceRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.TeachingResourceService;
-import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 
 @RestController
 public class FileUploadController {
@@ -79,54 +72,55 @@ public class FileUploadController {
   //        .body(resource);
   //  }
 
-  @GetMapping("/resources/{resourceClass}/{resourceId}/{resourceName:.+}")
-  public ResponseEntity<Resource> getFileAsResource(
-      @PathVariable String resourceClass,
-      @PathVariable Long resourceId,
-      @PathVariable String resourceName,
-      HttpServletRequest request) {
-
-    String receivedResourceUrl =
-        "/resources/" + resourceClass + "/" + resourceId + "/" + resourceName;
-    String resourceUrl = "";
-    if (resourceClass.equals(User.class.getSimpleName().toLowerCase())) {
-      User user = userRepository.findById(resourceId).orElse(null);
-      if (user == null) {
-        throw new ResourceNotFoundException(
-            Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
-      }
-      resourceUrl = user.getImageUrl();
-    } else if (resourceClass.equals(LectureResource.class.getSimpleName().toLowerCase())) {
-      LectureResource lectureResource = lectureResourceRepository.findById(resourceId).orElse(null);
-      if (lectureResource == null) {
-        throw new ResourceNotFoundException(
-            Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
-      }
-      resourceUrl = lectureResource.getFileUrl();
-    }
-
-    if (!receivedResourceUrl.equals(resourceUrl)) {
-      throw new ResourceNotFoundException(
-          Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
-    }
-
-    Resource resource = fileUploadService.getFileAsResource(resourceUrl);
-    String contentType = null;
-    try {
-      contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-    } catch (IOException ex) {
-      System.out.println("Count not determine mimeType");
-    }
-
-    if (contentType == null) {
-      contentType = "application/octet-stream";
-    }
-
-    return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(contentType))
-        .header(
-            HttpHeaders.CONTENT_DISPOSITION,
-            "attachment; filename=\"" + resource.getFilename() + "\"")
-        .body(resource);
-  }
+  //  @GetMapping("/resources/{resourceClass}/{resourceId}/{resourceName:.+}")
+  //  public ResponseEntity<Resource> getFileAsResource(
+  //      @PathVariable String resourceClass,
+  //      @PathVariable Long resourceId,
+  //      @PathVariable String resourceName,
+  //      HttpServletRequest request) {
+  //
+  //    String receivedResourceUrl =
+  //        "/resources/" + resourceClass + "/" + resourceId + "/" + resourceName;
+  //    String resourceUrl = "";
+  //    if (resourceClass.equals(User.class.getSimpleName().toLowerCase())) {
+  //      User user = userRepository.findById(resourceId).orElse(null);
+  //      if (user == null) {
+  //        throw new ResourceNotFoundException(
+  //            Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
+  //      }
+  //      resourceUrl = user.getImageUrl();
+  //    } else if (resourceClass.equals(VideoResource.class.getSimpleName().toLowerCase())) {
+  //      VideoResource videoResource = lectureResourceRepository.findById(resourceId).orElse(null);
+  //      if (videoResource == null) {
+  //        throw new ResourceNotFoundException(
+  //            Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
+  //      }
+  //      resourceUrl = videoResource.getFileUrl();
+  //    }
+  //
+  //    if (!receivedResourceUrl.equals(resourceUrl)) {
+  //      throw new ResourceNotFoundException(
+  //          Translator.toLocale("File.notfound", new Object[] {receivedResourceUrl}));
+  //    }
+  //
+  //    Resource resource = fileUploadService.getFileAsResource(resourceUrl);
+  //    String contentType = null;
+  //    try {
+  //      contentType =
+  // request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+  //    } catch (IOException ex) {
+  //      System.out.println("Count not determine mimeType");
+  //    }
+  //
+  //    if (contentType == null) {
+  //      contentType = "application/octet-stream";
+  //    }
+  //
+  //    return ResponseEntity.ok()
+  //        .contentType(MediaType.parseMediaType(contentType))
+  //        .header(
+  //            HttpHeaders.CONTENT_DISPOSITION,
+  //            "attachment; filename=\"" + resource.getFilename() + "\"")
+  //        .body(resource);
+  //  }
 }

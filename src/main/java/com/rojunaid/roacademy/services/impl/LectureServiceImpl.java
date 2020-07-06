@@ -1,5 +1,7 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.auth.oauth2.UploadedResourceInfo;
+import com.rojunaid.roacademy.auth.oauth2.youtube.YoutubeMetaData;
 import com.rojunaid.roacademy.dto.LecturePositionUpdateRequest;
 import com.rojunaid.roacademy.dto.LectureRequest;
 import com.rojunaid.roacademy.dto.LectureResponse;
@@ -15,9 +17,7 @@ import com.rojunaid.roacademy.repositories.LectureRepository;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.LectureService;
 import com.rojunaid.roacademy.services.TagService;
-import com.rojunaid.roacademy.util.Helper;
 import com.rojunaid.roacademy.util.Translator;
-import com.rojunaid.roacademy.youtube.YoutubeMetaData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,27 +77,17 @@ public class LectureServiceImpl implements LectureService {
 
   @Transactional
   @Override
-  public LectureResource uploadResource(Long lectureId, MultipartFile file) {
+  public LectureResponse uploadResource(Long lectureId, MultipartFile file) {
     Lecture lecture = getLecture(lectureId);
 
     String contentType = file.getContentType();
 
-    LectureResource resource;
-    if (lecture.getLectureResource() != null) {
-      resource = lecture.getLectureResource();
-    } else {
-      resource = new LectureResource();
-    }
-
+    UploadedResourceInfo resourceInfo;
+    LectureResource resource = new LectureResource();
     resource.setFileName(file.getOriginalFilename());
     resource.setFileSize(file.getSize());
     resource.setContentType(contentType);
-    resource.setLecture(lecture);
-    lecture.setLectureResource(resource);
 
-    lecture = lectureRepository.save(lecture);
-
-    String url;
     if (contentType.startsWith("video/")) {
       YoutubeMetaData youtubeMetaData = new YoutubeMetaData();
 
@@ -107,30 +97,36 @@ public class LectureServiceImpl implements LectureService {
           lecture.getTags().stream().map(t -> t.getName()).collect(Collectors.toList());
       youtubeMetaData.setTags(tags);
       youtubeMetaData.setStatus("public");
-      url = fileUploadService.uploadToYoutube(youtubeMetaData, file);
+      resourceInfo = fileUploadService.uploadToYoutube(youtubeMetaData, file);
+      resource.setFileUrl(resourceInfo.getResourceUrl());
+
     } else {
-      url =
-          fileUploadService.uploadFile(
-              LectureResource.class.getSimpleName(), lecture.getLectureResource().getId(), file);
+      resourceInfo =
+          fileUploadService.uploadToBox(
+              Lecture.class.getSimpleName().toLowerCase(), lecture.getId(), file);
+      resource.setFileUrl(resourceInfo.getResourceUrl());
     }
 
-    lecture.getLectureResource().setFileUrl(url);
-
+    lecture.addLectureResource(resource);
     lecture = lectureRepository.save(lecture);
 
-    return lecture.getLectureResource();
+    return lectureToLectureResponse(lecture);
+  }
+
+  @Override
+  public void deleteLectureResource(Long lectureId, Long resourceId) {
+    Lecture lecture = getLecture(lectureId);
   }
 
   @Override
   @Transactional
   public void deleteLecture(Long lectureId) {
     Lecture lecture = getLecture(lectureId);
+    if (lecture.getLectureResources().size() > 0) {
+      throw new BadRequestException(
+          "Lecture with contents cannot be deleted. Delete the contents first.");
+    }
     lectureRepository.delete(lecture);
-
-    LectureResource resource = lecture.getLectureResource();
-    String uri = resource.getClass().getSimpleName() + "/" + resource.getId().toString();
-
-    fileUploadService.deleteFileOrDirectory(uri);
   }
 
   @Override
@@ -140,8 +136,7 @@ public class LectureServiceImpl implements LectureService {
     response.setName(lecture.getName());
     response.setDescription(lecture.getDescription());
     response.setPosition(lecture.getPosition());
-    response.setLectureResource(
-        lectureResourceToLectureResourceResponse(lecture.getLectureResource()));
+    response.setLectureResources(lecture.getLectureResources());
     response.setTags(
         lecture.getTags().stream().map(tag -> tag.getName()).collect(Collectors.toList()));
     response.setCreatedAt(lecture.getCreatedAt());
@@ -166,19 +161,6 @@ public class LectureServiceImpl implements LectureService {
             () ->
                 new ResourceNotFoundException(
                     Translator.toLocale("${Lecture.id.notfound}", new Object[] {lectureId})));
-  }
-
-  private LectureResource lectureResourceToLectureResourceResponse(LectureResource resource) {
-    if (resource == null) {
-      return null;
-    }
-
-    if (resource.getContentType().startsWith("video")) {
-      resource.setFileUrl(resource.getFileUrl());
-    } else {
-      resource.setFileUrl(Helper.getBaseUrl() + resource.getFileUrl());
-    }
-    return resource;
   }
 
   private Lecture lectureRequestToLecture(LectureRequest lectureRequest) {

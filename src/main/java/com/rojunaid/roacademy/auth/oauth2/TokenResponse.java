@@ -1,4 +1,4 @@
-package com.rojunaid.roacademy.youtube;
+package com.rojunaid.roacademy.auth.oauth2;
 
 import com.google.api.client.util.Key;
 import lombok.Data;
@@ -8,6 +8,9 @@ public class TokenResponse {
 
   @Key("access_token")
   private String accessToken;
+
+  @Key("refresh_token")
+  private String refreshToken;
 
   @Key private String scope;
 
