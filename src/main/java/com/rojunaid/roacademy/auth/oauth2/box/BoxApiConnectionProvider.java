@@ -37,7 +37,6 @@ public class BoxApiConnectionProvider {
       apiConnection =
           new BoxAPIConnection(
               clientId, clientSecret, credential.getAccessToken(), credential.getRefreshToken());
-      apiConnection.refresh();
       apiConnection.addListener(
           new BoxAPIConnectionListener() {
 
@@ -55,6 +54,7 @@ public class BoxApiConnectionProvider {
               System.out.println(e.getLocalizedMessage());
             }
           });
+      apiConnection.refresh();
     }
     return apiConnection;
   }

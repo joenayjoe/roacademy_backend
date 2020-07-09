@@ -15,6 +15,9 @@ public interface FileUploadService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   UploadedResourceInfo uploadToBox(String resourceType, Long resourceId, MultipartFile file);
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  void deleteFromBox(String url);
+
   UploadedResourceInfo uploadToImgur(MultipartFile file);
   void deleteFromImgur(String urs);
 

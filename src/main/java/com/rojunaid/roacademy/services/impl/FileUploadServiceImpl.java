@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxItem;
@@ -11,6 +12,7 @@ import com.rojunaid.roacademy.auth.oauth2.youtube.YoutubeApiManager;
 import com.rojunaid.roacademy.auth.oauth2.youtube.YoutubeMetaData;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.DirectoryCreationException;
+import com.rojunaid.roacademy.exception.MediaUploadException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.util.Translator;
@@ -118,7 +120,7 @@ public class FileUploadServiceImpl implements FileUploadService {
         resourceInfo.setResourceUrl(boxApiManager.getSharedLink(updatedFile.getID()));
         return resourceInfo;
       } catch (IOException e) {
-        throw new BadRequestException(e.getLocalizedMessage());
+        throw new MediaUploadException(e.getLocalizedMessage());
       }
 
     } else {
@@ -130,8 +132,17 @@ public class FileUploadServiceImpl implements FileUploadService {
         resourceInfo.setResourceUrl(boxApiManager.getSharedLink(newFileInfo.getID()));
         return resourceInfo;
       } catch (IOException e) {
-        throw new BadRequestException(e.getLocalizedMessage());
+        throw new MediaUploadException(e.getLocalizedMessage());
       }
+    }
+  }
+
+  @Override
+  public void deleteFromBox(String fileId) {
+    try {
+      boxApiManager.deleteFile(fileId);
+    } catch (BoxAPIException e) {
+      throw new BadRequestException(e.getLocalizedMessage());
     }
   }
 

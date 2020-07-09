@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 @Data
 public class LectureResource extends Auditable {
 
+  private String resourceId;
   private String fileName;
   private String contentType;
   private Long fileSize;

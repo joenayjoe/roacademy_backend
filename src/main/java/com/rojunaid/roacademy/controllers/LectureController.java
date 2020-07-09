@@ -23,7 +23,7 @@ public class LectureController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @PostMapping("/{lectureId}/upload_content")
+  @PostMapping("/{lectureId}/resources")
   public ResponseEntity<LectureResponse> uploadLectureResource(
       @PathVariable Long lectureId, @Valid @RequestParam MultipartFile file) {
     LectureResponse response = lectureService.uploadResource(lectureId, file);

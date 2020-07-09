@@ -39,5 +39,6 @@
     <include file="db/changelog/0.3.1_add_column_position_to_chapter.xml"/>
     <include file="db/changelog/0.3.2_add_column_position_to_lecture.xml"/>
     <include file="db/changelog/0.3.3_remove_constrain_not_null_from_lecture_resource.xml"/>
+    <include file="db/changelog/0.3.4_add_column_resource_id_to_lecture_resource.xml"/>
 
 </databaseChangeLog>

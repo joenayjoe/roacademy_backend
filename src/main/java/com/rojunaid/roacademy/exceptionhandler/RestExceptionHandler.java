@@ -55,14 +55,14 @@ public class RestExceptionHandler {
   }
 
   // youtube upload exception handler
-  @ExceptionHandler(YoutubeUploadException.class)
+  @ExceptionHandler(MediaUploadException.class)
   public ResponseEntity<?> handleYoutubeUploadException(
-      YoutubeUploadException ytue, HttpServletRequest request) {
+          MediaUploadException mue, HttpServletRequest request) {
     ErrorDetail errorDetail = new ErrorDetail();
     errorDetail.setTitle("Resource Upload Error");
     errorDetail.setOccurredAt(LocalDateTime.now());
-    errorDetail.setDetail(ytue.getLocalizedMessage());
-    errorDetail.setDeveloperMessage(ytue.getClass().getName());
+    errorDetail.setDetail(mue.getLocalizedMessage());
+    errorDetail.setDeveloperMessage(mue.getClass().getName());
     errorDetail.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
     return new ResponseEntity<>(errorDetail, null, HttpStatus.INTERNAL_SERVER_ERROR);

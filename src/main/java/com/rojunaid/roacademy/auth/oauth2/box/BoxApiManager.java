@@ -29,6 +29,11 @@ public class BoxApiManager {
     return null;
   }
 
+  public void deleteFile(String fileId) throws BoxAPIException {
+    BoxFile file = new BoxFile(apiConnectionProvider.getConnection(), fileId);
+    file.delete();
+  }
+
   public String getSharedLink(String fileId) {
     BoxFile file = new BoxFile(apiConnectionProvider.getConnection(), fileId);
     BoxSharedLink.Permissions permissions = new BoxSharedLink.Permissions();

@@ -8,7 +8,7 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
-import com.rojunaid.roacademy.exception.YoutubeUploadException;
+import com.rojunaid.roacademy.exception.MediaUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -126,15 +126,15 @@ public class YoutubeApiManager {
               + " : "
               + e.getDetails().getMessage());
       e.printStackTrace();
-      throw new YoutubeUploadException(e.getDetails().getMessage());
+      throw new MediaUploadException(e.getDetails().getMessage());
     } catch (IOException e) {
       System.err.println("IOException: " + e.getMessage());
       e.printStackTrace();
-      throw new YoutubeUploadException(e.getMessage());
+      throw new MediaUploadException(e.getMessage());
     } catch (Throwable t) {
       System.err.println("Throwable: " + t.getMessage());
       t.printStackTrace();
-      throw new YoutubeUploadException(t.getMessage());
+      throw new MediaUploadException(t.getMessage());
     }
   }
 }

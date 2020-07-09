@@ -7,6 +7,7 @@ import com.rojunaid.roacademy.auth.oauth2.Auth;
 import com.rojunaid.roacademy.auth.oauth2.OAuth2CredentialService;
 import com.rojunaid.roacademy.auth.oauth2.UploadedResourceInfo;
 import com.rojunaid.roacademy.exception.BadRequestException;
+import com.rojunaid.roacademy.exception.MediaUploadException;
 import com.rojunaid.roacademy.models.AuthProvider;
 import com.rojunaid.roacademy.models.OAuth2Credential;
 import com.rojunaid.roacademy.util.HttpClientUtils;
@@ -92,7 +93,7 @@ public class ImgurApiManager {
       resourceInfo.setResourceUrl(imgurBasicResponse.getData().getImageUrl());
       return resourceInfo;
     } catch (IOException e) {
-      throw new BadRequestException(e.getLocalizedMessage());
+      throw new MediaUploadException(e.getLocalizedMessage());
     }
   }
 

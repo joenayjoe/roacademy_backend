@@ -14,6 +14,7 @@ import com.rojunaid.roacademy.models.LectureResource;
 import com.rojunaid.roacademy.models.Tag;
 import com.rojunaid.roacademy.repositories.ChapterRepository;
 import com.rojunaid.roacademy.repositories.LectureRepository;
+import com.rojunaid.roacademy.repositories.LectureResourceRepository;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.LectureService;
 import com.rojunaid.roacademy.services.TagService;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 public class LectureServiceImpl implements LectureService {
 
   @Autowired private LectureRepository lectureRepository;
+  @Autowired private LectureResourceRepository resourceRepository;
   @Autowired private ChapterRepository chapterRepository;
   @Autowired private TagService tagService;
   @Autowired private FileUploadService fileUploadService;
@@ -105,6 +107,7 @@ public class LectureServiceImpl implements LectureService {
           fileUploadService.uploadToBox(
               Lecture.class.getSimpleName().toLowerCase(), lecture.getId(), file);
       resource.setFileUrl(resourceInfo.getResourceUrl());
+      resource.setResourceId(resourceInfo.getResourceId());
     }
 
     lecture.addLectureResource(resource);
@@ -113,9 +116,26 @@ public class LectureServiceImpl implements LectureService {
     return lectureToLectureResponse(lecture);
   }
 
+  @Transactional
   @Override
   public void deleteLectureResource(Long lectureId, Long resourceId) {
     Lecture lecture = getLecture(lectureId);
+    LectureResource resource =
+        resourceRepository
+            .findById(resourceId)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        Translator.toLocale(
+                            "${LectureResource.id.notfound}", new Object[] {resourceId})));
+    if (resource.getContentType().startsWith("video")) {
+      // remove video from youtube
+    } else {
+      // remove file from box
+      lecture.getLectureResources().remove(resource);
+      lectureRepository.save(lecture);
+      fileUploadService.deleteFromBox(resource.getResourceId());
+    }
   }
 
   @Override
