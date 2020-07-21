@@ -5,6 +5,7 @@ import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.CourseStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,10 +23,10 @@ public interface CourseService {
       Long gradeId, List<CourseStatusEnum> status, String order);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  CourseResponse createCourse(CourseRequest courseRequest);
+  CourseResponse createCourse(CourseRequest courseData, MultipartFile file);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  CourseResponse updateCourse(Long courseId, CourseUpdateRequest courseRequest);
+  CourseResponse updateCourse(Long courseId, CourseUpdateRequest courseData, MultipartFile file);
 
   CourseResponse findCourseById(Long courseId, List<CourseStatusEnum> status);
 
@@ -40,6 +41,9 @@ public interface CourseService {
 
   Page<CourseResponse> searchCoursesByKeyword(
       String kw, int page, int size, String order, List<CourseStatusEnum> status);
+
+  Page<CourseResponse> findCoursesByInstructor(
+      Long id, int page, int size, List<CourseStatusEnum> statusEnums, String order);
 
   // DTO Mapper
   CourseResponse courseToCourseResponse(Course course);

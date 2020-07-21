@@ -45,9 +45,9 @@ spring:
               - profile
         provider:
           facebook:
-            authorizationUri: https://www.facebook.com/v5.0/dialog/oauth
-            tokenUri: https://graph.facebook.com/v5.0/oauth/access_token
-            userInfoUri: https://graph.facebook.com/v5.0/me?fields=id,first_name,middle_name,last_name,name,email,picture.width(250).height(250)
+            authorizationUri: https://www.facebook.com/v7.0/dialog/oauth
+            tokenUri: https://graph.facebook.com/v7.0/oauth/access_token
+            userInfoUri: https://graph.facebook.com/v7.0/me?fields=id,first_name,middle_name,last_name,name,email,picture.width(250).height(250)
 
 
 
@@ -66,37 +66,31 @@ file:
 app:
   auth:
     jwtSecret: ${ROACADEMY_JWT_SECRET}
-    jwtExpirationInMs: ${ROACADEMY_JWT_EXPIRATION_IN_MS}
+    jwtExpirationInMs: 604800000
 
   oauth2:
     box:
-      clientId: 2dyhehgrgnd3hur6lws8b7aw90ulvnjb
-      clientSecret: 6Ed2B4a4ke8zt2kfYraaHFAP38XcOBKJ
+      clientId: ${ROACADEMY_BOX_CLIENT_ID}
+      clientSecret: ${ROACADEMY_BOX_CLIENT_SECRET}
       authorizationUri: "https://account.box.com/api/oauth2/authorize"
       tokenUri: "https://api.box.com/oauth2/token"
 
     youtube:
-      clientId: ${ROACADEMY_YOUTUBE_CLIENT_ID}
-      clientSecret: ${ROACADEMY_YOUTUBE_CLIENT_SECRET}
+      clientId: ${ROACADEMY_GOOGLE_CLIENT_ID}
+      clientSecret: ${ROACADEMY_GOOGLE_CLIENT_SECRET}
       authorizationUri: "https://accounts.google.com/o/oauth2/v2/auth"
       tokenUri: "https://oauth2.googleapis.com/token"
-      scope:
-        - ${ROACADEMY_YOUTUBE_SCOPE}
+      redirectUri: "http://localhost:8080/api/oauth2/callback/youtube"
+      scopes:
+        - https://www.googleapis.com/auth/youtube
     imgur:
-      clientId: 0310cb46dabb718
-      clientSecret: 5f6c9298262bbaa6b0867fad6625ff11723e09f5
+      clientId: ${ROACADEMY_IMGUR_CLIENT_ID}
+      clientSecret: ${ROACADEMY_IMGUR_CLIENT_SECRET}
       authorizationUri: "https://api.imgur.com/oauth2/authorize"
       tokenUri: "https://api.imgur.com/oauth2/token"
 
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect
-
-#  social:
-#    facebook:
-#      appId: 2618998111521346
-#      secret: 079ca926adfe31a58c427a8c80bd6d69
-#      scope: public_profile,email
-#      redirectUrl: http://localhost:8080/callback/facebook
 
 server:
   port: 8080

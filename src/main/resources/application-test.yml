@@ -5,83 +5,11 @@ spring:
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
 
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-        ddl-auto: none
-
-
-
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
-
-
-  servlet:
-    multipart:
-      max-file-size: 300MB
-      max-request-size: 300MB
-      enabled: true
-
-  security:
-    oauth2:
-      client:
-        registration:
-          facebook:
-            clientId: ${ROACADEMY_FACEBOOK_CLIENT_ID}
-            clientSecret: ${ROACADEMY_FACEBOOK_CLIENT_SECRET}
-            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - email
-              - public_profile
-          google:
-            clientId: ${ROACADEMY_GOOGLE_CLIENT_ID}
-            clientSecret: ${ROACADEMY_GOOGLE_CLIENT_SECRET}
-            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - email
-              - profile
-          youtube:
-            provider: google
-            clientId: ${ROACADEMY_YOUTUBE_CLIENT_ID}
-            clientSecret: ${ROACADEMY_YOUTUBE_CLIENT_SECRET}
-            scope:
-              - ${ROACADEMY_YOUTUBE_SCOPE}
-        provider:
-          facebook:
-            authorizationUri: https://www.facebook.com/v5.0/dialog/oauth
-            tokenUri: https://graph.facebook.com/v5.0/oauth/access_token
-            userInfoUri: https://graph.facebook.com/v5.0/me?fields=id,first_name,middle_name,last_name,name,email,picture.width(250).height(250)
-
-
-
 logging:
   level:
     org:
       hibernate:
         SQL: DEBUG
-
-
-#file.upload-dir=/var/www/roacademy_files
-file:
-  upload-dir: ${ROACADEMY_UPLOAD_DIR}
-
-
-app:
-  auth:
-    jwtSecret: ${ROACADEMY_JWT_SECRET}
-    jwtExpirationInMs: ${ROACADEMY_JWT_EXPIRATION_IN_MS}
-
-  oauth2:
-    authorizedRedirectUris:
-      - http://localhost:3000/oauth2/redirect
-
-#  social:
-#    facebook:
-#      appId: 2618998111521346
-#      secret: 079ca926adfe31a58c427a8c80bd6d69
-#      scope: public_profile,email
-#      redirectUrl: http://localhost:8080/callback/facebook
 
 server:
   port: 5000

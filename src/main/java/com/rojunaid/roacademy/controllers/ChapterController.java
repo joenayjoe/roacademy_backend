@@ -3,7 +3,6 @@ package com.rojunaid.roacademy.controllers;
 import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.services.ChapterService;
 import com.rojunaid.roacademy.services.LectureService;
-import com.rojunaid.roacademy.services.TeachingResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,6 @@ import javax.validation.Valid;
 public class ChapterController {
 
   @Autowired ChapterService chapterService;
-  @Autowired TeachingResourceService teachingResourceService;
   @Autowired LectureService lectureService;
 
   // GET /api/courses/:courseId/chapters

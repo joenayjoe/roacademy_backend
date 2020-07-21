@@ -10,9 +10,6 @@ public interface UserService {
 
   User findByEmail(String email);
 
-  //  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
-  //  UserResponse createUser(UserRequest userDTO);
-
   UserResponse registerNewUser(SignUpRequest signUpRequest);
 
   @PreAuthorize("hasRole('ADMIN')")

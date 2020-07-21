@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -73,17 +74,19 @@ public class CourseController {
   // Create a course
   @PostMapping("")
   public ResponseEntity<CourseResponse> createCourse(
-      @Valid @RequestBody CourseRequest courseRequest) {
-    CourseResponse courseResponse = courseService.createCourse(courseRequest);
+      @Valid @RequestPart("courseData") CourseRequest courseData, @RequestPart(required = false) MultipartFile file) {
+    CourseResponse courseResponse = courseService.createCourse(courseData, file);
     return new ResponseEntity<>(courseResponse, HttpStatus.CREATED);
   }
 
   // PUT /api/courses/:courseId
   // Update a course
   @PutMapping("/{courseId}")
-  public ResponseEntity<CourseResponse> updateCourse(
-      @PathVariable Long courseId, @Valid @RequestBody CourseUpdateRequest courseRequest) {
-    CourseResponse courseResponse = courseService.updateCourse(courseId, courseRequest);
+  public ResponseEntity<?> updateCourse(
+      @PathVariable Long courseId,
+      @Valid @RequestPart("courseData") CourseUpdateRequest courseData,
+      @RequestPart(required = false) MultipartFile file) {
+    CourseResponse courseResponse = courseService.updateCourse(courseId, courseData, file);
     return new ResponseEntity<>(courseResponse, HttpStatus.OK);
   }
 

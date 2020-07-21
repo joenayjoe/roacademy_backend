@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.services.impl;
 
-import com.box.sdk.BoxAPIException;
 import com.box.sdk.BoxFile;
 import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxItem;
@@ -10,7 +9,6 @@ import com.rojunaid.roacademy.auth.oauth2.box.BoxApiManager;
 import com.rojunaid.roacademy.auth.oauth2.imgur.ImgurApiManager;
 import com.rojunaid.roacademy.auth.oauth2.youtube.YoutubeApiManager;
 import com.rojunaid.roacademy.auth.oauth2.youtube.YoutubeMetaData;
-import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.DirectoryCreationException;
 import com.rojunaid.roacademy.exception.MediaUploadException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
@@ -139,11 +137,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
   @Override
   public void deleteFromBox(String fileId) {
-    try {
-      boxApiManager.deleteFile(fileId);
-    } catch (BoxAPIException e) {
-      throw new BadRequestException(e.getLocalizedMessage());
-    }
+    boxApiManager.deleteFile(fileId);
   }
 
   @Override
@@ -152,8 +146,8 @@ public class FileUploadServiceImpl implements FileUploadService {
   }
 
   @Override
-  public void deleteFromImgur(String url) {
-    imgurApiManager.deleteImage(url);
+  public void deleteFromImgur(String imageId) {
+    imgurApiManager.deleteImage(imageId);
   }
 
   @Override

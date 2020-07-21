@@ -118,6 +118,7 @@ public class AppProperties {
       private String authorizationUri;
       private String tokenUri;
       private List<String> scopes;
+      private String redirectUri;
 
       public String getClientId() {
         return clientId;
@@ -157,6 +158,14 @@ public class AppProperties {
 
       public void setScopes(List<String> scopes) {
         this.scopes = scopes;
+      }
+
+      public String getRedirectUri() {
+        return this.redirectUri;
+      }
+
+      public void setRedirectUri(String uri) {
+        this.redirectUri = uri;
       }
     }
 

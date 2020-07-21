@@ -66,7 +66,7 @@ public class YoutubeApiManager {
       YouTube.Videos.Insert videoInsert =
           youtube
               .videos()
-              .insert("snippet,statistics,status", videoObjectDefiningMetadata, mediaContent);
+              .insert("snippet,status", videoObjectDefiningMetadata, mediaContent);
 
       // Set the upload type and add an event listener.
       MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
@@ -109,31 +109,13 @@ public class YoutubeApiManager {
       // Call the API and upload the video.
       Video returnedVideo = videoInsert.execute();
 
-      // Print data about the newly inserted video from the API response.
-      System.out.println("\n================== Returned Video ==================\n");
-      System.out.println("  - Id: " + returnedVideo.getId());
-      System.out.println("  - Title: " + returnedVideo.getSnippet().getTitle());
-      System.out.println("  - Tags: " + returnedVideo.getSnippet().getTags());
-      System.out.println("  - Privacy Status: " + returnedVideo.getStatus().getPrivacyStatus());
-      System.out.println("  - Video Count: " + returnedVideo.getStatistics().getViewCount());
-
       return returnedVideo;
 
     } catch (GoogleJsonResponseException e) {
-      System.err.println(
-          "GoogleJsonResponseException code: "
-              + e.getDetails().getCode()
-              + " : "
-              + e.getDetails().getMessage());
-      e.printStackTrace();
       throw new MediaUploadException(e.getDetails().getMessage());
     } catch (IOException e) {
-      System.err.println("IOException: " + e.getMessage());
-      e.printStackTrace();
       throw new MediaUploadException(e.getMessage());
     } catch (Throwable t) {
-      System.err.println("Throwable: " + t.getMessage());
-      t.printStackTrace();
       throw new MediaUploadException(t.getMessage());
     }
   }

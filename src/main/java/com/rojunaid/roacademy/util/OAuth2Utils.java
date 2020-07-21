@@ -4,6 +4,7 @@ import com.google.api.client.http.*;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.common.reflect.TypeToken;
 import com.rojunaid.roacademy.auth.oauth2.Auth;
+import com.rojunaid.roacademy.auth.oauth2.OAuth2RequestParams;
 import com.rojunaid.roacademy.auth.oauth2.TokenResponse;
 import com.rojunaid.roacademy.models.OAuth2Credential;
 import lombok.NonNull;
@@ -15,12 +16,7 @@ import java.util.Map;
 
 public class OAuth2Utils {
 
-  public static TokenResponse getOrRefreshAccessToken(
-      String clientId,
-      String clientSecret,
-      String grant_type,
-      String tokenOrCode,
-      String authOrTokenUri)
+  public static TokenResponse getOrRefreshAccessToken(OAuth2RequestParams params)
       throws IOException {
 
     HttpRequestFactory requestFactory =
@@ -29,17 +25,21 @@ public class OAuth2Utils {
               request.setParser(new JsonObjectParser(HttpClientUtils.JSON_FACTORY));
             });
 
-    GenericUrl url = new GenericUrl(authOrTokenUri);
+    GenericUrl url = new GenericUrl(params.getAuthOrTokenUrl());
 
     Map<String, String> param = new HashMap<>();
-    param.put("client_id", clientId);
-    param.put("client_secret", clientSecret);
-    param.put("grant_type", grant_type);
+    param.put("client_id", params.getClientId());
+    param.put("client_secret", params.getClientSecret());
+    param.put("grant_type", params.getGrantType());
 
-    if (grant_type.equalsIgnoreCase("authorization_code")) {
-      param.put("code", tokenOrCode);
+    if (params.getGrantType().equalsIgnoreCase("authorization_code")) {
+      param.put("code", params.getCodeOrToken());
     } else {
-      param.put("refresh_token", tokenOrCode);
+      param.put("refresh_token", params.getCodeOrToken());
+    }
+
+    if (params.getRedirectUrl() != null) {
+      param.put("redirect_uri", params.getRedirectUrl());
     }
 
     HttpContent content = new UrlEncodedContent(param);
@@ -61,9 +61,15 @@ public class OAuth2Utils {
       @NonNull Auth authProvider)
       throws IOException {
     if (!isValidToken(credential)) {
-      TokenResponse response =
-          getOrRefreshAccessToken(
-              clientId, clientSecret, "refresh_token", credential.getRefreshToken(), tokenUrl);
+
+      OAuth2RequestParams params = new OAuth2RequestParams();
+      params.setClientId(clientId);
+      params.setClientSecret(clientSecret);
+      params.setAuthOrTokenUrl(tokenUrl);
+      params.setGrantType("refresh_token");
+      params.setCodeOrToken(credential.getRefreshToken());
+
+      TokenResponse response = getOrRefreshAccessToken(params);
       credential.setRefreshToken(response.getRefreshToken());
       credential.setAccessToken(response.getAccessToken());
       credential.setExpiresInSeconds(

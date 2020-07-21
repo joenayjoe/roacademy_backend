@@ -99,10 +99,18 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public UserResponse updatePhoto(Long userId, MultipartFile file) {
     User user = getUser(userId);
+    String oldImageId = user.getImageId();
     UploadedResourceInfo uploadedResourceInfo = this.fileUploadService.uploadToImgur(file);
+
+    if (oldImageId != null) {
+      this.fileUploadService.deleteFromImgur(oldImageId);
+    }
+
     user.setImageUrl(uploadedResourceInfo.getResourceUrl());
+    user.setImageId(uploadedResourceInfo.getResourceId());
     user = userRepository.save(user);
     return this.userToUserResponse(user);
   }

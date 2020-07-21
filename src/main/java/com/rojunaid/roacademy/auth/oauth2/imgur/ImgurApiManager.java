@@ -1,10 +1,8 @@
 package com.rojunaid.roacademy.auth.oauth2.imgur;
 
 import com.google.api.client.http.*;
-import com.google.api.client.json.JsonObjectParser;
 import com.google.common.reflect.TypeToken;
 import com.rojunaid.roacademy.auth.oauth2.Auth;
-import com.rojunaid.roacademy.auth.oauth2.OAuth2CredentialService;
 import com.rojunaid.roacademy.auth.oauth2.UploadedResourceInfo;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.MediaUploadException;
@@ -25,25 +23,15 @@ import java.util.Map;
 public class ImgurApiManager {
 
   @Autowired private Auth authProvider;
-  @Autowired private OAuth2CredentialService oAuth2CredentialService;
   public static final String UPLOAD_URL = "https://api.imgur.com/3/upload";
+  public static final String DELETE_URL = "https://api.imgur.com/3/image";
 
   public UploadedResourceInfo uploadImage(MultipartFile file) {
     try {
-      OAuth2Credential credential = getCredential();
-      String clientId = authProvider.getClientId(AuthProvider.imgur);
-      String clientSecret = authProvider.getClientSecret(AuthProvider.imgur);
-      String tokenUrl = authProvider.getTokenUri(AuthProvider.imgur);
 
-      credential =
-          OAuth2Utils.updateTokenIfNotValid(
-              clientId, clientSecret, credential, tokenUrl, authProvider);
+      OAuth2Credential credential = this.getCredential();
 
-      HttpRequestFactory requestFactory =
-          HttpClientUtils.HTTP_TRANSPORT.createRequestFactory(
-              (HttpRequest request) -> {
-                request.setParser(new JsonObjectParser(HttpClientUtils.JSON_FACTORY));
-              });
+      HttpRequestFactory requestFactory = HttpClientUtils.getRequestFactory();
 
       GenericUrl url = new GenericUrl(UPLOAD_URL);
 
@@ -97,13 +85,39 @@ public class ImgurApiManager {
     }
   }
 
-  public void deleteImage(String url) {}
+  public void deleteImage(String imageId) {
+    try {
+      OAuth2Credential credential = this.getCredential();
+      HttpRequestFactory requestFactory = HttpClientUtils.getRequestFactory();
+      GenericUrl requestUrl = new GenericUrl(String.format("%s/%s", DELETE_URL, imageId));
+      HttpRequest request = requestFactory.buildDeleteRequest(requestUrl);
+      HttpHeaders headers = request.getHeaders();
+      headers.setAuthorization("Bearer " + credential.getAccessToken());
+      request.setHeaders(headers);
+      request.execute();
 
-  private OAuth2Credential getCredential() {
-    return authProvider
-        .getOAuth2Credential(AuthProvider.imgur)
-        .orElseThrow(
-            () ->
-                new BadRequestException("Imgur API is not configured. Please contact the admin."));
+    } catch (IOException e) {
+      throw new MediaUploadException(e.getLocalizedMessage());
+    }
+  }
+
+  private OAuth2Credential getCredential() throws IOException {
+
+    OAuth2Credential credential =
+        authProvider
+            .getOAuth2Credential(AuthProvider.imgur)
+            .orElseThrow(
+                () ->
+                    new BadRequestException(
+                        "Imgur API is not configured. Please contact the admin."));
+
+    String clientId = authProvider.getClientId(AuthProvider.imgur);
+    String clientSecret = authProvider.getClientSecret(AuthProvider.imgur);
+    String tokenUrl = authProvider.getTokenUri(AuthProvider.imgur);
+
+    credential =
+        OAuth2Utils.updateTokenIfNotValid(
+            clientId, clientSecret, credential, tokenUrl, authProvider);
+    return credential;
   }
 }

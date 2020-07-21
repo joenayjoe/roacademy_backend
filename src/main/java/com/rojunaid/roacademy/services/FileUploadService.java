@@ -11,7 +11,6 @@ public interface FileUploadService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   String uploadToLocal(String resourceClassName, Long resourceId, MultipartFile file);
 
-
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   UploadedResourceInfo uploadToBox(String resourceType, Long resourceId, MultipartFile file);
 
@@ -19,7 +18,8 @@ public interface FileUploadService {
   void deleteFromBox(String url);
 
   UploadedResourceInfo uploadToImgur(MultipartFile file);
-  void deleteFromImgur(String urs);
+
+  void deleteFromImgur(String imageId);
 
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   UploadedResourceInfo uploadToYoutube(YoutubeMetaData metaData, MultipartFile file);

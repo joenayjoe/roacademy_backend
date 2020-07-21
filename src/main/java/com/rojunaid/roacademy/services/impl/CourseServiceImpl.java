@@ -1,5 +1,6 @@
 package com.rojunaid.roacademy.services.impl;
 
+import com.rojunaid.roacademy.auth.oauth2.UploadedResourceInfo;
 import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
@@ -7,14 +8,20 @@ import com.rojunaid.roacademy.models.*;
 import com.rojunaid.roacademy.repositories.CategoryRepository;
 import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.repositories.GradeRepository;
+import com.rojunaid.roacademy.repositories.UserRepository;
+import com.rojunaid.roacademy.security.CustomUserPrincipal;
 import com.rojunaid.roacademy.services.CourseService;
+import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.util.Constants;
 import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +36,10 @@ public class CourseServiceImpl implements CourseService {
 
   @Autowired private CategoryRepository categoryRepository;
 
+  @Autowired private UserRepository userRepository;
+
+  @Autowired private FileUploadService fileUploadService;
+
   @Override
   public Page<CourseResponse> findAll(
       int page, int size, String order, List<CourseStatusEnum> status) {
@@ -36,7 +47,8 @@ public class CourseServiceImpl implements CourseService {
     PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
     Page<Course> courses = courseRepository.findAll(status, pageable);
 
-    Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponseWithObjectivesAndRequirements(course));
+    Page<CourseResponse> courseResponses =
+        courses.map(course -> courseToCourseResponseWithObjectivesAndRequirements(course));
     return courseResponses;
   }
 
@@ -73,16 +85,40 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public CourseResponse createCourse(CourseRequest courseRequest) {
-    Course course = this.courseRequestToCourse(courseRequest);
+  @Transactional
+  public CourseResponse createCourse(CourseRequest courseData, MultipartFile file) {
+    Course course = this.courseRequestToCourse(courseData);
+    CustomUserPrincipal principal =
+        (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = principal.getUser();
+    user = this.getUser(user.getId());
+
+    if (file != null) {
+      UploadedResourceInfo resourceInfo = fileUploadService.uploadToImgur(file);
+      course.setImageUrl(resourceInfo.getResourceUrl());
+      course.setImageId(resourceInfo.getResourceId());
+    }
+    course.addInstructor(user);
+    course.addCreator(user);
     course = courseRepository.save(course);
     return this.courseToCourseResponse(course);
   }
 
   @Override
-  public CourseResponse updateCourse(Long courseId, CourseUpdateRequest courseRequest) {
-    Course course = getCourse(courseRequest.getId());
-    course = courseUpdateRequestToCourse(course, courseRequest);
+  @Transactional
+  public CourseResponse updateCourse(
+      Long courseId, CourseUpdateRequest courseData, MultipartFile file) {
+    Course course = getCourse(courseData.getId());
+    String oldImageId = course.getImageId();
+    course = courseUpdateRequestToCourse(course, courseData);
+    if (file != null) {
+      UploadedResourceInfo resourceInfo = fileUploadService.uploadToImgur(file);
+      if (oldImageId != null) {
+        fileUploadService.deleteFromImgur(oldImageId);
+      }
+      course.setImageUrl(resourceInfo.getResourceUrl());
+      course.setImageId(resourceInfo.getResourceId());
+    }
     course = courseRepository.save(course);
     return this.courseToCourseResponse(course);
   }
@@ -171,6 +207,19 @@ public class CourseServiceImpl implements CourseService {
     return courseResponse;
   }
 
+  @Override
+  public Page<CourseResponse> findCoursesByInstructor(
+      Long instructorId, int page, int size, List<CourseStatusEnum> statusEnums, String order) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    User instructor = getUser(instructorId);
+    List<User> instructors = new ArrayList<>();
+    instructors.add(instructor);
+
+    Page<Course> courses =
+        courseRepository.findCoursesByInstructorsInAndStatusIn(instructors, statusEnums, pageable);
+    Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponse(course));
+    return courseResponses;
+  }
   // util methods
 
   private CourseResponse courseToCourseResponseWithObjectivesAndRequirements(Course course) {
@@ -230,6 +279,15 @@ public class CourseServiceImpl implements CourseService {
             () ->
                 new ResourceNotFoundException(
                     Translator.toLocale("Course.id.notfound", new Object[] {courseId})));
+  }
+
+  private User getUser(Long userId) {
+    return userRepository
+        .findById(userId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("User.id.notfound", new Object[] {userId})));
   }
 
   private Course courseRequestToCourse(CourseRequest courseRequest) {

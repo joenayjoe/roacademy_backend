@@ -1,0 +1,12 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="37" author="junaid">
+        <dropColumn tableName="course_instructor" columnName="created_at"/>
+        <dropColumn tableName="course_instructor" columnName="updated_at"/>
+        <dropColumn tableName="course_student" columnName="created_at"/>
+        <dropColumn tableName="course_student" columnName="updated_at"/>
+    </changeSet>
+</databaseChangeLog>

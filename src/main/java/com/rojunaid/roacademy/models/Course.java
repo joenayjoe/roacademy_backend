@@ -39,6 +39,8 @@ public class Course extends Auditable {
 
   private String imageUrl;
 
+  private String imageId;
+
   @Enumerated(EnumType.STRING)
   private CourseStatusEnum status = CourseStatusEnum.DRAFT;
 
@@ -67,7 +69,7 @@ public class Course extends Auditable {
   private Set<CourseRequirement> courseRequirements = new HashSet<>();
 
   @JsonManagedReference
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinTable(
       name = "course_instructor",
       joinColumns = {@JoinColumn(name = "course_id")},
@@ -75,7 +77,7 @@ public class Course extends Auditable {
   private Set<User> instructors = new HashSet<>();
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @JoinTable(
       name = "course_student",
       joinColumns = {@JoinColumn(name = "course_id")},
@@ -83,7 +85,7 @@ public class Course extends Auditable {
   private Set<User> students = new HashSet<>();
 
   @JsonManagedReference
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
   @JoinColumn(name = "created_by", updatable = false)
   private User createdBy;
 
@@ -112,11 +114,13 @@ public class Course extends Auditable {
     chapter.setCourse(this);
   }
 
-  @PrePersist
-  public void addCreatedBy() {
-    CustomUserPrincipal principal =
-        (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    User user = principal.getUser();
+  public void addInstructor(User user) {
+    this.getInstructors().add(user);
+    user.getTeachingCourses().add(this);
+  }
+
+  public void addCreator(User user) {
     this.setCreatedBy(user);
+    user.getCreatedCourses().add(this);
   }
 }

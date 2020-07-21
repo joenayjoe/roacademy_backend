@@ -16,7 +16,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class Auth {
@@ -27,8 +29,26 @@ public class Auth {
       AuthProvider authProvider, HttpServletRequest request, HttpServletResponse response) {
     String clientId = this.getClientId(authProvider);
     String authorizationUri = this.getAuthorizationUri(authProvider);
+
+    List<String> scopes = this.getScopes(authProvider);
+    String redirectUri = this.getRedirectUri(authProvider);
+
     String authorizationUrl =
         String.format("%s?client_id=%s&response_type=code", authorizationUri, clientId);
+
+    if (scopes != null && scopes.size() > 0) {
+      String sc = scopes.stream().collect(Collectors.joining(" "));
+      authorizationUrl = String.format("%s&scope=%s", authorizationUrl, sc);
+    }
+
+    if (redirectUri != null) {
+      authorizationUrl = String.format("%s&redirect_uri=%s", authorizationUrl, redirectUri);
+    }
+
+    if (authProvider.equals(AuthProvider.youtube)) {
+      authorizationUrl =
+          String.format("%s&access_type=offline&include_granted_scopes=true", authorizationUrl);
+    }
 
     String redirectUriAfterLogin =
         request.getParameter(
@@ -55,14 +75,15 @@ public class Auth {
 
     String code = servletRequest.getParameter("code");
     if (code != null) {
+      OAuth2RequestParams params = new OAuth2RequestParams();
+      params.setClientId(this.getClientId(authProvider));
+      params.setClientSecret(this.getClientSecret(authProvider));
+      params.setGrantType("authorization_code");
+      params.setCodeOrToken(code);
+      params.setAuthOrTokenUrl(this.getTokenUri(authProvider));
+      params.setRedirectUrl(this.getRedirectUri(authProvider));
       try {
-        TokenResponse tokenResponse =
-            OAuth2Utils.getOrRefreshAccessToken(
-                this.getClientId(authProvider),
-                this.getClientSecret(authProvider),
-                "authorization_code",
-                code,
-                this.getTokenUri(authProvider));
+        TokenResponse tokenResponse = OAuth2Utils.getOrRefreshAccessToken(params);
 
         // save token to db
         OAuth2Credential credential = this.getOAuth2Credential(authProvider).orElse(null);
@@ -148,6 +169,20 @@ public class Auth {
       authorizationUrl = appProperties.getOauth2().getYoutube().getAuthorizationUri();
     }
     return authorizationUrl;
+  }
+
+  public List<String> getScopes(AuthProvider authProvider) {
+    if (authProvider.equals(AuthProvider.youtube)) {
+      return appProperties.getOauth2().getYoutube().getScopes();
+    }
+    return null;
+  }
+
+  public String getRedirectUri(AuthProvider authProvider) {
+    if (authProvider.equals(AuthProvider.youtube)) {
+      return appProperties.getOauth2().getYoutube().getRedirectUri();
+    }
+    return null;
   }
 
   public Optional<OAuth2Credential> getOAuth2Credential(AuthProvider provider) {

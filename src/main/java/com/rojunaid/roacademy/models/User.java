@@ -23,6 +23,7 @@ public class User extends Auditable {
   @JsonIgnore private String hashPassword;
 
   private String imageUrl;
+  private String imageId;
 
   @Enumerated(EnumType.STRING)
   private AuthProvider provider;
@@ -36,10 +37,6 @@ public class User extends Auditable {
       joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   Set<Role> roles = new HashSet<>();
-
-  @JsonIgnore
-  @OneToMany(mappedBy = "user")
-  Set<TeachingResource> teachingResources = new HashSet<>();
 
   @JsonIgnore
   @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
