@@ -22,18 +22,18 @@ public interface CourseService {
   Iterable<CourseResponse> findCoursesByGradeId(
       Long gradeId, List<CourseStatusEnum> status, String order);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageCourse(#courseId)")
   CourseResponse createCourse(CourseRequest courseData, MultipartFile file);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageCourse(#courseId)")
   CourseResponse updateCourse(Long courseId, CourseUpdateRequest courseData, MultipartFile file);
 
   CourseResponse findCourseById(Long courseId, List<CourseStatusEnum> status);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageCourse(#courseId)")
   void updateStatus(Long courseId, CourseStatusUpdateRequest request);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageCourse(#courseId)")
   void deleteCourseById(Long courseId);
 
   Page<SearchResponse> getAutocompleteSuggestionsForCourse(

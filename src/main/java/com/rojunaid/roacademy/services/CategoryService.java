@@ -10,16 +10,16 @@ public interface CategoryService {
 
   Iterable<CategoryResponse> findAllCategoryWithGrades(String order);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   CategoryResponse createCategory(CategoryRequest category);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   CategoryResponse updateCategory(Long categoryId, CategoryUpdateRequest category);
 
   CategoryResponse findCategoryById(Long categoryId);
 
   CategoryResponse finCategoryWithGradesById(Long categoryId);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   void deleteCategoryById(Long categoryId);
 }

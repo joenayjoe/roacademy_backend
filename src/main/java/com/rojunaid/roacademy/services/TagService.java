@@ -15,7 +15,6 @@ public interface TagService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   Set<Tag> findOrCreateByNames(List<String> names);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   TagResponse tagToTagResponse(Tag tag);
 
   List<TagResponse> search(String name);

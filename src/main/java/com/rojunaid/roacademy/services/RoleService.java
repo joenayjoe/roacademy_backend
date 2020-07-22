@@ -8,15 +8,15 @@ public interface RoleService {
 
   Iterable<RoleResponse> getAllRole();
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   RoleResponse createRole(Role role);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   RoleResponse updateRole(Long roleId, Role role);
 
   RoleResponse getRoleById(Long roleId);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   void deleteRoleById(Long roleId);
 
   Role findOrCreateStudentRole();

@@ -14,10 +14,10 @@ public interface GradeService {
 
   Page<GradeResponse> findAll(int page, int size, String order);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   GradeResponse createGrade(GradeRequest gradeRequest);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   GradeResponse updateGrade(Long gradeId, GradeUpdateRequest gradeUpdateRequest);
 
   GradeResponse findGradeById(Long gradeId);
@@ -26,7 +26,7 @@ public interface GradeService {
 
   Iterable<GradeResponse> findGradesByCategoryId(Long categoryId, String order);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN')")
   void deleteGradeById(Long gradeId);
 
   GradeResponse gradeToGradeResponse(Grade grade);

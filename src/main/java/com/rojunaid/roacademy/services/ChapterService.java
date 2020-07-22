@@ -13,16 +13,16 @@ public interface ChapterService {
 
   ChapterResponse getChapterById(Long courseId, Long chapterId);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageCourse(#chapterRequest.courseId)")
   ChapterResponse createChapter(ChapterRequest chapterRequest);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageChapter(#chapterId)")
   ChapterResponse updateChapter(Long chapterId, ChapterUpdateRequest chapterRequest);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageCourse(#courseId)")
   void updateChapterPosition(Long courseId, ChapterPositionUpdateRequest[] positionUpdateRequests);
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageChapter(#chapterId)")
   void deleteChapter(Long chapterId);
 
   ChapterResponse chapterToChapterResponse(Chapter chapter);
