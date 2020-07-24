@@ -77,6 +77,7 @@ public class Auth {
       HttpServletRequest servletRequest,
       HttpServletResponse servletResponse) {
 
+    System.out.println(("#########   Enter to Get Access Token method ############"));
     String code = servletRequest.getParameter("code");
     if (code != null) {
       OAuth2RequestParams params = new OAuth2RequestParams();
@@ -87,9 +88,11 @@ public class Auth {
       params.setAuthOrTokenUrl(this.getTokenUri(authProvider));
       params.setRedirectUrl(this.getRedirectUri(authProvider));
       try {
+        System.out.println("###### refreshing Token #######");
         TokenResponse tokenResponse = OAuth2Utils.getOrRefreshAccessToken(params);
 
         // save token to db
+        System.out.println("###### Saving Token to DB #######");
         OAuth2Credential credential = this.getOAuth2Credential(authProvider).orElse(null);
 
         if (credential == null) {
@@ -122,6 +125,11 @@ public class Auth {
         }
 
       } catch (IOException e) {
+        System.out.println("###### Error detected #######");
+        System.out.println("###### Error Message =  #######"+ e.getLocalizedMessage());
+        System.out.println("###### Error Stack =  #######");
+        e.printStackTrace(System.out);
+
         System.out.println(e.getStackTrace());
         LOGGER.error("Auth Exception occurred:", e);
         throw new OAuth2AuthenticationProcessingException(e.getLocalizedMessage());
