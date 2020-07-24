@@ -1,8 +1,14 @@
 spring:
   datasource:
-    url: ${MYSQL_URL}
+    url: jdbc:postgresql://localhost:5432/roacademydb
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
 
 logging:
   level:

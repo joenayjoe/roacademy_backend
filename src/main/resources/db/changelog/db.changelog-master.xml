@@ -44,5 +44,6 @@
     <include file="db/changelog/0.3.6_add_column_image_id_to_course.xml"/>
     <include
             file="db/changelog/0.3.7_remove_column_created_at_and_updated_at_from_course_student_and_course_lecture.xml"/>
+    <include file="db/changelog/0.3.8_rename_table_user_to_app_user.xml"/>
 
 </databaseChangeLog>
