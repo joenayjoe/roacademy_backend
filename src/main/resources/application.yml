@@ -10,14 +10,11 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         ddl-auto: none
 
-
-
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
 
   profiles:
     active: @activatedProperties@
-
 
   servlet:
     multipart:
@@ -49,19 +46,15 @@ spring:
             tokenUri: https://graph.facebook.com/v7.0/oauth/access_token
             userInfoUri: https://graph.facebook.com/v7.0/me?fields=id,first_name,middle_name,last_name,name,email,picture.width(250).height(250)
 
-
-
 logging:
   level:
     org:
       hibernate:
         SQL: DEBUG
 
-
 #file.upload-dir=/var/www/roacademy_files
 file:
   upload-dir: ${ROACADEMY_UPLOAD_DIR}
-
 
 app:
   auth:
@@ -91,6 +84,3 @@ app:
 
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect
-
-server:
-  port: 8080
