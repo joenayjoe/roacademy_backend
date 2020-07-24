@@ -73,7 +73,7 @@ app:
       clientSecret: ${ROACADEMY_GOOGLE_CLIENT_SECRET}
       authorizationUri: "https://accounts.google.com/o/oauth2/v2/auth"
       tokenUri: "https://oauth2.googleapis.com/token"
-      redirectUri: "http://localhost:8080/api/oauth2/callback/youtube"
+      redirectUri: "https://roacademy-backend.herokuapp.com/api/oauth2/callback/youtube"
       scopes:
         - https://www.googleapis.com/auth/youtube
     imgur:
@@ -83,4 +83,4 @@ app:
       tokenUri: "https://api.imgur.com/oauth2/token"
 
     authorizedRedirectUris:
-      - http://localhost:3000/oauth2/redirect
+      - https://roacademy.herokuapp.com/oauth2/redirect
