@@ -9,6 +9,8 @@ import com.rojunaid.roacademy.models.OAuth2Credential;
 import com.rojunaid.roacademy.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.rojunaid.roacademy.util.CookieUtils;
 import com.rojunaid.roacademy.util.OAuth2Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 public class Auth {
   @Autowired private AppProperties appProperties;
   @Autowired private OAuth2CredentialService oAuth2CredentialService;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(Auth.class);
 
   public void authorize(
       AuthProvider authProvider, HttpServletRequest request, HttpServletResponse response) {
@@ -118,6 +122,7 @@ public class Auth {
         }
 
       } catch (IOException e) {
+        LOGGER.error("Auth Exception occurred:", e);
         throw new OAuth2AuthenticationProcessingException(e.getLocalizedMessage());
       }
     }
