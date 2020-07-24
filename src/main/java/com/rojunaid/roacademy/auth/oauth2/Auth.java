@@ -122,6 +122,7 @@ public class Auth {
         }
 
       } catch (IOException e) {
+        System.out.println(e.getStackTrace());
         LOGGER.error("Auth Exception occurred:", e);
         throw new OAuth2AuthenticationProcessingException(e.getLocalizedMessage());
       }
