@@ -53,8 +53,8 @@ logging:
         SQL: DEBUG
 
 #file.upload-dir=/var/www/roacademy_files
-file:
-  upload-dir: ${ROACADEMY_UPLOAD_DIR}
+#file:
+#  upload-dir: ${ROACADEMY_UPLOAD_DIR}
 
 app:
   auth:
