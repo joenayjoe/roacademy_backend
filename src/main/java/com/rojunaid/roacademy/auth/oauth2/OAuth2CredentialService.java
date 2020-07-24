@@ -12,12 +12,10 @@ public class OAuth2CredentialService {
 
   @Autowired private OAuth2CredentialRepository oAuth2CredentialRepository;
 
-  @PreAuthorize("hasRole('ADMIN')")
   public Optional<OAuth2Credential> getCredentialByProvider(String provider) {
     return oAuth2CredentialRepository.findFirstByProvider(provider);
   }
-
-  @PreAuthorize("hasRole('ADMIN')")
+  
   public OAuth2Credential createOrUpdateCredential(OAuth2Credential credential) {
     return oAuth2CredentialRepository.save(credential);
   }
