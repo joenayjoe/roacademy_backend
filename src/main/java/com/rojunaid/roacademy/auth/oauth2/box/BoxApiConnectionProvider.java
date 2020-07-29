@@ -42,10 +42,10 @@ public class BoxApiConnectionProvider {
 
             @Override
             public void onRefresh(BoxAPIConnection connection) {
-              credential.setAccessToken(apiConnection.getAccessToken());
-              credential.setRefreshToken(apiConnection.getRefreshToken());
+              credential.setAccessToken(connection.getAccessToken());
+              credential.setRefreshToken(connection.getRefreshToken());
               Long currentTime = System.currentTimeMillis();
-              credential.setExpiresInSeconds((currentTime + apiConnection.getExpires()) / 1000L);
+              credential.setExpiresInSeconds((currentTime + connection.getExpires()) / 1000L);
               oAuth2CredentialService.createOrUpdateCredential(credential);
             }
 

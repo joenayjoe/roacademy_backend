@@ -24,6 +24,9 @@ public interface FileUploadService {
   @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   UploadedResourceInfo uploadToYoutube(YoutubeMetaData metaData, MultipartFile file);
 
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+  void deleteFromYoutube(String resourceId);
+
   Resource getFileAsResource(String fileName);
 
   void deleteFileOrDirectory(String uri);

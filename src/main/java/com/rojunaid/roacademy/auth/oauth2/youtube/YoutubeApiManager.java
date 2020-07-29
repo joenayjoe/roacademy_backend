@@ -119,4 +119,15 @@ public class YoutubeApiManager {
       throw new MediaUploadException(t.getMessage());
     }
   }
+
+  public void delete(String resourceId) {
+    try{
+      youtube = connectionProvider.getYoutubeApiProvider();
+      YouTube.Videos.Delete request = youtube.videos().delete(resourceId);
+      request.execute();
+
+    }catch (IOException ex) {
+      throw new MediaUploadException("Delete failed with error: ["+ex.getLocalizedMessage()+"]");
+    }
+  }
 }

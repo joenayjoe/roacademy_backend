@@ -160,6 +160,11 @@ public class FileUploadServiceImpl implements FileUploadService {
   }
 
   @Override
+  public void deleteFromYoutube(String resourceId) {
+    youtubeApiManager.delete(resourceId);
+  }
+
+  @Override
   public Resource getFileAsResource(String fileUrl) {
     try {
       Path filePath = Paths.get(uploadDir, fileUrl).normalize();

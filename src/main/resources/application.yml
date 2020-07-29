@@ -83,4 +83,5 @@ app:
       tokenUri: "https://api.imgur.com/oauth2/token"
 
     authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
       - https://roacademy.herokuapp.com/oauth2/redirect

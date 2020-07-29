@@ -101,6 +101,7 @@ public class LectureServiceImpl implements LectureService {
       youtubeMetaData.setStatus("public");
       resourceInfo = fileUploadService.uploadToYoutube(youtubeMetaData, file);
       resource.setFileUrl(resourceInfo.getResourceUrl());
+      resource.setResourceId(resourceInfo.getResourceId());
 
     } else {
       resourceInfo =
@@ -129,9 +130,10 @@ public class LectureServiceImpl implements LectureService {
                         Translator.toLocale(
                             "${LectureResource.id.notfound}", new Object[] {resourceId})));
     if (resource.getContentType().startsWith("video")) {
-      // remove video from youtube
+      lecture.getLectureResources().remove(resource);
+      lectureRepository.save(lecture);
+      fileUploadService.deleteFromYoutube(resource.getResourceId());
     } else {
-      // remove file from box
       lecture.getLectureResources().remove(resource);
       lectureRepository.save(lecture);
       fileUploadService.deleteFromBox(resource.getResourceId());

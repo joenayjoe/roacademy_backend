@@ -58,10 +58,9 @@ public class YoutubeApiConnectionProvider {
                     @Override
                     public void onTokenResponse(Credential credential, TokenResponse tokenResponse)
                         throws IOException {
-                      oAuth2Credential.setAccessToken(currentGoogleCredential.getAccessToken());
-                      oAuth2Credential.setRefreshToken(currentGoogleCredential.getRefreshToken());
-                      oAuth2Credential.setExpiresInSeconds(
-                          currentGoogleCredential.getExpiresInSeconds());
+                      oAuth2Credential.setAccessToken(tokenResponse.getAccessToken());
+                      oAuth2Credential.setRefreshToken(tokenResponse.getRefreshToken());
+                      oAuth2Credential.setExpiresInSeconds(tokenResponse.getExpiresInSeconds());
                       authProvider.updateOAuth2Credential(oAuth2Credential);
                     }
 
@@ -77,7 +76,6 @@ public class YoutubeApiConnectionProvider {
       currentGoogleCredential.setAccessToken(oAuth2Credential.getAccessToken());
       currentGoogleCredential.setRefreshToken(oAuth2Credential.getRefreshToken());
       currentGoogleCredential.refreshToken();
-
     }
     return currentGoogleCredential;
   }
