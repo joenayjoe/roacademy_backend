@@ -1,12 +1,7 @@
 package com.rojunaid.roacademy.security;
 
-import com.rojunaid.roacademy.models.Chapter;
-import com.rojunaid.roacademy.models.Lecture;
-import com.rojunaid.roacademy.models.RoleEnum;
-import com.rojunaid.roacademy.models.User;
-import com.rojunaid.roacademy.repositories.ChapterRepository;
-import com.rojunaid.roacademy.repositories.LectureRepository;
-import com.rojunaid.roacademy.repositories.UserRepository;
+import com.rojunaid.roacademy.models.*;
+import com.rojunaid.roacademy.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +12,8 @@ public class PermissionService {
   @Autowired private UserRepository userRepository;
   @Autowired private ChapterRepository chapterRepository;
   @Autowired private LectureRepository lectureRepository;
+  @Autowired private CourseCommentRepository courseCommentRepository;
+  @Autowired private LectureCommentRepository lectureCommentRepository;
 
   public boolean canManageCourse(Long courseId) {
 
@@ -45,6 +42,31 @@ public class PermissionService {
       return false;
     }
     return canManageChapter(lecture.getChapter().getId());
+  }
+
+  public boolean canManageCourseComment(Long commentId) {
+    CourseComment courseComment = courseCommentRepository.findById(commentId).orElse(null);
+    if (courseComment == null) {
+      return false;
+    }
+
+    User user = getCurrentUser();
+    if (courseComment.getCommentedBy().getId() == user.getId()) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean canManageLectureComment(Long commentId) {
+    LectureComment lectureComment = lectureCommentRepository.findById(commentId).orElse(null);
+    if (lectureComment == null) {
+      return false;
+    }
+    User user = getCurrentUser();
+    if (lectureComment.getCommentedBy().getId() == user.getId()) {
+      return true;
+    }
+    return false;
   }
 
   private boolean isTeacher(User user) {

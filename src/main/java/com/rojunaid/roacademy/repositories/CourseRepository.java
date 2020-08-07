@@ -35,7 +35,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   Page<Course> search(String query, List<CourseStatusEnum> status, Pageable page);
 
   @Query(
-      "SELECT crs FROM Course  crs left join fetch crs.courseRequirements left join fetch crs.objectives left  join fetch crs.grade left  join  fetch crs.category left join fetch crs.createdBy where crs.id = ?1 and crs.status in (?2)")
+      "SELECT crs FROM Course  crs left join fetch crs.courseRequirements left join fetch crs.objectives left join fetch crs.comments left  join fetch crs.grade left  join  fetch crs.category left join fetch crs.createdBy left join fetch crs.instructors where crs.id = ?1 and crs.status in (?2)")
   Optional<Course> findById(Long courseId, List<CourseStatusEnum> status);
 
   Page<Course> findCoursesByInstructorsInAndStatusIn(

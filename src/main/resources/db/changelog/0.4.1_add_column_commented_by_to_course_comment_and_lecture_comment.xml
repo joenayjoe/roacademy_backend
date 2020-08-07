@@ -1,0 +1,22 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="41" author="junaid">
+        <addColumn tableName="course_comment">
+            <column name="commented_by" type="BIGINT">
+                <constraints foreignKeyName="fk_course_comment_user_id"
+                             references="app_user(id)"
+                             nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="lecture_comment">
+            <column name="commented_by" type="BIGINT">
+                <constraints foreignKeyName="fk_lecture_comment_user_id"
+                             references="app_user(id)"
+                             nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

@@ -5,10 +5,7 @@ import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.*;
-import com.rojunaid.roacademy.repositories.CategoryRepository;
-import com.rojunaid.roacademy.repositories.CourseRepository;
-import com.rojunaid.roacademy.repositories.GradeRepository;
-import com.rojunaid.roacademy.repositories.UserRepository;
+import com.rojunaid.roacademy.repositories.*;
 import com.rojunaid.roacademy.security.CustomUserPrincipal;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.FileUploadService;
@@ -39,6 +36,8 @@ public class CourseServiceImpl implements CourseService {
   @Autowired private UserRepository userRepository;
 
   @Autowired private FileUploadService fileUploadService;
+
+  @Autowired private CourseCommentRepository courseCommentRepository;
 
   @Override
   public Page<CourseResponse> findAll(
@@ -199,6 +198,7 @@ public class CourseServiceImpl implements CourseService {
     primaryUser.setFirstName(course.getCreatedBy().getFirstName());
     primaryUser.setLastName(course.getCreatedBy().getLastName());
     primaryUser.setEmail(course.getCreatedBy().getEmail());
+    primaryUser.setImageUrl(course.getCreatedBy().getImageUrl());
 
     courseResponse.setCreatedBy(primaryUser);
 
@@ -220,6 +220,65 @@ public class CourseServiceImpl implements CourseService {
     Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponse(course));
     return courseResponses;
   }
+
+  @Override
+  public CommentResponse addComment(Long courseId, CommentRequest comment) {
+    Course course = this.getCourse(courseId);
+    CourseComment courseComment = commentRequestToCourseComment(comment);
+    course.addComment(courseComment);
+    courseComment = courseCommentRepository.save(courseComment);
+    return commentToCommentResponse(courseComment);
+  }
+
+  @Override
+  public CommentResponse addCommentReply(
+      Long courseId, Long commentId, CommentRequest commentRequest) {
+    CourseComment parentComment = this.getComment(commentId);
+
+    CourseComment reply = commentRequestToCourseComment(commentRequest);
+    if (parentComment.getParent() != null) {
+      reply.setParent(parentComment.getParent());
+    } else {
+      reply.setParent(parentComment);
+    }
+    reply = courseCommentRepository.save(reply);
+
+    return commentToCommentResponse(reply);
+  }
+
+  @Override
+  public Page<CommentResponse> getCourseComments(Long courseId, int page, int size, String order) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<CourseComment> courseComments =
+        courseCommentRepository.findAllByCourseId(courseId, pageable);
+
+    Page<CommentResponse> responses = courseComments.map(x -> commentToCommentResponse(x));
+    return responses;
+  }
+
+  @Override
+  public Page<CommentResponse> getCommentReplies(Long courseId, Long commentId, int page, int size, String order) {
+    PageRequest pageRequest = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<CourseComment> courseComments = courseCommentRepository.findCourseReplies(commentId, pageRequest);
+    Page<CommentResponse> responses = courseComments.map(x -> commentToCommentResponse(x));
+    return responses;
+  }
+
+  @Override
+  public CommentResponse updateComment(
+      Long courseId, Long commentId, CommentUpdateRequest commentRequest) {
+    CourseComment comment = this.getComment(commentId);
+    comment.setCommentBody(commentRequest.getCommentBody());
+    comment = courseCommentRepository.save(comment);
+    return commentToCommentResponse(comment);
+  }
+
+  @Override
+  public void deleteComment(Long courseId, Long commentId) {
+    CourseComment courseComment = this.getComment(commentId);
+    courseCommentRepository.delete(courseComment);
+  }
+
   // util methods
 
   private CourseResponse courseToCourseResponseWithObjectivesAndRequirements(Course course) {
@@ -229,6 +288,10 @@ public class CourseServiceImpl implements CourseService {
         course.getObjectives().stream().map(x -> x.getName()).collect(Collectors.toList()));
     courseResponse.setRequirements(
         course.getCourseRequirements().stream().map(x -> x.getName()).collect(Collectors.toList()));
+    courseResponse.setInstructors(
+        course.getInstructors().stream()
+            .map(x -> userToPrimaryUser(x))
+            .collect(Collectors.toList()));
     return courseResponse;
   }
 
@@ -243,7 +306,28 @@ public class CourseServiceImpl implements CourseService {
     return searchResponse;
   }
 
-  // private methods
+  private CourseComment commentRequestToCourseComment(CommentRequest commentRequest) {
+    CourseComment courseComment = new CourseComment();
+    courseComment.setCommentBody(commentRequest.getCommentBody());
+
+    CustomUserPrincipal principal =
+        (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = principal.getUser();
+    user = this.getUser(user.getId());
+
+    courseComment.addCommentedBy(user);
+
+    return courseComment;
+  }
+
+  private PrimaryUser userToPrimaryUser(User user) {
+    PrimaryUser primaryUser = new PrimaryUser();
+    primaryUser.setId(user.getId());
+    primaryUser.setFirstName(user.getFirstName());
+    primaryUser.setLastName(user.getLastName());
+    primaryUser.setEmail(user.getEmail());
+    return primaryUser;
+  }
 
   private Grade getGrade(Long gradeId) {
     return gradeRepository
@@ -279,6 +363,15 @@ public class CourseServiceImpl implements CourseService {
             () ->
                 new ResourceNotFoundException(
                     Translator.toLocale("Course.id.notfound", new Object[] {courseId})));
+  }
+
+  private CourseComment getComment(Long commentId) {
+    return courseCommentRepository
+        .findById(commentId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("CourseComment.id.notfound", new Object[] {commentId})));
   }
 
   private User getUser(Long userId) {
@@ -354,5 +447,27 @@ public class CourseServiceImpl implements CourseService {
       course.addCourseRequirement(courseRequirement);
     }
     return course;
+  }
+
+  private CommentResponse commentToCommentResponse(CourseComment comment) {
+    CommentResponse response = new CommentResponse();
+    response.setId(comment.getId());
+    response.setCommentBody(comment.getCommentBody());
+    if (comment.getParent() != null) {
+      response.setParentId(comment.getParent().getId());
+    }
+    response.setCreatedAt(comment.getCreatedAt());
+    response.setUpdatedAt(comment.getUpdatedAt());
+
+    PrimaryUser user = new PrimaryUser();
+    user.setId(comment.getCommentedBy().getId());
+    user.setFirstName(comment.getCommentedBy().getFirstName());
+    user.setLastName(comment.getCommentedBy().getLastName());
+    user.setEmail(comment.getCommentedBy().getEmail());
+    user.setImageUrl(comment.getCommentedBy().getImageUrl());
+    response.setCommentedBy(user);
+
+    response.setNumberOfReplies(comment.getReplies().size());
+    return response;
   }
 }

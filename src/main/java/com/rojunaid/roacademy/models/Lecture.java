@@ -2,6 +2,7 @@ package com.rojunaid.roacademy.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rojunaid.roacademy.security.CustomUserPrincipal;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,14 +39,6 @@ public class Lecture extends Auditable {
   @EqualsAndHashCode.Exclude
   private User createdBy;
 
-  //  @OneToOne(
-  //      mappedBy = "lecture",
-  //      fetch = FetchType.LAZY,
-  //      orphanRemoval = true,
-  //      cascade = CascadeType.ALL)
-  //  @EqualsAndHashCode.Exclude
-  //  private VideoResource videoResource;
-
   @JsonBackReference
   @OneToMany(
       mappedBy = "lecture",
@@ -61,6 +54,14 @@ public class Lecture extends Auditable {
   @EqualsAndHashCode.Exclude
   private Chapter chapter;
 
+  @JsonManagedReference
+  @OneToMany(
+          mappedBy = "lecture",
+          fetch = FetchType.LAZY,
+          orphanRemoval = true,
+          cascade = CascadeType.ALL)
+  private Set<LectureComment> comments = new HashSet<>();
+
   @PrePersist
   public void addCreatedBy() {
     CustomUserPrincipal principal =
@@ -72,5 +73,10 @@ public class Lecture extends Auditable {
   public void addLectureResource(LectureResource resource) {
     this.getLectureResources().add(resource);
     resource.setLecture(this);
+  }
+
+  public void addComment(LectureComment comment) {
+    this.getComments().add(comment);
+    comment.setLecture(this);
   }
 }

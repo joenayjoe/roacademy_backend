@@ -55,6 +55,14 @@ public class User extends Auditable {
   @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
   private Set<Lecture> createdLectures = new HashSet<>();
 
+  @JsonIgnore
+  @OneToMany(mappedBy = "commentedBy", fetch = FetchType.LAZY)
+  private Set<CourseComment> courseComments = new HashSet<>();
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "commentedBy", fetch = FetchType.LAZY)
+  private Set<LectureComment> lectureComments = new HashSet<>();
+
   public String getFullName() {
     return firstName + " " + lastName;
   }

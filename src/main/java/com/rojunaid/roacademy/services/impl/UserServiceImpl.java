@@ -185,6 +185,7 @@ public class UserServiceImpl implements UserService {
     }
 
     userResponse.setRoles(roleResponses);
+
     if (user.getImageUrl() != null && !user.getImageUrl().startsWith("http")) {
       userResponse.setImageUrl(Helper.getBaseUrl() + user.getImageUrl());
     } else {

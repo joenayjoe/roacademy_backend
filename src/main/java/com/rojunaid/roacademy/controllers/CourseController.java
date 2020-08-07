@@ -1,9 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
-import com.rojunaid.roacademy.dto.CourseRequest;
-import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.dto.CourseStatusUpdateRequest;
-import com.rojunaid.roacademy.dto.CourseUpdateRequest;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.util.Constants;
@@ -74,7 +71,8 @@ public class CourseController {
   // Create a course
   @PostMapping("")
   public ResponseEntity<CourseResponse> createCourse(
-      @Valid @RequestPart("courseData") CourseRequest courseData, @RequestPart(required = false) MultipartFile file) {
+      @Valid @RequestPart("courseData") CourseRequest courseData,
+      @RequestPart(required = false) MultipartFile file) {
     CourseResponse courseResponse = courseService.createCourse(courseData, file);
     return new ResponseEntity<>(courseResponse, HttpStatus.CREATED);
   }
@@ -127,6 +125,73 @@ public class CourseController {
   @DeleteMapping("/{courseId}")
   public ResponseEntity<HttpStatus> deleteCourseById(@PathVariable Long courseId) {
     courseService.deleteCourseById(courseId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  // POST /api/courses/:courseId/comments
+  // Create a comment
+  @PostMapping("/{courseId}/comments")
+  public ResponseEntity<CommentResponse> addComment(
+      @PathVariable Long courseId, @Valid @RequestBody CommentRequest comment) {
+    CommentResponse courseComment = courseService.addComment(courseId, comment);
+    return new ResponseEntity<>(courseComment, HttpStatus.CREATED);
+  }
+
+  // POST /api/courses/:courseId/comments/:commentId/replies
+  // Add a reply to comment
+  @PostMapping("/{courseId}/comments/{commentId}/replies")
+  public ResponseEntity<CommentResponse> addCommentReply(
+      @PathVariable Long courseId,
+      @PathVariable Long commentId,
+      @Valid @RequestBody CommentRequest commentRequest) {
+    CommentResponse commentResponse =
+        courseService.addCommentReply(courseId, commentId, commentRequest);
+    return new ResponseEntity<>(commentResponse, HttpStatus.CREATED);
+  }
+
+  // GET /api/courses/:courseId/comments?page=PAGE&SIZE=SIZE
+  // Get comments for course
+  @GetMapping("/{courseId}/comments")
+  public ResponseEntity<Page<CommentResponse>> getComments(
+      @PathVariable Long courseId,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order) {
+
+    Page<CommentResponse> courseComments =
+        courseService.getCourseComments(courseId, page, size, order);
+    return new ResponseEntity<>(courseComments, HttpStatus.OK);
+  }
+
+  @GetMapping("/{courseId}/comments/{commentId}/replies")
+  public ResponseEntity<Page<CommentResponse>> getReplies(
+      @PathVariable Long courseId,
+      @PathVariable Long commentId,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
+      @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order) {
+    Page<CommentResponse> responses =
+        courseService.getCommentReplies(courseId, commentId, page, size, order);
+    return new ResponseEntity<>(responses, HttpStatus.OK);
+  }
+
+  // PUT /api/courses/:courseId/comments/:commentId
+  // Update a comment
+  @PutMapping("/{courseId}/comments/{commentId}")
+  public ResponseEntity<CommentResponse> updateComment(
+      @PathVariable Long courseId,
+      @PathVariable Long commentId,
+      @Valid @RequestBody CommentUpdateRequest comment) {
+    CommentResponse courseComment = courseService.updateComment(courseId, commentId, comment);
+    return new ResponseEntity<>(courseComment, HttpStatus.OK);
+  }
+
+  // DELETE /api/courses/:courseId/comments/:commentId
+  // Delete a comment
+  @DeleteMapping("/{courseId}/comments/{commentId}")
+  public ResponseEntity<HttpStatus> deleteComment(
+      @PathVariable Long courseId, @PathVariable Long commentId) {
+    courseService.deleteComment(courseId, commentId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

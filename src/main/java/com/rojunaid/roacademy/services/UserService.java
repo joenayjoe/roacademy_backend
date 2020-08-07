@@ -18,10 +18,10 @@ public interface UserService {
   @PreAuthorize("hasRole('ADMIN')")
   UserResponse updateUserRole(Long userId, UserRoleUpdateRequest userRoleUpdateRequest);
 
-  @PreAuthorize("#userId == authentication.principal.user.id")
+  @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
   UserResponse updatePhoto(Long userId, MultipartFile file);
 
-  @PreAuthorize("#userId == authentication.principal.user.id")
+  @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
   UserResponse updateEmail(Long userId, ResetEmailRequest emailRequest);
 
   UserResponse findUserById(Long userId);

@@ -3,10 +3,8 @@ package com.rojunaid.roacademy.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.rojunaid.roacademy.security.CustomUserPrincipal;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -89,6 +87,14 @@ public class Course extends Auditable {
   @JoinColumn(name = "created_by", updatable = false)
   private User createdBy;
 
+  @JsonManagedReference
+  @OneToMany(
+          mappedBy = "course",
+          fetch = FetchType.LAZY,
+          orphanRemoval = true,
+          cascade = CascadeType.ALL)
+  private Set<CourseComment> comments = new HashSet<>();
+
   public void addCategory(Category category) {
     this.setCategory(category);
     category.getCourses().add(this);
@@ -122,5 +128,10 @@ public class Course extends Auditable {
   public void addCreator(User user) {
     this.setCreatedBy(user);
     user.getCreatedCourses().add(this);
+  }
+
+  public void addComment(CourseComment comment) {
+    this.getComments().add(comment);
+    comment.setCourse(this);
   }
 }

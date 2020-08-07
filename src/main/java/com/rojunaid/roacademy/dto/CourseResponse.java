@@ -4,9 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -23,8 +21,8 @@ public class CourseResponse extends AuditableDTO {
   private String imageUrl;
   private String status;
   private PrimaryUser createdBy;
-  private Set<PrimaryUser> instructors = new HashSet<>();
-  private Set<PrimaryUser> students = new HashSet<>();
+  private List<PrimaryUser> instructors = new ArrayList<>();
+  private List<PrimaryUser> students = new ArrayList<>();
   private List<String> objectives = new ArrayList<>();
   private List<String> requirements = new ArrayList<>();
 }

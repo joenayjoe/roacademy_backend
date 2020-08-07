@@ -45,6 +45,21 @@ public interface CourseService {
   Page<CourseResponse> findCoursesByInstructor(
       Long id, int page, int size, List<CourseStatusEnum> statusEnums, String order);
 
+  CommentResponse addComment(Long courseId, CommentRequest comment);
+
+  Page<CommentResponse> getCourseComments(Long courseId, int page, int size, String order);
+  Page<CommentResponse> getCommentReplies(Long courseId, Long commentId, int page, int size, String order);
+
+  @PreAuthorize(
+      "hasRole('ADMIN') or @permissionService.canManageCourse(#courseId) or @permissionService.canManageCourseComment(#commentRequest.id)")
+  CommentResponse updateComment(Long courseId, Long commentId, CommentUpdateRequest commentRequest);
+
+  CommentResponse addCommentReply(Long courseId, Long commentId, CommentRequest commentRequest);
+
+  @PreAuthorize(
+      "hasRole('ADMIN') or @permissionService.canManageCourse(#courseId) or @permissionService.canManageCourseComment(#commentId)")
+  void deleteComment(Long courseId, Long commentId);
+
   // DTO Mapper
   CourseResponse courseToCourseResponse(Course course);
 }

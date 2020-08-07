@@ -1,0 +1,10 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="43" author="junaid">
+        <dropNotNullConstraint tableName="course_comment" columnName="course_id"/>
+        <dropNotNullConstraint tableName="lecture_comment" columnName="lecture_id"/>
+    </changeSet>
+</databaseChangeLog>

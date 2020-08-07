@@ -2,24 +2,22 @@ package com.rojunaid.roacademy.services.impl;
 
 import com.rojunaid.roacademy.auth.oauth2.UploadedResourceInfo;
 import com.rojunaid.roacademy.auth.oauth2.youtube.YoutubeMetaData;
-import com.rojunaid.roacademy.dto.LecturePositionUpdateRequest;
-import com.rojunaid.roacademy.dto.LectureRequest;
-import com.rojunaid.roacademy.dto.LectureResponse;
-import com.rojunaid.roacademy.dto.LectureUpdateRequest;
+import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
-import com.rojunaid.roacademy.models.Chapter;
-import com.rojunaid.roacademy.models.Lecture;
-import com.rojunaid.roacademy.models.LectureResource;
-import com.rojunaid.roacademy.models.Tag;
-import com.rojunaid.roacademy.repositories.ChapterRepository;
-import com.rojunaid.roacademy.repositories.LectureRepository;
-import com.rojunaid.roacademy.repositories.LectureResourceRepository;
+import com.rojunaid.roacademy.models.*;
+import com.rojunaid.roacademy.repositories.*;
+import com.rojunaid.roacademy.security.CustomUserPrincipal;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.LectureService;
 import com.rojunaid.roacademy.services.TagService;
+import com.rojunaid.roacademy.util.SortingUtils;
 import com.rojunaid.roacademy.util.Translator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +34,8 @@ public class LectureServiceImpl implements LectureService {
   @Autowired private ChapterRepository chapterRepository;
   @Autowired private TagService tagService;
   @Autowired private FileUploadService fileUploadService;
+  @Autowired private LectureCommentRepository lectureCommentRepository;
+  @Autowired private UserRepository userRepository;
 
   @Override
   public LectureResponse createLecture(LectureRequest lectureRequest) {
@@ -152,6 +152,74 @@ public class LectureServiceImpl implements LectureService {
   }
 
   @Override
+  public CommentResponse addComment(Long lectureId, CommentRequest commentRequest) {
+    Lecture lecture = this.getLecture(lectureId);
+    LectureComment comment = commentRequestToLectureComment(commentRequest);
+    lecture.addComment(comment);
+
+    comment = lectureCommentRepository.save(comment);
+
+    return commentToCommentResponse(comment);
+  }
+
+  @Override
+  public CommentResponse addCommentReply(
+      Long lectureId, Long commentId, CommentRequest commentRequest) {
+    LectureComment parentComment = getComment(commentId);
+
+    LectureComment reply = commentRequestToLectureComment(commentRequest);
+    if (parentComment.getParent() != null) {
+      reply.setParent(parentComment.getParent());
+    } else {
+      reply.setParent(parentComment);
+    }
+    reply = lectureCommentRepository.save(reply);
+    return commentToCommentResponse(reply);
+  }
+
+  @Override
+  public Page<CommentResponse> getComments(Long lectureId, int page, int size, String order) {
+    PageRequest pageRequest = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<LectureComment> comments =
+        lectureCommentRepository.findAllByLectureId(lectureId, pageRequest);
+    Page<CommentResponse> responses = comments.map(x -> commentToCommentResponse(x));
+    return responses;
+  }
+
+  @Override
+  public Page<CommentResponse> getCommentReplies(
+      Long lectureId, Long commentId, int page, int size, String order) {
+    PageRequest pageRequest = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<LectureComment> replies =
+        lectureCommentRepository.findCommentReplies(commentId, pageRequest);
+    Page<CommentResponse> responses = replies.map(x -> commentToCommentResponse(x));
+    return responses;
+  }
+
+  @Override
+  public CommentResponse updateComment(
+      Long lectureId, Long commentId, CommentUpdateRequest commentUpdateRequest) {
+    LectureComment comment = this.getComment(commentId);
+
+    if (canManageComment(comment)) {
+      comment.setCommentBody(commentUpdateRequest.getCommentBody());
+      comment = lectureCommentRepository.save(comment);
+      return commentToCommentResponse(comment);
+    }
+    throw new AccessDeniedException(Translator.toLocale("AccessDenied"));
+  }
+
+  @Override
+  public void deleteComment(Long lectureId, Long commentId) {
+    LectureComment comment = this.getComment(commentId);
+    if (canManageComment(comment)) {
+      lectureCommentRepository.delete(comment);
+    } else {
+      throw new AccessDeniedException(Translator.toLocale("AccessDenied"));
+    }
+  }
+
+  @Override
   public LectureResponse lectureToLectureResponse(Lecture lecture) {
     LectureResponse response = new LectureResponse();
     response.setId(lecture.getId());
@@ -185,6 +253,24 @@ public class LectureServiceImpl implements LectureService {
                     Translator.toLocale("${Lecture.id.notfound}", new Object[] {lectureId})));
   }
 
+  private User getUser(Long userId) {
+    return userRepository
+        .findById(userId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("User.id.notfound", new Object[] {userId})));
+  }
+
+  private LectureComment getComment(Long commentId) {
+    return lectureCommentRepository
+        .findById(commentId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("LectureComment.id.notfound", new Object[] {commentId})));
+  }
+
   private Lecture lectureRequestToLecture(LectureRequest lectureRequest) {
     Lecture lecture = new Lecture();
     lecture.setName(lectureRequest.getName());
@@ -196,5 +282,51 @@ public class LectureServiceImpl implements LectureService {
     lecture.setTags(tags);
 
     return lecture;
+  }
+
+  private boolean canManageComment(LectureComment comment) {
+    CustomUserPrincipal principal =
+        (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = principal.getUser();
+    user = this.getUser(user.getId());
+    if (comment.getCommentedBy().getId() == user.getId()) {
+      return true;
+    }
+    return false;
+  }
+
+  private LectureComment commentRequestToLectureComment(CommentRequest commentRequest) {
+    LectureComment comment = new LectureComment();
+    comment.setCommentBody(commentRequest.getCommentBody());
+
+    CustomUserPrincipal principal =
+        (CustomUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = principal.getUser();
+    user = this.getUser(user.getId());
+    comment.addCommentedBy(user);
+    return comment;
+  }
+
+  private CommentResponse commentToCommentResponse(LectureComment comment) {
+    CommentResponse response = new CommentResponse();
+
+    response.setId(comment.getId());
+    response.setCommentBody(comment.getCommentBody());
+    if (comment.getParent() != null) {
+      response.setParentId(comment.getParent().getId());
+    }
+    response.setCreatedAt(comment.getCreatedAt());
+    response.setUpdatedAt(comment.getUpdatedAt());
+
+    PrimaryUser primaryUser = new PrimaryUser();
+    primaryUser.setId(comment.getCommentedBy().getId());
+    primaryUser.setFirstName(comment.getCommentedBy().getFirstName());
+    primaryUser.setLastName(comment.getCommentedBy().getLastName());
+    primaryUser.setEmail(comment.getCommentedBy().getEmail());
+    primaryUser.setImageUrl(comment.getCommentedBy().getImageUrl());
+    response.setCommentedBy(primaryUser);
+
+    response.setNumberOfReplies(comment.getReplies().size());
+    return response;
   }
 }
