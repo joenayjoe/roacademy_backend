@@ -41,6 +41,18 @@ public class RestExceptionHandler {
         };
   }
 
+  @ExceptionHandler(UnauthorizedException.class)
+  public ResponseEntity<?> handleUnauthorizedException(
+      UnauthorizedException uae, HttpServletRequest request) {
+    ErrorDetail errorDetail = new ErrorDetail();
+    errorDetail.setStatus(HttpStatus.UNAUTHORIZED.value());
+    errorDetail.setTitle("Unauthorized");
+    errorDetail.setDeveloperMessage(uae.getClass().getName());
+    errorDetail.setDetail(uae.getMessage());
+    errorDetail.setOccurredAt(LocalDateTime.now());
+    return new ResponseEntity<>(errorDetail, null, HttpStatus.UNAUTHORIZED);
+  }
+
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<?> handleResourceNotFoundException(
       ResourceNotFoundException rnfe, HttpServletRequest request) {
@@ -57,7 +69,7 @@ public class RestExceptionHandler {
   // youtube upload exception handler
   @ExceptionHandler(MediaUploadException.class)
   public ResponseEntity<?> handleYoutubeUploadException(
-          MediaUploadException mue, HttpServletRequest request) {
+      MediaUploadException mue, HttpServletRequest request) {
     ErrorDetail errorDetail = new ErrorDetail();
     errorDetail.setTitle("Resource Upload Error");
     errorDetail.setOccurredAt(LocalDateTime.now());

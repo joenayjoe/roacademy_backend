@@ -257,9 +257,11 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public Page<CommentResponse> getCommentReplies(Long courseId, Long commentId, int page, int size, String order) {
+  public Page<CommentResponse> getCommentReplies(
+      Long courseId, Long commentId, int page, int size, String order) {
     PageRequest pageRequest = PageRequest.of(page, size, SortingUtils.SortBy(order));
-    Page<CourseComment> courseComments = courseCommentRepository.findCourseReplies(commentId, pageRequest);
+    Page<CourseComment> courseComments =
+        courseCommentRepository.findCourseReplies(commentId, pageRequest);
     Page<CommentResponse> responses = courseComments.map(x -> commentToCommentResponse(x));
     return responses;
   }

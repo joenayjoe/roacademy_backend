@@ -29,11 +29,11 @@ public class LectureComment extends Auditable {
   @EqualsAndHashCode.Exclude
   private User commentedBy;
 
-  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<LectureComment> replies = new HashSet<>();
 
   @JsonIgnore
-  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_id", updatable = false)
   @EqualsAndHashCode.Exclude
   private LectureComment parent;
