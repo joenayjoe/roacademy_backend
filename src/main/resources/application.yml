@@ -84,4 +84,5 @@ app:
 
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect
-      - http://roacademy.no/oauth2/redirect
+      - http://www.roacademy.no/oauth2/redirect
+      - https://roacademy.herokuapp.com/oauth2/redirect
