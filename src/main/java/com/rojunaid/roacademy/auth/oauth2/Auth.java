@@ -51,7 +51,7 @@ public class Auth {
 
     if (authProvider.equals(AuthProvider.youtube)) {
       authorizationUrl =
-          String.format("%s&access_type=offline&include_granted_scopes=true", authorizationUrl);
+          String.format("%s&prompt=consent&access_type=offline&include_granted_scopes=true", authorizationUrl);
     }
 
     String redirectUriAfterLogin =
