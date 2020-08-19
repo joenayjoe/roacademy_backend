@@ -88,11 +88,7 @@ public class Auth {
       params.setRedirectUrl(this.getRedirectUri(authProvider));
       try {
         TokenResponse tokenResponse = OAuth2Utils.getOrRefreshAccessToken(params);
-
-        System.out.println(("##### OAUTH2 Response ######"));
-        System.out.println(("##### Access Token = "+ tokenResponse.getAccessToken()));
-        System.out.println(("##### Refresh Token = "+ tokenResponse.getRefreshToken()));
-        System.out.println("######  END ######");
+        
         // save token to db
         OAuth2Credential credential = this.getOAuth2Credential(authProvider).orElse(null);
 
