@@ -5,8 +5,10 @@ import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
+import com.rojunaid.roacademy.models.Course;
 import com.rojunaid.roacademy.models.Role;
 import com.rojunaid.roacademy.models.User;
+import com.rojunaid.roacademy.repositories.CourseRepository;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import com.rojunaid.roacademy.security.AuthenticationFacade;
@@ -35,12 +37,13 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-  @Autowired UserRepository userRepository;
-  @Autowired PasswordEncoder passwordEncoder;
-  @Autowired RoleRepository roleRepository;
-  @Autowired RoleService roleService;
-  @Autowired AuthenticationFacade authenticationFacade;
-  @Autowired FileUploadService fileUploadService;
+  @Autowired private UserRepository userRepository;
+  @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired private RoleRepository roleRepository;
+  @Autowired private RoleService roleService;
+  @Autowired private AuthenticationFacade authenticationFacade;
+  @Autowired private FileUploadService fileUploadService;
+  @Autowired private CourseRepository courseRepository;
 
   @Value("${file.upload-dir}")
   private String uploadDir;
@@ -169,6 +172,26 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public void subscribeCourse(Long userId, CourseSubscriptionRequest data) {
+    User user = getUser(userId);
+    Course course = getCourse(data.getCourseId());
+    user.subscribeCourse(course);
+    userRepository.save(user);
+  }
+
+  @Override
+  public CourseSubscriptionCheckResponse isSubscribed(Long userId, Long courseId) {
+    User user = getUser(userId);
+    Course course = getCourse(courseId);
+    boolean c = user.getEnrolledCourses().contains(course);
+    CourseSubscriptionCheckResponse r = new CourseSubscriptionCheckResponse();
+    r.setCourseId(courseId);
+    r.setUserId(userId);
+    r.setSubscribed(c);
+    return r;
+  }
+
+  @Override
   public UserResponse userToUserResponse(User user) {
     UserResponse userResponse = new UserResponse();
     userResponse.setId(user.getId());
@@ -196,11 +219,20 @@ public class UserServiceImpl implements UserService {
 
   // private method
 
-  User getUser(Long userId) {
+  private User getUser(Long userId) {
     return userRepository.findById(userId).orElseThrow(() -> this.userNotFoundException(userId));
   }
 
-  ResourceNotFoundException userNotFoundException(Long userId) {
+  private Course getCourse(Long courseId) {
+    return courseRepository
+        .findById(courseId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    Translator.toLocale("Course.id.notfound", new Object[] {courseId})));
+  }
+
+  private ResourceNotFoundException userNotFoundException(Long userId) {
     return new ResourceNotFoundException(
         Translator.toLocale("User.id.notfound", new Object[] {userId}));
   }

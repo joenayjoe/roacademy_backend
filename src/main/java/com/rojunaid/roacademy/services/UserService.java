@@ -37,5 +37,9 @@ public interface UserService {
   @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
   UserResponse resetUserPassword(Long userId, ResetPasswordRequest resetPasswordRequest);
 
+  void subscribeCourse(Long userId, CourseSubscriptionRequest data);
+
+  CourseSubscriptionCheckResponse isSubscribed(Long userId, Long courseId);
+
   UserResponse userToUserResponse(User user);
 }

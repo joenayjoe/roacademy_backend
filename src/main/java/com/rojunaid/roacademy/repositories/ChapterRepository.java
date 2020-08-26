@@ -16,6 +16,6 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
   Optional<Chapter> findByChapterIdAndCourseId(Long chapterId, Long courseId);
 
   @Query(
-      "SELECT DISTINCT chptr from Chapter chptr left join fetch chptr.course left join fetch chptr.lectures lctrs  left join fetch lctrs.lectureResources left join fetch lctrs.tags where chptr.course.id=?1")
+      "SELECT DISTINCT chptr from Chapter chptr LEFT JOIN FETCH chptr.course LEFT JOIN FETCH chptr.lectures lcts LEFT JOIN FETCH lcts.tags LEFT JOIN FETCH lcts.lectureResources WHERE chptr.course.id=?1")
   Iterable<Chapter> findByCourseId(Long courseId, Sort sort);
 }

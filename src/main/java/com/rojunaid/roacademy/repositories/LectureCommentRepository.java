@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface LectureCommentRepository extends JpaRepository<LectureComment, Long> {
   @Query(
       value =
-          "SELECT cmnt from LectureComment cmnt LEFT JOIN FETCH cmnt.commentedBy WHERE cmnt.lecture.id = ?1",
+          "SELECT cmnt from LectureComment cmnt LEFT JOIN FETCH cmnt.commentedBy LEFT JOIN FETCH cmnt.replies WHERE cmnt.lecture.id = ?1",
       countQuery = "SELECT COUNT(cmnt) from LectureComment cmnt WHERE cmnt.lecture.id= ?1")
   Page<LectureComment> findAllByLectureId(Long lectureId, Pageable pageable);
 

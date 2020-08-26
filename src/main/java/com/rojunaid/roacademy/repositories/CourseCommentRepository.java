@@ -12,7 +12,7 @@ public interface CourseCommentRepository extends JpaRepository<CourseComment, Lo
 
   @Query(
       value =
-          "SELECT cmnt from CourseComment cmnt LEFT JOIN FETCH cmnt.commentedBy WHERE cmnt.course.id = ?1",
+          "SELECT cmnt from CourseComment cmnt LEFT JOIN FETCH cmnt.replies LEFT JOIN FETCH cmnt.commentedBy WHERE cmnt.course.id = ?1",
       countQuery = "SELECT COUNT(cmnt) from CourseComment cmnt WHERE cmnt.course.id= ?1")
   Page<CourseComment> findAllByCourseId(Long courseId, Pageable pageable);
 

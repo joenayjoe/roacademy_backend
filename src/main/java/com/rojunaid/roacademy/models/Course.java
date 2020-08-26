@@ -75,7 +75,7 @@ public class Course extends Auditable {
   private Set<User> instructors = new HashSet<>();
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.DETACH})
   @JoinTable(
       name = "course_student",
       joinColumns = {@JoinColumn(name = "course_id")},

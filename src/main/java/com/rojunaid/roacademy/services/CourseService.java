@@ -22,7 +22,7 @@ public interface CourseService {
   Iterable<CourseResponse> findCoursesByGradeId(
       Long gradeId, List<CourseStatusEnum> status, String order);
 
-  @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageCourse(#courseId)")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
   CourseResponse createCourse(CourseRequest courseData, MultipartFile file);
 
   @PreAuthorize("hasRole('ADMIN') or @permissionService.canManageCourse(#courseId)")

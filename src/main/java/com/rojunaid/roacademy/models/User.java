@@ -44,7 +44,10 @@ public class User extends Auditable {
   Set<Course> teachingCourses = new HashSet<>();
 
   @JsonIgnore
-  @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
+  @ManyToMany(
+      mappedBy = "students",
+      fetch = FetchType.LAZY,
+      cascade = {CascadeType.PERSIST, CascadeType.DETACH})
   Set<Course> enrolledCourses = new HashSet<>();
 
   @JsonIgnore
@@ -65,5 +68,17 @@ public class User extends Auditable {
 
   public String getFullName() {
     return firstName + " " + lastName;
+  }
+
+  public void subscribeCourse(Course course) {
+
+    Set<Course> subscribedCourses = this.getEnrolledCourses();
+    if (subscribedCourses.contains(course)) {
+      subscribedCourses.remove(course);
+      course.getStudents().remove(this);
+    } else {
+      subscribedCourses.add(course);
+      course.getStudents().add(this);
+    }
   }
 }
