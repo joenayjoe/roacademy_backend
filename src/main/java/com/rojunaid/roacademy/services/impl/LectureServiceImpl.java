@@ -100,16 +100,14 @@ public class LectureServiceImpl implements LectureService {
       youtubeMetaData.setTags(tags);
       youtubeMetaData.setStatus("public");
       resourceInfo = fileUploadService.uploadToYoutube(youtubeMetaData, file);
-      resource.setFileUrl(resourceInfo.getResourceUrl());
-      resource.setResourceId(resourceInfo.getResourceId());
 
     } else {
       resourceInfo =
           fileUploadService.uploadToBox(
               Lecture.class.getSimpleName().toLowerCase(), lecture.getId(), file);
-      resource.setFileUrl(resourceInfo.getResourceUrl());
-      resource.setResourceId(resourceInfo.getResourceId());
     }
+    resource.setFileUrl(resourceInfo.getResourceUrl());
+    resource.setResourceId(resourceInfo.getResourceId());
 
     lecture.addLectureResource(resource);
     lecture = lectureRepository.save(lecture);

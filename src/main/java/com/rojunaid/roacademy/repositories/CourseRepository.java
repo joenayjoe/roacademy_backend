@@ -31,7 +31,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   @Query("select crs from Course  crs where crs.grade.id = ?1 and crs.status in (?2)")
   Iterable<Course> findAllByGradeId(Long gradeId, List<CourseStatusEnum> status, Sort sort);
 
-  @Query("SELECT crs from Course crs where crs.name LIKE %?1%  and crs.status in (?2)")
+  @Query("SELECT crs from Course crs where lower(crs.name) LIKE lower(concat('%', ?1, '%') )  and crs.status in (?2)")
   Page<Course> search(String query, List<CourseStatusEnum> status, Pageable page);
 
   @Query(

@@ -45,11 +45,7 @@ public class YoutubeApiManager {
       snippet.setTitle(metaData.getTitle());
       snippet.setCategoryId("27"); // 27 = Education
       snippet.setTags(metaData.getTags());
-
-      String hashTags =
-          metaData.getTags().stream().map(tag -> "#" + tag).collect(Collectors.joining(" "));
-
-      snippet.setDescription(metaData.getDescription() + "\n\n" + hashTags);
+      snippet.setDescription(metaData.getDescription());
 
       // Add the completed snippet object to the video resource.
       videoObjectDefiningMetadata.setSnippet(snippet);
