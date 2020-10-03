@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.security;
 
-import com.rojunaid.roacademy.models.User;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -208,20 +208,6 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public Page<CourseResponse> findCoursesByInstructor(
-      Long instructorId, int page, int size, List<CourseStatusEnum> statusEnums, String order) {
-    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
-    User instructor = getUser(instructorId);
-    List<User> instructors = new ArrayList<>();
-    instructors.add(instructor);
-
-    Page<Course> courses =
-        courseRepository.findCoursesByInstructorsInAndStatusIn(instructors, statusEnums, pageable);
-    Page<CourseResponse> courseResponses = courses.map(course -> courseToCourseResponse(course));
-    return courseResponses;
-  }
-
-  @Override
   public CommentResponse addComment(Long courseId, CommentRequest comment) {
     Course course = this.getCourse(courseId);
     CourseComment courseComment = commentRequestToCourseComment(comment);

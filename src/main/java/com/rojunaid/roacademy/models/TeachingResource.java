@@ -1,17 +1,17 @@
-//package com.rojunaid.roacademy.models;
+// package com.rojunaid.roacademy.models;
 //
-//import com.fasterxml.jackson.annotation.JsonIgnore;
-//import lombok.Getter;
-//import lombok.Setter;
+// import com.fasterxml.jackson.annotation.JsonIgnore;
+// import lombok.Getter;
+// import lombok.Setter;
 //
-//import javax.persistence.*;
-//import java.util.HashSet;
-//import java.util.Set;
+// import javax.persistence.*;
+// import java.util.HashSet;
+// import java.util.Set;
 //
-//@Entity
-//@Getter
-//@Setter
-//public class TeachingResource extends Auditable {
+// @Entity
+// @Getter
+// @Setter
+// public class TeachingResource extends Auditable {
 //
 //  @JsonIgnore @ManyToOne User user;
 //
@@ -39,4 +39,4 @@
 //  // it will be used for polymorphic query
 //
 //  private String resourceOwnerType;
-//}
+// }

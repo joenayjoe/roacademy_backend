@@ -32,11 +32,9 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class FileUploadServiceImpl implements FileUploadService {
 
+  private static final String RESOURCE_FOLDER_NAME = "resources";
   @Value("${file.upload-dir}")
   private String uploadDir;
-
-  private static final String RESOURCE_FOLDER_NAME = "resources";
-
   @Autowired private YoutubeApiManager youtubeApiManager;
   @Autowired private BoxApiManager boxApiManager;
   @Autowired private ImgurApiManager imgurApiManager;

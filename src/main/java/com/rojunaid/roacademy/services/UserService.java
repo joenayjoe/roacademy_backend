@@ -1,10 +1,13 @@
 package com.rojunaid.roacademy.services;
 
 import com.rojunaid.roacademy.dto.*;
+import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -40,6 +43,13 @@ public interface UserService {
   void subscribeCourse(Long userId, CourseSubscriptionRequest data);
 
   CourseSubscriptionCheckResponse isSubscribed(Long userId, Long courseId);
+
+  @PreAuthorize("#instructorId == authentication.principal.user.id or hasRole('ADMIN')")
+  Page<CourseResponse> getTeachingCourses(
+      Long instructorId, int page, int size, List<CourseStatusEnum> statusEnums, String order);
+
+  @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
+  Page<CourseResponse> getSubscribedCourses(Long studentId, int page, int size, String order);
 
   UserResponse userToUserResponse(User user);
 }

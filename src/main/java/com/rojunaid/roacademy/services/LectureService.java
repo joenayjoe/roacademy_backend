@@ -34,7 +34,8 @@ public interface LectureService {
 
   Page<CommentResponse> getComments(Long lectureId, int page, int size, String order);
 
-  Page<CommentResponse> getCommentReplies(Long lectureId, Long commentId, int page, int size, String order);
+  Page<CommentResponse> getCommentReplies(
+      Long lectureId, Long commentId, int page, int size, String order);
 
   @PreAuthorize(
       "hasRole('ADMIN') or @permissionService.canManageLecture(#lectureId) or @permissionService.canManageLectureComment(#commentUpdateRequest.id)")

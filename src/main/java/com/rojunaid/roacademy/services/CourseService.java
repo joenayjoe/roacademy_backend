@@ -42,13 +42,12 @@ public interface CourseService {
   Page<CourseResponse> searchCoursesByKeyword(
       String kw, int page, int size, String order, List<CourseStatusEnum> status);
 
-  Page<CourseResponse> findCoursesByInstructor(
-      Long id, int page, int size, List<CourseStatusEnum> statusEnums, String order);
-
   CommentResponse addComment(Long courseId, CommentRequest comment);
 
   Page<CommentResponse> getCourseComments(Long courseId, int page, int size, String order);
-  Page<CommentResponse> getCommentReplies(Long courseId, Long commentId, int page, int size, String order);
+
+  Page<CommentResponse> getCommentReplies(
+      Long courseId, Long commentId, int page, int size, String order);
 
   @PreAuthorize(
       "hasRole('ADMIN') or @permissionService.canManageCourse(#courseId) or @permissionService.canManageCourseComment(#commentRequest.id)")

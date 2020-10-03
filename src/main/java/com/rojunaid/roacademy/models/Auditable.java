@@ -1,6 +1,5 @@
 package com.rojunaid.roacademy.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,11 +21,11 @@ public class Auditable {
 
   @CreatedDate
   @Column(nullable = false, updatable = false)
-  //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "E, dd MMM YYYY 'at' hh:mm:ss a")
+  // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "E, dd MMM YYYY 'at' hh:mm:ss a")
   private Date createdAt;
 
   @LastModifiedDate
   @Column(nullable = false)
-  //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "E, dd MMM YYYY 'at' hh:mm:ss a")
+  // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "E, dd MMM YYYY 'at' hh:mm:ss a")
   private Date updatedAt;
 }

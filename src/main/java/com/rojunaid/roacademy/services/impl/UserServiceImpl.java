@@ -6,6 +6,7 @@ import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
 import com.rojunaid.roacademy.models.Course;
+import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.models.Role;
 import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.repositories.CourseRepository;
@@ -13,6 +14,7 @@ import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import com.rojunaid.roacademy.security.AuthenticationFacade;
 import com.rojunaid.roacademy.security.CustomUserPrincipal;
+import com.rojunaid.roacademy.services.CourseService;
 import com.rojunaid.roacademy.services.FileUploadService;
 import com.rojunaid.roacademy.services.RoleService;
 import com.rojunaid.roacademy.services.UserService;
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService {
   @Autowired private AuthenticationFacade authenticationFacade;
   @Autowired private FileUploadService fileUploadService;
   @Autowired private CourseRepository courseRepository;
+  @Autowired private CourseService courseService;
 
   @Value("${file.upload-dir}")
   private String uploadDir;
@@ -189,6 +192,27 @@ public class UserServiceImpl implements UserService {
     r.setUserId(userId);
     r.setSubscribed(c);
     return r;
+  }
+
+  @Override
+  public Page<CourseResponse> getTeachingCourses(
+      Long instructorId, int page, int size, List<CourseStatusEnum> statusEnums, String order) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+
+    Page<Course> courses = userRepository.findTeachingCourses(instructorId, statusEnums, pageable);
+    Page<CourseResponse> courseResponses =
+        courses.map(c -> courseService.courseToCourseResponse(c));
+    return courseResponses;
+  }
+
+  @Override
+  public Page<CourseResponse> getSubscribedCourses(
+      Long studentId, int page, int size, String order) {
+    PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
+    Page<Course> courses = userRepository.findSubscribedCourses(studentId, pageable);
+    Page<CourseResponse> courseResponses =
+        courses.map(c -> courseService.courseToCourseResponse(c));
+    return courseResponses;
   }
 
   @Override

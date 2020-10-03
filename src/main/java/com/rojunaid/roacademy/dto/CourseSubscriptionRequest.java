@@ -6,9 +6,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class CourseSubscriptionRequest {
-  @NotNull
-  private Long userId;
+  @NotNull private Long userId;
 
-  @NotNull
-  private Long courseId;
+  @NotNull private Long courseId;
 }

@@ -18,12 +18,6 @@ import java.util.Set;
 @Data
 public class Lecture extends Auditable {
 
-  private String name;
-
-  private String description;
-
-  private int position;
-
   @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
@@ -32,7 +26,9 @@ public class Lecture extends Auditable {
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
   @EqualsAndHashCode.Exclude
   Set<Tag> tags = new HashSet<>();
-
+  private String name;
+  private String description;
+  private int position;
   @JsonIgnore
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "created_by", updatable = false)
@@ -56,10 +52,10 @@ public class Lecture extends Auditable {
 
   @JsonManagedReference
   @OneToMany(
-          mappedBy = "lecture",
-          fetch = FetchType.LAZY,
-          orphanRemoval = true,
-          cascade = CascadeType.ALL)
+      mappedBy = "lecture",
+      fetch = FetchType.LAZY,
+      orphanRemoval = true,
+      cascade = CascadeType.ALL)
   private Set<LectureComment> comments = new HashSet<>();
 
   @PrePersist

@@ -2,7 +2,10 @@ package com.rojunaid.roacademy;
 
 import com.rojunaid.roacademy.auth.oauth2.OAuth2CredentialService;
 import com.rojunaid.roacademy.configs.AppProperties;
-import com.rojunaid.roacademy.models.*;
+import com.rojunaid.roacademy.models.AuthProvider;
+import com.rojunaid.roacademy.models.Role;
+import com.rojunaid.roacademy.models.RoleEnum;
+import com.rojunaid.roacademy.models.User;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +45,14 @@ public class RoacademyApplication implements CommandLineRunner {
     }
 
     Role teacherRole = roleRepository.findByName(RoleEnum.ROLE_TEACHER).orElse(null);
-    if(teacherRole == null) {
+    if (teacherRole == null) {
       teacherRole = new Role();
       teacherRole.setName(RoleEnum.ROLE_TEACHER);
       roleRepository.save(teacherRole);
     }
 
     Role studentRole = roleRepository.findByName(RoleEnum.ROLE_STUDENT).orElse(null);
-    if(studentRole == null) {
+    if (studentRole == null) {
       studentRole = new Role();
       studentRole.setName(RoleEnum.ROLE_STUDENT);
       roleRepository.save(studentRole);

@@ -1,25 +1,25 @@
-//package com.rojunaid.roacademy.auth.oauth2.youtube;
+// package com.rojunaid.roacademy.auth.oauth2.youtube;
 //
-//import com.google.api.client.auth.oauth2.BearerToken;
-//import com.google.api.client.auth.oauth2.Credential;
-//import com.google.api.client.http.HttpTransport;
-//import com.google.api.client.http.javanet.NetHttpTransport;
-//import com.google.api.client.json.JsonFactory;
-//import com.google.api.client.json.jackson2.JacksonFactory;
-//import com.google.api.client.util.Clock;
-//import com.rojunaid.roacademy.auth.oauth2.OAuth2CredentialService;
-//import com.rojunaid.roacademy.configs.AppProperties;
-//import com.rojunaid.roacademy.exception.OAuth2AuthenticationProcessingException;
-//import com.rojunaid.roacademy.models.AuthProvider;
-//import com.rojunaid.roacademy.models.OAuth2Credential;
-//import com.rojunaid.roacademy.util.OAuth2Utils;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Component;
+// import com.google.api.client.auth.oauth2.BearerToken;
+// import com.google.api.client.auth.oauth2.Credential;
+// import com.google.api.client.http.HttpTransport;
+// import com.google.api.client.http.javanet.NetHttpTransport;
+// import com.google.api.client.json.JsonFactory;
+// import com.google.api.client.json.jackson2.JacksonFactory;
+// import com.google.api.client.util.Clock;
+// import com.rojunaid.roacademy.auth.oauth2.OAuth2CredentialService;
+// import com.rojunaid.roacademy.configs.AppProperties;
+// import com.rojunaid.roacademy.exception.OAuth2AuthenticationProcessingException;
+// import com.rojunaid.roacademy.models.AuthProvider;
+// import com.rojunaid.roacademy.models.OAuth2Credential;
+// import com.rojunaid.roacademy.util.OAuth2Utils;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.stereotype.Component;
 //
-//import java.io.IOException;
+// import java.io.IOException;
 //
-//@Component("YoutubeAuth")
-//public class Auth {
+// @Component("YoutubeAuth")
+// public class Auth {
 //
 //  public static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 //  public static final JsonFactory JSON_FACTORY = new JacksonFactory();
@@ -93,4 +93,4 @@
 //  public String getTokenUri() {
 //    return appProperties.getOauth2().getYoutube().getTokenUri();
 //  }
-//}
+// }

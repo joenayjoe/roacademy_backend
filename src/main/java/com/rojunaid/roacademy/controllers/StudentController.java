@@ -1,7 +1,6 @@
 package com.rojunaid.roacademy.controllers;
 
 import com.rojunaid.roacademy.dto.CourseResponse;
-import com.rojunaid.roacademy.models.CourseStatusEnum;
 import com.rojunaid.roacademy.services.UserService;
 import com.rojunaid.roacademy.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,24 +9,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/teachers")
-public class TeacherController {
+@RequestMapping("/api/students")
+public class StudentController {
 
-  @Autowired private UserService userService;
+  private final UserService userService;
 
-  @GetMapping("/{teacherId}/courses")
-  public ResponseEntity<Page<CourseResponse>> teacherCourses(
-      @PathVariable Long teacherId,
+  @Autowired
+  public StudentController(UserService userService) {
+    this.userService = userService;
+  }
+
+  @GetMapping("/{studentId}/courses")
+  public ResponseEntity<Page<CourseResponse>> getSubscribedCourses(
+      @PathVariable Long studentId,
       @RequestParam(defaultValue = Constants.DEFAULT_PAGE) int page,
       @RequestParam(defaultValue = Constants.DEFAULT_PAGE_SIZE) int size,
-      @RequestParam(defaultValue = Constants.DEFAULT_COURSE_STATUS) List<CourseStatusEnum> status,
       @RequestParam(defaultValue = Constants.DEFAULT_SORTING) String order) {
-
-    Page<CourseResponse> courseResponses =
-        userService.getTeachingCourses(teacherId, page, size, status, order);
-    return new ResponseEntity<>(courseResponses, HttpStatus.OK);
+    Page<CourseResponse> responses = userService.getSubscribedCourses(studentId, page, size, order);
+    return new ResponseEntity<>(responses, HttpStatus.OK);
   }
 }

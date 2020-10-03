@@ -39,11 +39,14 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
         response,
         OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME,
         CookieUtils.serialize(authorizationRequest),
-            COOKIE_EXPIRATION_IN_SEC);
+        COOKIE_EXPIRATION_IN_SEC);
     String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
     if (StringUtils.isNotBlank(redirectUriAfterLogin)) {
       CookieUtils.addCookie(
-          response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, COOKIE_EXPIRATION_IN_SEC);
+          response,
+          REDIRECT_URI_PARAM_COOKIE_NAME,
+          redirectUriAfterLogin,
+          COOKIE_EXPIRATION_IN_SEC);
     }
   }
 

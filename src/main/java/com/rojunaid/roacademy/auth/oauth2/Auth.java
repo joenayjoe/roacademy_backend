@@ -24,10 +24,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class Auth {
+  private static final Logger LOGGER = LoggerFactory.getLogger(Auth.class);
   @Autowired private AppProperties appProperties;
   @Autowired private OAuth2CredentialService oAuth2CredentialService;
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(Auth.class);
 
   public void authorize(
       AuthProvider authProvider, HttpServletRequest request, HttpServletResponse response) {
@@ -51,7 +50,9 @@ public class Auth {
 
     if (authProvider.equals(AuthProvider.youtube)) {
       authorizationUrl =
-          String.format("%s&prompt=consent&access_type=offline&include_granted_scopes=true", authorizationUrl);
+          String.format(
+              "%s&prompt=consent&access_type=offline&include_granted_scopes=true",
+              authorizationUrl);
     }
 
     String redirectUriAfterLogin =
@@ -88,7 +89,7 @@ public class Auth {
       params.setRedirectUrl(this.getRedirectUri(authProvider));
       try {
         TokenResponse tokenResponse = OAuth2Utils.getOrRefreshAccessToken(params);
-        
+
         // save token to db
         OAuth2Credential credential = this.getOAuth2Credential(authProvider).orElse(null);
 

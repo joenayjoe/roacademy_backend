@@ -75,7 +75,9 @@ public class Course extends Auditable {
   private Set<User> instructors = new HashSet<>();
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.DETACH})
+  @ManyToMany(
+      fetch = FetchType.LAZY,
+      cascade = {CascadeType.PERSIST, CascadeType.DETACH})
   @JoinTable(
       name = "course_student",
       joinColumns = {@JoinColumn(name = "course_id")},
@@ -89,10 +91,10 @@ public class Course extends Auditable {
 
   @JsonManagedReference
   @OneToMany(
-          mappedBy = "course",
-          fetch = FetchType.LAZY,
-          orphanRemoval = true,
-          cascade = CascadeType.ALL)
+      mappedBy = "course",
+      fetch = FetchType.LAZY,
+      orphanRemoval = true,
+      cascade = CascadeType.ALL)
   private Set<CourseComment> comments = new HashSet<>();
 
   public void addCategory(Category category) {

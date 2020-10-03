@@ -9,7 +9,7 @@ public class StringToCourseStatusEnumConverter implements Converter<String, Cour
 
   @Override
   public CourseStatusEnum convert(String source) {
-    try{
+    try {
       return CourseStatusEnum.valueOf(source.toUpperCase());
     } catch (IllegalArgumentException e) {
       return null;

@@ -22,9 +22,9 @@ import java.util.Map;
 @Component
 public class ImgurApiManager {
 
-  @Autowired private Auth authProvider;
   public static final String UPLOAD_URL = "https://api.imgur.com/3/upload";
   public static final String DELETE_URL = "https://api.imgur.com/3/image";
+  @Autowired private Auth authProvider;
 
   public UploadedResourceInfo uploadImage(MultipartFile file) {
     try {

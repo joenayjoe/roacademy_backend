@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.stream.Collectors;
 
 @Component
 public class YoutubeApiManager {
@@ -60,9 +59,7 @@ public class YoutubeApiManager {
       // is the video resource that contains metadata about the new video.
       // The third argument is the actual video content.
       YouTube.Videos.Insert videoInsert =
-          youtube
-              .videos()
-              .insert("snippet,status", videoObjectDefiningMetadata, mediaContent);
+          youtube.videos().insert("snippet,status", videoObjectDefiningMetadata, mediaContent);
 
       // Set the upload type and add an event listener.
       MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
@@ -117,13 +114,14 @@ public class YoutubeApiManager {
   }
 
   public void delete(String resourceId) {
-    try{
+    try {
       youtube = connectionProvider.getYoutubeApiProvider();
       YouTube.Videos.Delete request = youtube.videos().delete(resourceId);
       request.execute();
 
-    }catch (IOException ex) {
-      throw new MediaUploadException("Delete failed with error: ["+ex.getLocalizedMessage()+"]");
+    } catch (IOException ex) {
+      throw new MediaUploadException(
+          "Delete failed with error: [" + ex.getLocalizedMessage() + "]");
     }
   }
 }

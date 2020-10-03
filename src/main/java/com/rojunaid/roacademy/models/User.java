@@ -15,22 +15,6 @@ import java.util.Set;
 @Table(name = "app_user")
 public class User extends Auditable {
 
-  private String firstName;
-  private String lastName;
-
-  @Column(unique = true)
-  private String email;
-
-  @JsonIgnore private String hashPassword;
-
-  private String imageUrl;
-  private String imageId;
-
-  @Enumerated(EnumType.STRING)
-  private AuthProvider provider;
-
-  private Boolean enable;
-
   @JsonManagedReference
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
@@ -38,18 +22,25 @@ public class User extends Auditable {
       joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   Set<Role> roles = new HashSet<>();
-
   @JsonIgnore
   @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
   Set<Course> teachingCourses = new HashSet<>();
-
   @JsonIgnore
   @ManyToMany(
       mappedBy = "students",
       fetch = FetchType.LAZY,
       cascade = {CascadeType.PERSIST, CascadeType.DETACH})
   Set<Course> enrolledCourses = new HashSet<>();
-
+  private String firstName;
+  private String lastName;
+  @Column(unique = true)
+  private String email;
+  @JsonIgnore private String hashPassword;
+  private String imageUrl;
+  private String imageId;
+  @Enumerated(EnumType.STRING)
+  private AuthProvider provider;
+  private Boolean enable;
   @JsonIgnore
   @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
   private Set<Course> createdCourses = new HashSet<>();
