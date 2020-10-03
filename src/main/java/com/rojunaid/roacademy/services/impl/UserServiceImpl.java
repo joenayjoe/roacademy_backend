@@ -5,11 +5,9 @@ import com.rojunaid.roacademy.dto.*;
 import com.rojunaid.roacademy.exception.BadRequestException;
 import com.rojunaid.roacademy.exception.ResourceAlreadyExistException;
 import com.rojunaid.roacademy.exception.ResourceNotFoundException;
-import com.rojunaid.roacademy.models.Course;
-import com.rojunaid.roacademy.models.CourseStatusEnum;
-import com.rojunaid.roacademy.models.Role;
-import com.rojunaid.roacademy.models.User;
+import com.rojunaid.roacademy.models.*;
 import com.rojunaid.roacademy.repositories.CourseRepository;
+import com.rojunaid.roacademy.repositories.CourseStudentRepository;
 import com.rojunaid.roacademy.repositories.RoleRepository;
 import com.rojunaid.roacademy.repositories.UserRepository;
 import com.rojunaid.roacademy.security.AuthenticationFacade;
@@ -47,6 +45,7 @@ public class UserServiceImpl implements UserService {
   @Autowired private FileUploadService fileUploadService;
   @Autowired private CourseRepository courseRepository;
   @Autowired private CourseService courseService;
+  @Autowired private CourseStudentRepository courseStudentRepository;
 
   @Value("${file.upload-dir}")
   private String uploadDir;
@@ -175,10 +174,16 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void subscribeCourse(Long userId, CourseSubscriptionRequest data) {
-    User user = getUser(userId);
-    Course course = getCourse(data.getCourseId());
-    user.subscribeCourse(course);
+  public void subscribeCourse(Long userId, CourseSubscriptionRequest subscription) {
+    User user = getUser(subscription.getStudentId());
+    Course course = getCourse(subscription.getCourseId());
+    CourseStudent courseStudent =
+        courseStudentRepository.findByStudentAndCourse(user, course).orElse(null);
+    if (courseStudent == null) {
+      user.subscribeCourse(course);
+    } else {
+      user.unsubscribe(course, courseStudent);
+    }
     userRepository.save(user);
   }
 
@@ -186,11 +191,16 @@ public class UserServiceImpl implements UserService {
   public CourseSubscriptionCheckResponse isSubscribed(Long userId, Long courseId) {
     User user = getUser(userId);
     Course course = getCourse(courseId);
-    boolean c = user.getEnrolledCourses().contains(course);
     CourseSubscriptionCheckResponse r = new CourseSubscriptionCheckResponse();
     r.setCourseId(courseId);
-    r.setUserId(userId);
-    r.setSubscribed(c);
+    r.setStudentId(userId);
+    r.setSubscribed(false);
+
+    CourseStudent courseStudent =
+        courseStudentRepository.findByStudentAndCourse(user, course).orElse(null);
+    if (courseStudent != null) {
+      r.setSubscribed(false);
+    }
     return r;
   }
 
@@ -209,7 +219,7 @@ public class UserServiceImpl implements UserService {
   public Page<CourseResponse> getSubscribedCourses(
       Long studentId, int page, int size, String order) {
     PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
-    Page<Course> courses = userRepository.findSubscribedCourses(studentId, pageable);
+    Page<Course> courses = courseStudentRepository.findSubscribedCourses(studentId, pageable);
     Page<CourseResponse> courseResponses =
         courses.map(c -> courseService.courseToCourseResponse(c));
     return courseResponses;

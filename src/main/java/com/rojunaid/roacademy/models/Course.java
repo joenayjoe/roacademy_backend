@@ -1,18 +1,20 @@
 package com.rojunaid.roacademy.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Course extends Auditable {
 
   @Column(unique = true)
@@ -74,15 +76,8 @@ public class Course extends Auditable {
       inverseJoinColumns = {@JoinColumn(name = "instructor_id")})
   private Set<User> instructors = new HashSet<>();
 
-  @JsonIgnore
-  @ManyToMany(
-      fetch = FetchType.LAZY,
-      cascade = {CascadeType.PERSIST, CascadeType.DETACH})
-  @JoinTable(
-      name = "course_student",
-      joinColumns = {@JoinColumn(name = "course_id")},
-      inverseJoinColumns = {@JoinColumn(name = "student_id")})
-  private Set<User> students = new HashSet<>();
+  @OneToMany(mappedBy = "course", fetch = FetchType.LAZY, orphanRemoval = true)
+  private Set<CourseStudent> courseStudents;
 
   @JsonManagedReference
   @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -135,5 +130,19 @@ public class Course extends Auditable {
   public void addComment(CourseComment comment) {
     this.getComments().add(comment);
     comment.setCourse(this);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Course that = (Course) o;
+
+    return Objects.equals(this.getId(), that.getId());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.getId(), this.getName());
   }
 }

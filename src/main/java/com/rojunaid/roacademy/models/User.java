@@ -3,15 +3,18 @@ package com.rojunaid.roacademy.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "app_user")
 public class User extends Auditable {
 
@@ -22,25 +25,36 @@ public class User extends Auditable {
       joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   Set<Role> roles = new HashSet<>();
+
   @JsonIgnore
   @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
   Set<Course> teachingCourses = new HashSet<>();
-  @JsonIgnore
-  @ManyToMany(
-      mappedBy = "students",
+
+  @OneToMany(
+      mappedBy = "student",
       fetch = FetchType.LAZY,
-      cascade = {CascadeType.PERSIST, CascadeType.DETACH})
-  Set<Course> enrolledCourses = new HashSet<>();
+      cascade = CascadeType.ALL,
+      orphanRemoval = true)
+  Set<CourseStudent> courseStudents;
+
   private String firstName;
+
   private String lastName;
+
   @Column(unique = true)
   private String email;
+
   @JsonIgnore private String hashPassword;
+
   private String imageUrl;
+
   private String imageId;
+
   @Enumerated(EnumType.STRING)
   private AuthProvider provider;
+
   private Boolean enable;
+
   @JsonIgnore
   @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
   private Set<Course> createdCourses = new HashSet<>();
@@ -62,14 +76,30 @@ public class User extends Auditable {
   }
 
   public void subscribeCourse(Course course) {
+    CourseStudent courseStudent = new CourseStudent();
+    courseStudent.setStudent(this);
+    courseStudent.setCourse(course);
 
-    Set<Course> subscribedCourses = this.getEnrolledCourses();
-    if (subscribedCourses.contains(course)) {
-      subscribedCourses.remove(course);
-      course.getStudents().remove(this);
-    } else {
-      subscribedCourses.add(course);
-      course.getStudents().add(this);
-    }
+    course.getCourseStudents().add(courseStudent);
+    courseStudents.add(courseStudent);
+  }
+
+  public void unsubscribe(Course course, CourseStudent courseStudent) {
+    course.getCourseStudents().remove(courseStudent);
+    courseStudents.remove(courseStudent);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User that = (User) o;
+
+    return Objects.equals(this.getId(), that.getId());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.getId());
   }
 }

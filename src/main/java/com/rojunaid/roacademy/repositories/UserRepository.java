@@ -25,10 +25,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Page<Course> findTeachingCourses(
       Long instructorId, List<CourseStatusEnum> status, Pageable pageable);
 
-  @Query(
-      value =
-          "select crs from User std left join std.enrolledCourses crs left join fetch crs.category left join fetch crs.grade left join fetch crs.createdBy creator left join fetch creator.roles where std.id = ?1",
-      countQuery =
-          "select count (crs) from User std left join std.enrolledCourses crs where std.id = ?1")
-  Page<Course> findSubscribedCourses(Long userId, Pageable pageable);
+  //  @Query(
+  //      value =
+  //          "select crs from User std left join std.enrolledCourses crs left join fetch
+  // crs.category left join fetch crs.grade left join fetch crs.createdBy creator left join fetch
+  // creator.roles where std.id = ?1",
+  //      countQuery =
+  //          "select count (crs) from User std left join std.enrolledCourses crs where std.id =
+  // ?1")
+  //  Page<Course> findSubscribedCourses(Long userId, Pageable pageable);
 }

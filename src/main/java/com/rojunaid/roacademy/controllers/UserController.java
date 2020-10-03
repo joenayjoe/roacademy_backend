@@ -74,20 +74,6 @@ public class UserController {
     return new ResponseEntity<>(userResponse, HttpStatus.OK);
   }
 
-  @PutMapping("/{userId}/subscribe-course")
-  public ResponseEntity<HttpStatus> subscribeCourse(
-      @PathVariable Long userId, @Valid @RequestBody CourseSubscriptionRequest data) {
-    userService.subscribeCourse(userId, data);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @GetMapping("/{userId}/courses/{courseId}/is-subscribed")
-  public ResponseEntity<CourseSubscriptionCheckResponse> isSubscribed(
-      @PathVariable Long userId, @PathVariable Long courseId) {
-    CourseSubscriptionCheckResponse r = userService.isSubscribed(userId, courseId);
-    return new ResponseEntity<>(r, HttpStatus.OK);
-  }
-
   @DeleteMapping("/{userId}")
   public ResponseEntity<HttpStatus> deleteUserById(@PathVariable Long userId) {
     userService.deleteUserById(userId);

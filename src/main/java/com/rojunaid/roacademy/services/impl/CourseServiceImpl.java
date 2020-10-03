@@ -141,7 +141,7 @@ public class CourseServiceImpl implements CourseService {
   public void deleteCourseById(Long courseId) {
 
     Course course = getCourse(courseId);
-    if (course.getStudents().size() > 0) {
+    if (course.getCourseStudents().size() > 0) {
       throw new BadRequestException(Translator.toLocale("Course.cannotdelete"));
     } else {
       courseRepository.deleteById(courseId);

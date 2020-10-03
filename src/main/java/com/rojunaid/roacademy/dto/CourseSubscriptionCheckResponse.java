@@ -6,6 +6,6 @@ import lombok.Data;
 public class CourseSubscriptionCheckResponse {
 
   private Long courseId;
-  private Long userId;
+  private Long studentId;
   private boolean subscribed;
 }
