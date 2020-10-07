@@ -14,11 +14,10 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CourseStudent extends Auditable {
-
+public class CourseInstructor extends Auditable {
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "student_id")
-  private User student;
+  @JoinColumn(name = "instructor_id")
+  private User instructor;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "course_id")
@@ -28,7 +27,7 @@ public class CourseStudent extends Auditable {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CourseStudent that = (CourseStudent) o;
+    CourseInstructor that = (CourseInstructor) o;
 
     return Objects.equals(this.getId(), that.getId());
   }

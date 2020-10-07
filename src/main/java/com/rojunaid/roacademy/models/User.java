@@ -26,16 +26,15 @@ public class User extends Auditable {
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
   Set<Role> roles = new HashSet<>();
 
-  @JsonIgnore
-  @ManyToMany(mappedBy = "instructors", fetch = FetchType.LAZY)
-  Set<Course> teachingCourses = new HashSet<>();
+  @OneToMany(mappedBy = "instructor", fetch = FetchType.LAZY, orphanRemoval = true)
+  Set<CourseInstructor> courseInstructors = new HashSet<>();
 
   @OneToMany(
       mappedBy = "student",
       fetch = FetchType.LAZY,
       cascade = CascadeType.ALL,
       orphanRemoval = true)
-  Set<CourseStudent> courseStudents;
+  Set<CourseStudent> courseStudents = new HashSet<>();
 
   private String firstName;
 

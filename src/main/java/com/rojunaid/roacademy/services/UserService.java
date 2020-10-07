@@ -48,7 +48,7 @@ public interface UserService {
   Page<CourseResponse> getTeachingCourses(
       Long instructorId, int page, int size, List<CourseStatusEnum> statusEnums, String order);
 
-  @PreAuthorize("#userId == authentication.principal.user.id or hasRole('ADMIN')")
+  @PreAuthorize("#studentId == authentication.principal.user.id or hasRole('ADMIN')")
   Page<CourseResponse> getSubscribedCourses(Long studentId, int page, int size, String order);
 
   UserResponse userToUserResponse(User user);

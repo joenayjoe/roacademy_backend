@@ -5,11 +5,14 @@ import com.rojunaid.roacademy.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PermissionService {
 
   @Autowired private AuthenticationFacade authenticationFacade;
   @Autowired private UserRepository userRepository;
+  @Autowired private CourseRepository courseRepository;
   @Autowired private ChapterRepository chapterRepository;
   @Autowired private LectureRepository lectureRepository;
   @Autowired private CourseCommentRepository courseCommentRepository;
@@ -18,12 +21,15 @@ public class PermissionService {
   public boolean canManageCourse(Long courseId) {
 
     User user = userRepository.findById(getCurrentUser().getId()).orElse(null);
-    if (user == null) {
-      return false;
-    }
+    if (user == null) return false;
 
-    return isTeacher(user)
-        && user.getTeachingCourses().stream().anyMatch(e -> e.getId() == courseId);
+    Course course = courseRepository.findById(courseId).orElse(null);
+    if (course == null) return false;
+
+    List<User> courseInstructors = courseRepository.findCourseInstructors(courseId);
+    if (courseInstructors.size() <= 0) return false;
+
+    return isTeacher(user) && courseInstructors.contains(user);
   }
 
   public boolean canManageChapter(Long chapterId) {

@@ -52,4 +52,6 @@
     <include file="db/changelog/0.4.3_remove_constrain_not_null_from_course_comment_and_lecture_comment.xml"/>
     <include file="db/changelog/0.4.4_add_column_created_at_and_updated_at_to_course_student.xml"/>
     <include file="db/changelog/0.4.5_add_not_null_constrains_to_course_student.xml"/>
+    <include file="db/changelog/0.4.6_add_column_created_at_and_updated_at_to_course_instructor.xml"/>
+    <include file="db/changelog/0.4.7_add_not_null_contstrain_to_course_instructor.xml"/>
 </databaseChangeLog>

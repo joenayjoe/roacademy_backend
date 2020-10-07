@@ -189,18 +189,11 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public CourseSubscriptionCheckResponse isSubscribed(Long userId, Long courseId) {
-    User user = getUser(userId);
-    Course course = getCourse(courseId);
+    boolean subscribed = courseRepository.isSubscribed(userId, courseId);
     CourseSubscriptionCheckResponse r = new CourseSubscriptionCheckResponse();
     r.setCourseId(courseId);
     r.setStudentId(userId);
-    r.setSubscribed(false);
-
-    CourseStudent courseStudent =
-        courseStudentRepository.findByStudentAndCourse(user, course).orElse(null);
-    if (courseStudent != null) {
-      r.setSubscribed(false);
-    }
+    r.setSubscribed(subscribed);
     return r;
   }
 
@@ -209,7 +202,8 @@ public class UserServiceImpl implements UserService {
       Long instructorId, int page, int size, List<CourseStatusEnum> statusEnums, String order) {
     PageRequest pageable = PageRequest.of(page, size, SortingUtils.SortBy(order));
 
-    Page<Course> courses = userRepository.findTeachingCourses(instructorId, statusEnums, pageable);
+    Page<Course> courses =
+        courseRepository.findAllByInstructorId(instructorId, statusEnums, pageable);
     Page<CourseResponse> courseResponses =
         courses.map(c -> courseService.courseToCourseResponse(c));
     return courseResponses;

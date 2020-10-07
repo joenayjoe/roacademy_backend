@@ -68,16 +68,15 @@ public class Course extends Auditable {
       cascade = CascadeType.ALL)
   private Set<CourseRequirement> courseRequirements = new HashSet<>();
 
-  @JsonManagedReference
-  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  @JoinTable(
-      name = "course_instructor",
-      joinColumns = {@JoinColumn(name = "course_id")},
-      inverseJoinColumns = {@JoinColumn(name = "instructor_id")})
-  private Set<User> instructors = new HashSet<>();
+  @OneToMany(
+      mappedBy = "course",
+      cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY,
+      orphanRemoval = true)
+  private Set<CourseInstructor> courseInstructors = new HashSet<>();
 
   @OneToMany(mappedBy = "course", fetch = FetchType.LAZY, orphanRemoval = true)
-  private Set<CourseStudent> courseStudents;
+  private Set<CourseStudent> courseStudents = new HashSet<>();
 
   @JsonManagedReference
   @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -118,8 +117,17 @@ public class Course extends Auditable {
   }
 
   public void addInstructor(User user) {
-    this.getInstructors().add(user);
-    user.getTeachingCourses().add(this);
+    CourseInstructor courseInstructor = new CourseInstructor();
+    courseInstructor.setCourse(this);
+    courseInstructor.setInstructor(user);
+
+    courseInstructors.add(courseInstructor);
+    user.getCourseInstructors().add(courseInstructor);
+  }
+
+  public void removeInstructor(User user, CourseInstructor courseInstructor) {
+    courseInstructors.remove(courseInstructor);
+    user.getCourseInstructors().remove(courseInstructor);
   }
 
   public void addCreator(User user) {

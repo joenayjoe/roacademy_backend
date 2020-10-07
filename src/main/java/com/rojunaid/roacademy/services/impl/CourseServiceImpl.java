@@ -276,10 +276,11 @@ public class CourseServiceImpl implements CourseService {
         course.getObjectives().stream().map(x -> x.getName()).collect(Collectors.toList()));
     courseResponse.setRequirements(
         course.getCourseRequirements().stream().map(x -> x.getName()).collect(Collectors.toList()));
-    courseResponse.setInstructors(
-        course.getInstructors().stream()
-            .map(x -> userToPrimaryUser(x))
-            .collect(Collectors.toList()));
+    List<PrimaryUser> instructors = new ArrayList<>();
+    for (CourseInstructor ci : course.getCourseInstructors()) {
+      instructors.add(userToPrimaryUser(ci.getInstructor()));
+    }
+    courseResponse.setInstructors(instructors);
     return courseResponse;
   }
 
