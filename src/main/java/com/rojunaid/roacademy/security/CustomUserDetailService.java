@@ -17,7 +17,7 @@ public class CustomUserDetailService implements UserDetailsService {
   public UserDetails loadUserByUsername(String email) {
     User user = userRepository.findByEmail(email).orElse(null);
     if (user == null) {
-      throw new ResourceNotFoundException("User with email [" + email + "] not found");
+      throw new ResourceNotFoundException("incorrect credentials");
     }
     return new CustomUserPrincipal(user);
   }
