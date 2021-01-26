@@ -3,10 +3,7 @@ package com.rojunaid.roacademy.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -19,7 +16,7 @@ public class LectureResource extends Auditable {
   private String fileUrl;
 
   @JsonIgnore
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "lecture_id", nullable = false)
   private Lecture lecture;
 }
