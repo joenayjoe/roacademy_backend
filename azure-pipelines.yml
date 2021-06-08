@@ -34,6 +34,7 @@ stages:
       displayName: 'Maven Package'
       inputs:
         mavenPomFile: 'pom.xml'
+        options: 'package -Dmaven.test.skip'
 
     - task: CopyFiles@2
       displayName: 'Copy Files to artifact staging directory'
