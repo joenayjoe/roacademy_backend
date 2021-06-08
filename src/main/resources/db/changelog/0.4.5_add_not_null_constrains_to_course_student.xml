@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
     <changeSet id="45" author="junaid">
-        <addNotNullConstraint tableName="course_student" columnName="student_id"/>
-        <addNotNullConstraint tableName="course_student" columnName="course_id"/>
+        <addNotNullConstraint tableName="course_student" columnName="student_id" columnDataType="BIGINT"/>
+        <addNotNullConstraint tableName="course_student" columnName="course_id" columnDataType="BIGINT"/>
     </changeSet>
 </databaseChangeLog>

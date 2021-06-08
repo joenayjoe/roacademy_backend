@@ -1,15 +1,15 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/roacademydb
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
-        jdbc:
-          lob:
-            non_contextual_creation: true
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/roacademydb
+#    username: ${MYSQL_USERNAME}
+#    password: ${MYSQL_PASSWORD}
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+#        jdbc:
+#          lob:
+#            non_contextual_creation: true
 
 logging:
   level:
